@@ -17,9 +17,11 @@ constexpr int SAMPLE_RATE = 44100;
 static float t = 0.0f;
 
 void sdl_audio_callback(void * user_data, Uint8 * stream, int len) {
+    int jakob[] = { 0, 2, 4, 0, 0, 2, 4, 0, 4, 5, 7, 7, 4, 5, 7, 7 };
+
     for (int i = 0; i < len; i++) {
-        char sample = std::sin(TWO_PI * t * note_freq(48 + int(t))) * 48.0f;
-        stream[i] = sample;
+        char sample = std::sin(TWO_PI * t * note_freq(36 + jakob[int(t) % 16])) * 512.0f;
+        stream[i] = sample / 4;
 
         t += 1.0f / float(SAMPLE_RATE);
     }
