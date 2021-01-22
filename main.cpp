@@ -48,8 +48,6 @@ static void sdl_audio_callback(void * user_data, Uint8 * stream, int len) {
 		0,0, -5,-5, 0,0, 0,0
 	};
 
-	printf("%i\n", len);
-
 	for (int i = 0; i < len; i += 2) {
 		auto val = 
 			char(play_square  (t, note_freq(36 + jakob[(int(t * 2))      % 64]), 48.0f)) +
