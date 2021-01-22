@@ -2,7 +2,7 @@
 #include <cstdlib>
 #include <cmath>
 
-#include <unordered_set>
+#include <unordered_map>
 
 #include <SDL2/SDL.h>
 
@@ -18,26 +18,6 @@ static float note_freq(int note) {
 
 static int scancode_to_note(SDL_Scancode scancode) {
 	switch (scancode) {
-		case SDL_SCANCODE_Q:            return 36;  // C
-		case SDL_SCANCODE_2:            return 37;  // C#
-		case SDL_SCANCODE_W:            return 38;  // D
-		case SDL_SCANCODE_3:            return 39;  // D#
-		case SDL_SCANCODE_E:            return 40;  // E
-		case SDL_SCANCODE_R:            return 41;  // F
-		case SDL_SCANCODE_5:            return 42;  // F#
-		case SDL_SCANCODE_T:            return 43;  // G
-		case SDL_SCANCODE_6:            return 44;  // G#
-		case SDL_SCANCODE_Y:            return 45;  // A
-		case SDL_SCANCODE_7:            return 46; // A#
-		case SDL_SCANCODE_U:            return 47; // B
-		case SDL_SCANCODE_I:            return 48; // C
-		case SDL_SCANCODE_9:            return 49; // C#
-		case SDL_SCANCODE_O:            return 50; // D
-		case SDL_SCANCODE_0:            return 51; // D#
-		case SDL_SCANCODE_P:            return 52; // E
-		case SDL_SCANCODE_LEFTBRACKET:  return 53; // F
-		case SDL_SCANCODE_RIGHTBRACKET: return 54; // G
-
 		case SDL_SCANCODE_Z:          return 24; // C
 		case SDL_SCANCODE_S:          return 25; // C#
 		case SDL_SCANCODE_X:          return 26; // D
@@ -56,6 +36,26 @@ static int scancode_to_note(SDL_Scancode scancode) {
 		case SDL_SCANCODE_SEMICOLON:  return 39; // D#
 		case SDL_SCANCODE_SLASH:      return 40; // E
 		case SDL_SCANCODE_APOSTROPHE: return 41; // F
+
+		case SDL_SCANCODE_Q:            return 36;  // C
+		case SDL_SCANCODE_2:            return 37;  // C#
+		case SDL_SCANCODE_W:            return 38;  // D
+		case SDL_SCANCODE_3:            return 39;  // D#
+		case SDL_SCANCODE_E:            return 40;  // E
+		case SDL_SCANCODE_R:            return 41;  // F
+		case SDL_SCANCODE_5:            return 42;  // F#
+		case SDL_SCANCODE_T:            return 43;  // G
+		case SDL_SCANCODE_6:            return 44;  // G#
+		case SDL_SCANCODE_Y:            return 45;  // A
+		case SDL_SCANCODE_7:            return 46; // A#
+		case SDL_SCANCODE_U:            return 47; // B
+		case SDL_SCANCODE_I:            return 48; // C
+		case SDL_SCANCODE_9:            return 49; // C#
+		case SDL_SCANCODE_O:            return 50; // D
+		case SDL_SCANCODE_0:            return 51; // D#
+		case SDL_SCANCODE_P:            return 52; // E
+		case SDL_SCANCODE_LEFTBRACKET:  return 53; // F
+		case SDL_SCANCODE_RIGHTBRACKET: return 55; // G
 
 		default: return -1;
 	}
@@ -83,14 +83,54 @@ static float t = 0.0f;
 static Uint64 time_last;
 static float  time_inv_freq;
 
-static std::unordered_set<int> notes;
+struct Note {
+	float start_time;
 
-static void sdl_audio_callback(void* user_data, Uint8* stream, int len) {
+	int note_idx;
+};
+
+static std::unordered_map<int, Note> notes;
+
+static float lerp(float a, float b, float t) {
+	return a + (b - a) * t;
+}
+
+static float envelope(float t) {
+	static constexpr float attack  = 0.1f;
+	static constexpr float hold    = 0.5f;
+	static constexpr float decay   = 1.0f;
+	static constexpr float sustain = 0.5f;
+//	static constexpr float release = 1.0f;
+
+	if (t < attack) {
+		return t / attack;
+	} 
+	t -= attack;
+
+	if (t < hold) {
+		return 1.0f;
+	}
+	t -= hold;
+
+	if (t < decay) {
+		return lerp(1.0f, sustain, t / decay);
+	}
+
+	return sustain;
+}
+
+static float bitcrush(float signal, float crush = 16.0f) {
+	return crush * std::floor(signal / crush);
+}
+
+static void sdl_audio_callback(void * user_data, Uint8 * stream, int len) {
 	for (int i = 0; i < len; i += 2) {
 		char val = 0;
 		
-		for (auto note : notes) {
-			val += play_saw(t, note_freq(note), 32.0f);
+		for (auto const & [note_idx, note] : notes) {
+			float duration = t - note.start_time;
+
+			val += bitcrush(play_saw(t, note_freq(note_idx), 32.0f * envelope(duration)));
 		}
 
 		stream[i]     = val;
@@ -100,7 +140,7 @@ static void sdl_audio_callback(void* user_data, Uint8* stream, int len) {
 	}
 }
 
-int main(int argc, char* argv[]) {
+int main(int argc, char * argv[]) {
 	SDL_Init(SDL_INIT_EVERYTHING);
 
 	auto window = SDL_CreateWindow("Synthesizer", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, SDL_WINDOW_OPENGL);
@@ -125,7 +165,10 @@ int main(int argc, char* argv[]) {
 			switch (event.type) {
 				case SDL_KEYDOWN: {
 					auto note = scancode_to_note(event.key.keysym.scancode);
-					if (note != -1) notes.insert(note);
+					if (note != -1) {
+						Note n = { t, note };	
+						notes.insert(std::make_pair(note, n));
+					}
 
 					break;
 				}
