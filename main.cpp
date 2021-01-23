@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cmath>
+#include <cassert>
 
 #include <unordered_map>
 
@@ -9,7 +10,7 @@
 static constexpr float     PI = 3.14159265359f;
 static constexpr float TWO_PI = 6.28318530718f;
 
-static constexpr float A_0 = 27.5f; // Tuning of A 0 in Hz
+static constexpr float C_0 = 16.35f; // Tuning of C0 in Hz
 
 static constexpr int   SAMPLE_RATE     = 44100;
 static constexpr float SAMPLE_RATE_INV = 1.0f / float(SAMPLE_RATE);
@@ -18,7 +19,35 @@ static constexpr int WINDOW_WIDTH  = 1280;
 static constexpr int WINDOW_HEIGHT = 720;
 
 static float note_freq(int note) {
-	return A_0 * std::pow(2.0f, float(note) / 12.0f);
+	assert(note >= 0);
+
+	float freq = C_0;
+
+	// Find octave
+	while (note >= 12) {
+		freq *= 2.0f;
+		note -= 12;
+	}
+
+	// Find note within octave
+	static float pow[12] = { // LUT with 2^(i/12) at index i
+		 1.0f,
+		 1.059463094f,
+		 1.122462048f,
+		 1.189207115f,
+		 1.259921050f,
+		 1.334839854f,
+		 1.414213562f,
+		 1.498307077f,
+		 1.587401052f,
+		 1.681792831f,
+		 1.781797436f,
+		 1.887748625f
+	};
+
+	return freq * pow[note];
+
+//	return C_0 * std::pow(2.0f, float(note) / 12.0f);
 }
 
 static int scancode_to_note(SDL_Scancode scancode) {
@@ -116,7 +145,7 @@ static float envelope(float t) {
 
 	if (t < attack) {
 		return t / attack;
-	} 
+	}
 	t -= attack;
 
 	if (t < hold) {
@@ -135,16 +164,24 @@ static float bitcrush(float signal, float crush = 16.0f) {
 	return crush * std::floor(signal / crush);
 }
 
+static float distort(float signal, float amount = 0.2f) {
+	float cut = 0.5f * (1.0f - amount) + 0.00001f;
+
+	if (signal < cut) {
+		return lerp(0.0f, 1.0f - cut, signal / cut);
+	} else {
+		return lerp(1.0f - cut, 1.0f, (signal - cut) / (1.0f - cut));
+	}
+}
+
 static float filter(float sample, float cutoff = 1000.0f, float resonance = 0.5f) {
 	static float z1_A[2];
 	static float z2_A[2];
 
-	auto wa = (2.0f * SAMPLE_RATE) * tan(PI * cutoff * SAMPLE_RATE_INV);
-
 	auto Q = 1.0f / (2.0f * (1.0f - resonance));
 
-	auto g = wa * SAMPLE_RATE_INV / 2.0f; // Gain
-	auto R = 1.0f / (2.0f * Q);	          // Damping
+	auto g = std::tan(PI * cutoff * SAMPLE_RATE_INV); // Gain
+	auto R = 1.0f / (2.0f * Q);	                      // Damping
     
 	auto high_pass = (sample - (2.0f * R + g) * z1_A[0] - z2_A[0]) / (1.0f + (2.0f * R * g) + g * g);
 	auto band_pass = high_pass * g + z1_A[0];
@@ -230,6 +267,8 @@ int main(int argc, char * argv[]) {
 	}
 
 	SDL_CloseAudioDevice(device);
+	SDL_GL_DeleteContext(context);
+	SDL_DestroyWindow(window);
 	SDL_Quit();
 
 	return 0;
