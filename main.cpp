@@ -6,11 +6,16 @@
 
 #include <SDL2/SDL.h>
 
+static constexpr float     PI = 3.14159265359f;
 static constexpr float TWO_PI = 6.28318530718f;
 
 static constexpr float A_0 = 27.5f; // Tuning of A 0 in Hz
 
-static constexpr int SAMPLE_RATE = 44100;
+static constexpr int   SAMPLE_RATE     = 44100;
+static constexpr float SAMPLE_RATE_INV = 1.0f / float(SAMPLE_RATE);
+
+static constexpr int WINDOW_WIDTH  = 1280;
+static constexpr int WINDOW_HEIGHT = 720;
 
 static float note_freq(int note) {
 	return A_0 * std::pow(2.0f, float(note) / 12.0f);
@@ -80,8 +85,8 @@ static float play_triangle(float t, float freq, float amplitude = 1.0f) {
 
 static float t = 0.0f;
 
-static Uint64 time_last;
-static float  time_inv_freq;
+static float mouse_x = 0.0f;
+static float mouse_y = 0.0f;
 
 struct Note {
 	float start_time;
@@ -93,6 +98,13 @@ static std::unordered_map<int, Note> notes;
 
 static float lerp(float a, float b, float t) {
 	return a + (b - a) * t;
+}
+
+static float clamp(float value, float min = 0.0f, float max = 1.0f) {
+	if (value < min) return min;
+	if (value > max) return max;
+
+	return value;
 }
 
 static float envelope(float t) {
@@ -123,27 +135,50 @@ static float bitcrush(float signal, float crush = 16.0f) {
 	return crush * std::floor(signal / crush);
 }
 
+static float filter(float sample, float cutoff = 1000.0f, float resonance = 0.5f) {
+	static float z1_A[2];
+	static float z2_A[2];
+
+	auto wa = (2.0f * SAMPLE_RATE) * tan(PI * cutoff * SAMPLE_RATE_INV);
+
+	auto Q = 1.0f / (2.0f * (1.0f - resonance));
+
+	auto g = wa * SAMPLE_RATE_INV / 2.0f; // Gain
+	auto R = 1.0f / (2.0f * Q);	          // Damping
+    
+	auto high_pass = (sample - (2.0f * R + g) * z1_A[0] - z2_A[0]) / (1.0f + (2.0f * R * g) + g * g);
+	auto band_pass = high_pass * g + z1_A[0];
+	auto  low_pass = band_pass * g + z2_A[0];
+	
+	z1_A[0] = g * high_pass + band_pass;
+	z2_A[0] = g * band_pass + low_pass;
+
+	return low_pass;
+}
+
 static void sdl_audio_callback(void * user_data, Uint8 * stream, int len) {
 	for (int i = 0; i < len; i += 2) {
-		char val = 0;
+		auto sample = 0.0f;
 		
 		for (auto const & [note_idx, note] : notes) {
 			float duration = t - note.start_time;
 
-			val += bitcrush(play_saw(t, note_freq(note_idx), 32.0f * envelope(duration)));
+			sample += play_saw(t, note_freq(note_idx), 32.0f * envelope(duration));
 		}
 
-		stream[i]     = val;
-		stream[i + 1] = val;
+		sample = filter(sample, lerp(100.0f, 10000.0f, mouse_x), lerp(0.5f, 1.0f, mouse_y));
 
-		t += 1.0f / float(SAMPLE_RATE);
+		stream[i]     = char(clamp(sample, -128.0f, 127.0f));
+		stream[i + 1] = char(clamp(sample, -128.0f, 127.0f));
+
+		t += SAMPLE_RATE_INV;
 	}
 }
 
 int main(int argc, char * argv[]) {
 	SDL_Init(SDL_INIT_EVERYTHING);
 
-	auto window  = SDL_CreateWindow("Synthesizer", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, SDL_WINDOW_OPENGL);
+	auto window  = SDL_CreateWindow("Synthesizer", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_OPENGL);
 	auto context = SDL_GL_CreateContext(window);
 
 	SDL_GL_SetSwapInterval(0);
@@ -157,8 +192,8 @@ int main(int argc, char * argv[]) {
 
 	auto device = SDL_OpenAudioDevice(nullptr, 0, &audio_spec, nullptr, 0);
 
-	time_inv_freq = 1.0f / float(SDL_GetPerformanceFrequency());
-	time_last = SDL_GetPerformanceCounter();
+	// time_inv_freq = 1.0f / float(SDL_GetPerformanceFrequency());
+	// time_last = SDL_GetPerformanceCounter();
 
 	SDL_PauseAudioDevice(device, 0);
 
@@ -186,6 +221,10 @@ int main(int argc, char * argv[]) {
 				default: break;
 			}
 		}
+
+		int x, y; SDL_GetMouseState(&x, &y);
+		mouse_x = float(x) / float(WINDOW_WIDTH);
+		mouse_y = float(y) / float(WINDOW_HEIGHT);
 
 		SDL_GL_SwapWindow(window);
 	}
