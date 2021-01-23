@@ -7,6 +7,8 @@
 
 #include <SDL2/SDL.h>
 
+#include "midi.h"
+
 static constexpr float     PI = 3.14159265359f;
 static constexpr float TWO_PI = 6.28318530718f;
 
@@ -212,11 +214,11 @@ static void sdl_audio_callback(void * user_data, Uint8 * stream, int len) {
 		for (auto const & [note_idx, note] : notes) {
 			float duration = t - note.start_time;
 
-			sample += play_saw(t, note_freq(note_idx), 32.0f * envelope(duration));
+			sample += play_saw(t, note_freq(note_idx), 20.0f * envelope(duration));
 		}
 
 		sample = filter(sample, lerp(100.0f, 10000.0f, mouse_x), lerp(0.5f, 1.0f, mouse_y));
-		sample = delay(sample);
+//		sample = delay(sample);
 
 		stream[i]     = char(clamp(sample, -128.0f, 127.0f));
 		stream[i + 1] = char(clamp(sample, -128.0f, 127.0f));
@@ -242,12 +244,21 @@ int main(int argc, char * argv[]) {
 
 	auto device = SDL_OpenAudioDevice(nullptr, 0, &audio_spec, nullptr, 0);
 
-	// time_inv_freq = 1.0f / float(SDL_GetPerformanceFrequency());
-	// time_last = SDL_GetPerformanceCounter();
+	auto time_inv_freq = 1.0 / double(SDL_GetPerformanceFrequency());
+	auto time_start    = double(SDL_GetPerformanceCounter());
 
-	SDL_PauseAudioDevice(device, 0);
+	SDL_PauseAudioDevice(device, false);
 
-	while (true) {
+	auto midi = MidiTrack::load("loop.mid");
+	auto midi_offset = 0;
+
+	auto window_is_open = true;
+
+	while (window_is_open) {
+		auto time = (double(SDL_GetPerformanceCounter()) - time_start) * time_inv_freq;
+		
+		SDL_PauseAudioDevice(device, true);
+
 		SDL_Event event;
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
@@ -268,9 +279,28 @@ int main(int argc, char * argv[]) {
 					break;
 				}
 
+				case SDL_QUIT: window_is_open = false; break;
+
 				default: break;
 			}
 		}
+
+		while (midi_offset < midi.events.size()) {
+			auto const & event = midi.events[midi_offset];
+
+			if (event.time > time) break;
+
+			if (event.press) {
+				Note n = { t, event.note };
+				notes.insert(std::make_pair(event.note, n));
+			} else {
+				notes.erase(event.note);
+			}
+
+			midi_offset++;
+		}
+		
+		SDL_PauseAudioDevice(device, false);
 
 		int x, y; SDL_GetMouseState(&x, &y);
 		mouse_x = float(x) / float(WINDOW_WIDTH);
