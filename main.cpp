@@ -3,25 +3,50 @@
 #include <cmath>
 #include <cassert>
 
+#include <atomic>
 #include <unordered_map>
 
 #include <SDL2/SDL.h>
 
 #include "midi.h"
 
-static constexpr float     PI = 3.14159265359f;
-static constexpr float TWO_PI = 6.28318530718f;
+struct Sample {
+	float left;
+	float right;
+};
 
-static constexpr float C_0 = 16.35f; // Tuning of C0 in Hz
+struct Note {
+	float start_time;
 
-static constexpr int   SAMPLE_RATE     = 44100;
-static constexpr float SAMPLE_RATE_INV = 1.0f / float(SAMPLE_RATE);
+	int note_idx;
+};
 
-static constexpr int WINDOW_WIDTH  = 1280;
-static constexpr int WINDOW_HEIGHT = 720;
+
+static constexpr auto     PI = 3.14159265359f;
+static constexpr auto TWO_PI = 6.28318530718f;
+
+
+static constexpr auto SAMPLE_RATE     = 44100;
+static constexpr auto SAMPLE_RATE_INV = 1.0f / float(SAMPLE_RATE);
+
+
+static constexpr int BUFFER_SIZE  = 1024;
+static constexpr int BUFFER_COUNT = 3;
+
+static Sample buffers[BUFFER_COUNT][BUFFER_SIZE];
+
+static std::atomic<int> buffer_read  = 0;
+static std::atomic<int> buffer_write = 0;
+
+
+static constexpr auto WINDOW_WIDTH  = 1280;
+static constexpr auto WINDOW_HEIGHT = 720;
+
 
 static float note_freq(int note) {
 	assert(note >= 0);
+	
+	static constexpr float C_0 = 16.35f; // Tuning of C0 in Hz
 
 	float freq = C_0;
 
@@ -71,16 +96,16 @@ static int scancode_to_note(SDL_Scancode scancode) {
 		case SDL_SCANCODE_SLASH:      return 40; // E
 		case SDL_SCANCODE_APOSTROPHE: return 41; // F
 
-		case SDL_SCANCODE_Q:            return 36;  // C
-		case SDL_SCANCODE_2:            return 37;  // C#
-		case SDL_SCANCODE_W:            return 38;  // D
-		case SDL_SCANCODE_3:            return 39;  // D#
-		case SDL_SCANCODE_E:            return 40;  // E
-		case SDL_SCANCODE_R:            return 41;  // F
-		case SDL_SCANCODE_5:            return 42;  // F#
-		case SDL_SCANCODE_T:            return 43;  // G
-		case SDL_SCANCODE_6:            return 44;  // G#
-		case SDL_SCANCODE_Y:            return 45;  // A
+		case SDL_SCANCODE_Q:            return 36; // C
+		case SDL_SCANCODE_2:            return 37; // C#
+		case SDL_SCANCODE_W:            return 38; // D
+		case SDL_SCANCODE_3:            return 39; // D#
+		case SDL_SCANCODE_E:            return 40; // E
+		case SDL_SCANCODE_R:            return 41; // F
+		case SDL_SCANCODE_5:            return 42; // F#
+		case SDL_SCANCODE_T:            return 43; // G
+		case SDL_SCANCODE_6:            return 44; // G#
+		case SDL_SCANCODE_Y:            return 45; // A
 		case SDL_SCANCODE_7:            return 46; // A#
 		case SDL_SCANCODE_U:            return 47; // B
 		case SDL_SCANCODE_I:            return 48; // C
@@ -94,6 +119,7 @@ static int scancode_to_note(SDL_Scancode scancode) {
 		default: return -1;
 	}
 }
+
 
 static float play_sine(float t, float freq, float amplitude = 1.0f) {
 	return amplitude * std::sin(TWO_PI * t * freq);
@@ -112,18 +138,6 @@ static float play_triangle(float t, float freq, float amplitude = 1.0f) {
 	return amplitude * (4.0f * std::abs(x - std::floor(x + 0.5f)) - 1.0f);
 }
 
-static float t = 0.0f;
-
-static float mouse_x = 0.0f;
-static float mouse_y = 0.0f;
-
-struct Note {
-	float start_time;
-
-	int note_idx;
-};
-
-static std::unordered_map<int, Note> notes;
 
 static float lerp(float a, float b, float t) {
 	return a + (b - a) * t;
@@ -160,6 +174,7 @@ static float envelope(float t) {
 	return sustain;
 }
 
+
 static float bitcrush(float signal, float crush = 16.0f) {
 	return crush * std::floor(signal / crush);
 }
@@ -178,10 +193,8 @@ static float filter(float sample, float cutoff = 1000.0f, float resonance = 0.5f
 	static float z1_A[2];
 	static float z2_A[2];
 
-	auto Q = 1.0f / (2.0f * (1.0f - resonance));
-
 	auto g = std::tan(PI * cutoff * SAMPLE_RATE_INV); // Gain
-	auto R = 1.0f / (2.0f * Q);	                      // Damping
+	auto R = 1.0f - resonance;                        // Damping
     
 	auto high_pass = (sample - (2.0f * R + g) * z1_A[0] - z2_A[0]) / (1.0f + (2.0f * R * g) + g * g);
 	auto band_pass = high_pass * g + z1_A[0];
@@ -193,39 +206,38 @@ static float filter(float sample, float cutoff = 1000.0f, float resonance = 0.5f
 	return low_pass;
 }
 
-static float delay(float sample, float feedback = 0.6f) {
+static float delay(float sample, float feedback = 0.7f) {
 	static constexpr auto HISTORY_SIZE = SAMPLE_RATE * 462 / 1000;
 	static float history[HISTORY_SIZE];
 	static int offset = 0;
 
-	auto offset_prev = offset;
+	sample = sample + feedback * history[offset];
+	history[offset] = sample;
+	
 	offset = (offset + 1) % HISTORY_SIZE;
 
-	sample = sample + feedback * history[offset];
-	history[offset_prev] = sample;
-	
 	return sample;
 }
 
+
 static void sdl_audio_callback(void * user_data, Uint8 * stream, int len) {
-	for (int i = 0; i < len; i += 2) {
-		auto sample = 0.0f;
-		
-		for (auto const & [note_idx, note] : notes) {
-			float duration = t - note.start_time;
+	assert(len == 2 * BUFFER_SIZE);
 
-			sample += play_saw(t, note_freq(note_idx), 20.0f * envelope(duration));
-		}
+	auto buffer_curr = buffer_read.load();
+	while (buffer_curr == buffer_write.load()) { }
+	
+	assert(buffer_curr >= 0);
 
-		sample = filter(sample, lerp(100.0f, 10000.0f, mouse_x), lerp(0.5f, 1.0f, mouse_y));
-//		sample = delay(sample);
+	auto buf = buffers[buffer_curr];
 
-		stream[i]     = char(clamp(sample, -128.0f, 127.0f));
-		stream[i + 1] = char(clamp(sample, -128.0f, 127.0f));
-
-		t += SAMPLE_RATE_INV;
+	for (int i = 0; i < BUFFER_SIZE; i++) {
+		stream[2*i    ] = (char)clamp(buf[i].left,  -128.0f, 127.0f);
+		stream[2*i + 1] = (char)clamp(buf[i].right, -128.0f, 127.0f);
 	}
+	
+	buffer_read.store((buffer_curr + 1) % BUFFER_COUNT);
 }
+
 
 int main(int argc, char * argv[]) {
 	SDL_Init(SDL_INIT_EVERYTHING);
@@ -239,7 +251,7 @@ int main(int argc, char * argv[]) {
 	audio_spec.freq = SAMPLE_RATE;
 	audio_spec.format = AUDIO_S8;
 	audio_spec.channels = 2;
-	audio_spec.samples = 1024;
+	audio_spec.samples = BUFFER_SIZE;
 	audio_spec.callback = sdl_audio_callback;
 
 	auto device = SDL_OpenAudioDevice(nullptr, 0, &audio_spec, nullptr, 0);
@@ -251,14 +263,19 @@ int main(int argc, char * argv[]) {
 
 	auto midi = MidiTrack::load("loop.mid");
 	auto midi_offset = 0;
+	
+	auto t = 0.0f;
+	
+	std::unordered_map<int, Note> notes;
+
+	auto mouse_x = 0.0f;
+	auto mouse_y = 0.0f;
 
 	auto window_is_open = true;
 
 	while (window_is_open) {
 		auto time = (double(SDL_GetPerformanceCounter()) - time_start) * time_inv_freq;
 		
-		SDL_PauseAudioDevice(device, true);
-
 		SDL_Event event;
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
@@ -285,27 +302,51 @@ int main(int argc, char * argv[]) {
 			}
 		}
 
-		while (midi_offset < midi.events.size()) {
-			auto const & event = midi.events[midi_offset];
+		//while (midi_offset < midi.events.size()) {
+		//	auto const & event = midi.events[midi_offset];
 
-			if (event.time > time) break;
+		//	if (event.time > time) break;
 
-			if (event.press) {
-				Note n = { t, event.note };
-				notes.insert(std::make_pair(event.note, n));
-			} else {
-				notes.erase(event.note);
-			}
+		//	if (event.press) {
+		//		Note n = { t, event.note };
+		//		notes.insert(std::make_pair(event.note, n));
+		//	} else {
+		//		notes.erase(event.note);
+		//	}
 
-			midi_offset++;
-		}
+		//	midi_offset++;
+		//}
 		
-		SDL_PauseAudioDevice(device, false);
-
 		int x, y; SDL_GetMouseState(&x, &y);
 		mouse_x = float(x) / float(WINDOW_WIDTH);
 		mouse_y = float(y) / float(WINDOW_HEIGHT);
 
+		auto buffer_curr = buffer_write.load();
+		auto buf         = buffers[buffer_curr];
+		
+		for (int i = 0; i < BUFFER_SIZE; i++) {
+			auto sample = 0.0f;
+		
+			for (auto const & [note_idx, note] : notes) {
+				float duration = t - note.start_time;
+
+				sample += play_saw(t, note_freq(note_idx), 20.0f * envelope(duration));
+			}
+
+//			sample = filter(sample, lerp(100.0f, 10000.0f, mouse_x), lerp(0.5f, 1.0f, mouse_y));
+//			sample = delay(sample);
+
+			buf[i].left  = sample;
+			buf[i].right = sample;
+
+			t += SAMPLE_RATE_INV;
+		}
+		
+		auto buffer_next = (buffer_curr + 1) % BUFFER_COUNT;
+		while (buffer_next == buffer_read.load()) { }
+		
+		buffer_write.store(buffer_next);
+		
 		SDL_GL_SwapWindow(window);
 	}
 
