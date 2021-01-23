@@ -13,7 +13,42 @@
 struct Sample {
 	float left;
 	float right;
+
+	Sample()                 : left(0), right(0) { }
+	Sample(float f)          : left(f), right(f) { }
+	Sample(float l, float r) : left(l), right(r) { }
+
+	static Sample floor(Sample const & s) { return { std::floor(s.left), std::floor(s.right) }; }
+
+	static Sample lerp(Sample const & a, Sample const & b, Sample const & t);
+
+	void operator+=(Sample const & other) { left += other.left; right += other.right; }
+	void operator-=(Sample const & other) { left -= other.left; right -= other.right; }
+	void operator*=(Sample const & other) { left *= other.left; right *= other.right; }
+	void operator/=(Sample const & other) { left /= other.left; right /= other.right; }
+
+	void operator+=(float f) { left += f; right += f; }
+	void operator-=(float f) { left -= f; right -= f; }
+	void operator*=(float f) { left *= f; right *= f; }
+	void operator/=(float f) { left /= f; right /= f; }
 };
+
+Sample operator+(Sample const & a, Sample const & b) { return { a.left + b.left, a.right + b.right }; }
+Sample operator-(Sample const & a, Sample const & b) { return { a.left - b.left, a.right - b.right }; }
+Sample operator*(Sample const & a, Sample const & b) { return { a.left * b.left, a.right * b.right }; }
+Sample operator/(Sample const & a, Sample const & b) { return { a.left / b.left, a.right / b.right }; }
+
+Sample operator+(Sample const & s, float f) { return { s.left + f, s.right + f }; }
+Sample operator-(Sample const & s, float f) { return { s.left - f, s.right - f }; }
+Sample operator*(Sample const & s, float f) { return { s.left * f, s.right * f }; }
+Sample operator/(Sample const & s, float f) { return { s.left / f, s.right / f }; }
+
+Sample operator+(float f, Sample const & s) { return { s.left + f, s.right + f }; }
+Sample operator-(float f, Sample const & s) { return { s.left - f, s.right - f }; }
+Sample operator*(float f, Sample const & s) { return { s.left * f, s.right * f }; }
+Sample operator/(float f, Sample const & s) { return { s.left / f, s.right / f }; }
+
+Sample Sample::lerp(Sample const & a, Sample const & b, Sample const & t) { return a + (b - a) * t; }
 
 struct Note {
 	float start_time;
@@ -121,25 +156,26 @@ static int scancode_to_note(SDL_Scancode scancode) {
 }
 
 
-static float play_sine(float t, float freq, float amplitude = 1.0f) {
+static Sample play_sine(float t, float freq, float amplitude = 1.0f) {
 	return amplitude * std::sin(TWO_PI * t * freq);
 }
 
-static float play_saw(float t, float freq, float amplitude = 1.0f) {
+static Sample play_saw(float t, float freq, float amplitude = 1.0f) {
 	return amplitude * 2.0f * (t * freq - std::floor(t * freq + 0.5f));
 }
 
-static float play_square(float t, float freq, float amplitude = 1.0f) {
+static Sample play_square(float t, float freq, float amplitude = 1.0f) {
 	return std::fmodf(t * freq, 1.0f) < 0.5f ? amplitude : -amplitude;
 }
 
-static float play_triangle(float t, float freq, float amplitude = 1.0f) {
+static Sample play_triangle(float t, float freq, float amplitude = 1.0f) {
 	float x = t * freq + 0.25f;
 	return amplitude * (4.0f * std::abs(x - std::floor(x + 0.5f)) - 1.0f);
 }
 
 
-static float lerp(float a, float b, float t) {
+template<typename T>
+static float lerp(T a, T b, float t) {
 	return a + (b - a) * t;
 }
 
@@ -175,8 +211,8 @@ static float envelope(float t) {
 }
 
 
-static float bitcrush(float signal, float crush = 16.0f) {
-	return crush * std::floor(signal / crush);
+static Sample bitcrush(Sample signal, float crush = 16.0f) {
+	return crush * Sample::floor(signal / crush);
 }
 
 static float distort(float signal, float amount = 0.2f) {
@@ -189,19 +225,19 @@ static float distort(float signal, float amount = 0.2f) {
 	}
 }
 
-static float filter(float sample, float cutoff = 1000.0f, float resonance = 0.5f) {
-	static float z1_A[2];
-	static float z2_A[2];
+static Sample filter(Sample sample, float cutoff = 1000.0f, float resonance = 0.5f) {
+	static Sample z1;
+	static Sample z2;
 
 	auto g = std::tan(PI * cutoff * SAMPLE_RATE_INV); // Gain
 	auto R = 1.0f - resonance;                        // Damping
     
-	auto high_pass = (sample - (2.0f * R + g) * z1_A[0] - z2_A[0]) / (1.0f + (2.0f * R * g) + g * g);
-	auto band_pass = high_pass * g + z1_A[0];
-	auto  low_pass = band_pass * g + z2_A[0];
+	auto high_pass = (sample - (2.0f * R + g) * z1 - z2) / (1.0f + (2.0f * R * g) + g * g);
+	auto band_pass = high_pass * g + z1;
+	auto  low_pass = band_pass * g + z2;
 	
-	z1_A[0] = g * high_pass + band_pass;
-	z2_A[0] = g * band_pass + low_pass;
+	z1 = g * high_pass + band_pass;
+	z2 = g * band_pass + low_pass;
 
 	return low_pass;
 }
@@ -325,7 +361,7 @@ int main(int argc, char * argv[]) {
 		auto buf         = buffers[buffer_curr];
 		
 		for (int i = 0; i < BUFFER_SIZE; i++) {
-			auto sample = 0.0f;
+			Sample sample;
 		
 			for (auto const & [note_idx, note] : notes) {
 				float duration = t - note.start_time;
@@ -336,8 +372,7 @@ int main(int argc, char * argv[]) {
 //			sample = filter(sample, lerp(100.0f, 10000.0f, mouse_x), lerp(0.5f, 1.0f, mouse_y));
 //			sample = delay(sample);
 
-			buf[i].left  = sample;
-			buf[i].right = sample;
+			buf[i] = sample;
 
 			t += SAMPLE_RATE_INV;
 		}
