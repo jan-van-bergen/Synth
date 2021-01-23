@@ -30,7 +30,7 @@ static float note_freq(int note) {
 	}
 
 	// Find note within octave
-	static float pow[12] = { // LUT with 2^(i/12) at index i
+	static constexpr float pow[12] = { // LUT with 2^(i/12) at index i
 		 1.0f,
 		 1.059463094f,
 		 1.122462048f,
@@ -46,8 +46,6 @@ static float note_freq(int note) {
 	};
 
 	return freq * pow[note];
-
-//	return C_0 * std::pow(2.0f, float(note) / 12.0f);
 }
 
 static int scancode_to_note(SDL_Scancode scancode) {
@@ -193,6 +191,20 @@ static float filter(float sample, float cutoff = 1000.0f, float resonance = 0.5f
 	return low_pass;
 }
 
+static float delay(float sample, float feedback = 0.6f) {
+	static constexpr auto HISTORY_SIZE = SAMPLE_RATE * 462 / 1000;
+	static float history[HISTORY_SIZE];
+	static int offset = 0;
+
+	auto offset_prev = offset;
+	offset = (offset + 1) % HISTORY_SIZE;
+
+	sample = sample + feedback * history[offset];
+	history[offset_prev] = sample;
+	
+	return sample;
+}
+
 static void sdl_audio_callback(void * user_data, Uint8 * stream, int len) {
 	for (int i = 0; i < len; i += 2) {
 		auto sample = 0.0f;
@@ -204,6 +216,7 @@ static void sdl_audio_callback(void * user_data, Uint8 * stream, int len) {
 		}
 
 		sample = filter(sample, lerp(100.0f, 10000.0f, mouse_x), lerp(0.5f, 1.0f, mouse_y));
+		sample = delay(sample);
 
 		stream[i]     = char(clamp(sample, -128.0f, 127.0f));
 		stream[i + 1] = char(clamp(sample, -128.0f, 127.0f));
