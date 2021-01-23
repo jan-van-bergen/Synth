@@ -143,7 +143,10 @@ static void sdl_audio_callback(void * user_data, Uint8 * stream, int len) {
 int main(int argc, char * argv[]) {
 	SDL_Init(SDL_INIT_EVERYTHING);
 
-	auto window = SDL_CreateWindow("Synthesizer", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, SDL_WINDOW_OPENGL);
+	auto window  = SDL_CreateWindow("Synthesizer", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, SDL_WINDOW_OPENGL);
+	auto context = SDL_GL_CreateContext(window);
+
+	SDL_GL_SetSwapInterval(0);
 
 	SDL_AudioSpec audio_spec = { };
 	audio_spec.freq = SAMPLE_RATE;
@@ -184,7 +187,7 @@ int main(int argc, char * argv[]) {
 			}
 		}
 
-		SDL_Delay(16);
+		SDL_GL_SwapWindow(window);
 	}
 
 	SDL_CloseAudioDevice(device);
