@@ -6,7 +6,43 @@
 
 #include "ring_buffer.h"
 
-// Reference: https://faydoc.tripod.com/formats/mid.htm
+//////////////////////////////////////////////////////////
+// Reference: https://faydoc.tripod.com/formats/mid.htm //
+//////////////////////////////////////////////////////////
+
+#define CHECK_MM(result) check_mm(result, __LINE__, __FILE__);
+
+void check_mm(MMRESULT result, int line, char const * file) {
+	switch (result) {
+		case MMSYSERR_NOERROR: return;
+
+		case MMSYSERR_ERROR:        printf("MM ERROR at line %i of %s: MMSYSERR_ERROR",        line, file); break;
+		case MMSYSERR_BADDEVICEID:  printf("MM ERROR at line %i of %s: MMSYSERR_BADDEVICEID",  line, file); break;
+		case MMSYSERR_NOTENABLED:   printf("MM ERROR at line %i of %s: MMSYSERR_NOTENABLED",   line, file); break;
+		case MMSYSERR_ALLOCATED: 	printf("MM ERROR at line %i of %s: MMSYSERR_ALLOCATED",    line, file); break;
+		case MMSYSERR_INVALHANDLE: 	printf("MM ERROR at line %i of %s: MMSYSERR_INVALHANDLE",  line, file); break;
+		case MMSYSERR_NODRIVER:    	printf("MM ERROR at line %i of %s: MMSYSERR_NODRIVER",     line, file); break;
+		case MMSYSERR_NOMEM:       	printf("MM ERROR at line %i of %s: MMSYSERR_NOMEM",        line, file); break;
+		case MMSYSERR_NOTSUPPORTED:	printf("MM ERROR at line %i of %s: MMSYSERR_NOTSUPPORTED", line, file); break;
+		case MMSYSERR_BADERRNUM:   	printf("MM ERROR at line %i of %s: MMSYSERR_BADERRNUM",    line, file); break;
+		case MMSYSERR_INVALFLAG:   	printf("MM ERROR at line %i of %s: MMSYSERR_INVALFLAG",    line, file); break;
+		case MMSYSERR_INVALPARAM:  	printf("MM ERROR at line %i of %s: MMSYSERR_INVALPARAM",   line, file); break;
+		case MMSYSERR_HANDLEBUSY:  	printf("MM ERROR at line %i of %s: MMSYSERR_HANDLEBUSY",   line, file); break;
+		case MMSYSERR_INVALIDALIAS:	printf("MM ERROR at line %i of %s: MMSYSERR_INVALIDALIAS", line, file); break;
+		case MMSYSERR_BADDB:       	printf("MM ERROR at line %i of %s: MMSYSERR_BADDB",        line, file); break;
+		case MMSYSERR_KEYNOTFOUND: 	printf("MM ERROR at line %i of %s: MMSYSERR_KEYNOTFOUND",  line, file); break;
+		case MMSYSERR_READERROR:   	printf("MM ERROR at line %i of %s: MMSYSERR_READERROR",    line, file); break;
+		case MMSYSERR_WRITEERROR:  	printf("MM ERROR at line %i of %s: MMSYSERR_WRITEERROR",   line, file); break;
+		case MMSYSERR_DELETEERROR: 	printf("MM ERROR at line %i of %s: MMSYSERR_DELETEERROR",  line, file); break;
+		case MMSYSERR_VALNOTFOUND: 	printf("MM ERROR at line %i of %s: MMSYSERR_VALNOTFOUND",  line, file); break;
+		case MMSYSERR_NODRIVERCB:  	printf("MM ERROR at line %i of %s: MMSYSERR_NODRIVERCB",   line, file); break;
+		case WAVERR_BADFORMAT:     	printf("MM ERROR at line %i of %s: WAVERR_BADFORMAT",      line, file); break;
+		case WAVERR_STILLPLAYING:  	printf("MM ERROR at line %i of %s: WAVERR_STILLPLAYING",   line, file); break;
+		case WAVERR_UNPREPARED:    	printf("MM ERROR at line %i of %s: WAVERR_UNPREPARED",     line, file); break;
+	}
+	
+	__debugbreak();
+}
 
 midi::Track midi::Track::load(std::string const & filename) {
 	FILE * file; fopen_s(&file, filename.c_str(), "rb");
@@ -78,7 +114,7 @@ midi::Track midi::Track::load(std::string const & filename) {
 					}
 
 					default: {
-						printf("WARNING: MIDI Meta Command 0x%02x is unsupported and will be ignored!\n", meta_cmd); 
+						printf("WARNING: MIDI Meta Command 0x%02x in file '%s' was ignored!\n", meta_cmd, filename.c_str()); 
 
 						fseek(file, num_bytes, SEEK_CUR);
 
@@ -123,116 +159,41 @@ midi::Track midi::Track::load(std::string const & filename) {
 	return midi;
 }
 
-// Based on: http://midi.teragonaudio.com/tech/lowmidi.htm
-static unsigned char SysXBuffer[256];
-static unsigned char SysXFlag = 0;
-
 static RingBuffer<midi::Event, 1024> buffer_events;
 
-void CALLBACK midi_callback(HMIDIIN handle, UINT uMsg, DWORD dwInstance, DWORD dwParam1, DWORD dwParam2) {
-	TCHAR			buffer[80];
-	unsigned char 	bytes;
-
-	/* Determine why Windows called me */
-	switch (uMsg) {
-		/* Received some regular MIDI message */
+// Based on: http://midi.teragonaudio.com/tech/lowmidi.htm
+void CALLBACK midi_callback(HMIDIIN handle, UINT msg, DWORD instance, DWORD param_1, DWORD param_2) {
+	switch (msg) {
 		case MIM_DATA: {
-			/* Display the time stamp, and the bytes. (Note: I always display 3 bytes even for
-			Midi messages that have less) */
-			wsprintf(&buffer[0], L"0x%08X 0x%02X 0x%02X 0x%02X\r\n", dwParam2, dwParam1 & 0x000000FF, (dwParam1>>8) & 0x000000FF, (dwParam1>>16) & 0x000000FF);
-			_cputws(&buffer[0]);
+			auto nib_command = (param_1 & 0xf0) >> 4;
+			auto nib_channel = (param_1 & 0x0f);
 
-			auto nib_command = (dwParam1 & 0xf0) >> 4;
-			auto nib_channel = (dwParam1 & 0x0f);
-
-			if (nib_command == 0x8 || nib_command == 0x9) {
+			if (nib_command == 0x9 || nib_command == 0x8) { // Press / Release
 				auto pressed = nib_command == 9;
 
-				int note     = (dwParam1 >> 8)  & 0x000000ff;
-				int velocity = (dwParam1 >> 16) & 0x000000ff;
+				int note     = (param_1 >> 8)  & 0x000000ff;
+				int velocity = (param_1 >> 16) & 0x000000ff;
 
 				buffer_events.get_write() = { pressed, note, velocity };
 				buffer_events.advance_write();
-			} else if (nib_command == 0xB) {
-				int control = (dwParam1 >> 8)  & 0x000000ff;
-				int value   = (dwParam1 >> 16) & 0x000000ff;
+			} else if (nib_command == 0xB) { // Control changed value
+				int control = (param_1 >> 8)  & 0x000000ff;
+				int value   = (param_1 >> 16) & 0x000000ff;
 
-				midi::controls[control] = float(value) / 128.0f;
-
-				printf("%02x = %f\n", control, midi::controls[control]);
+				midi::controls[control] = float(value) / 127.0f;
+			} else {
+				printf("0x%08X 0x%02X 0x%02X 0x%02X\r\n", param_2, param_1 & 0x000000ff, (param_1 >> 8) & 0x000000ff, (param_1 >> 16) & 0x000000ff);
 			}
 
 			break;
 		}
 
-		/* Received all or part of some System Exclusive message */
-		case MIM_LONGDATA: {
-			/* If this application is ready to close down, then don't midiInAddBuffer() again */
-			if (!(SysXFlag & 0x80)) {
-				/*	Assign address of MIDIHDR to a LPMIDIHDR variable. Makes it easier to access the
-					field that contains the pointer to our block of MIDI events */
-				auto lpMIDIHeader = (LPMIDIHDR)dwParam1;
-
-				/* Get address of the MIDI event that caused this call */
-				auto ptr = (unsigned char *)(lpMIDIHeader->lpData);
-
-				/* Is this the first block of System Exclusive bytes? */
-				if (!SysXFlag) {
-					/* Print out a noticeable heading as well as the timestamp of the first block.
-						(But note that other, subsequent blocks will have their own time stamps). */
-					printf("*************** System Exclusive **************\r\n0x%08X ", dwParam2);
-
-					/* Indicate we've begun handling a particular System Exclusive message */
-					SysXFlag |= 0x01;
-				}
-
-				/* Is this the last block (ie, the end of System Exclusive byte is here in the buffer)? */
-				if (*(ptr + (lpMIDIHeader->dwBytesRecorded - 1)) == 0xF7) {
-					/* Indicate we're done handling this particular System Exclusive message */
-					SysXFlag &= (~0x01);
-				}
-
-				/* Display the bytes -- 16 per line */
-				bytes = 16;
-
-				while((lpMIDIHeader->dwBytesRecorded--)) {
-					if (!(--bytes)) {
-						wsprintf(&buffer[0], L"0x%02X\r\n", *(ptr)++);
-						bytes = 16;
-					} else {
-						wsprintf(&buffer[0], L"0x%02X ", *(ptr)++);
-					}
-
-					_cputws(&buffer[0]);
-				}
-
-				/* Was this the last block of System Exclusive bytes? */
-				if (!SysXFlag) {
-					/* Print out a noticeable ending */
-					_cputws(L"\r\n******************************************\r\n");
-				}
-
-				/* Queue the MIDIHDR for more input */
-				midiInAddBuffer(handle, lpMIDIHeader, sizeof(MIDIHDR));
-			}
-
-			break;
-		}
+		default: break;
 	}
 }
 
 static HMIDIIN midi_handle;
 static MIDIHDR midi_hdr;
-
-#define CHECK_MM(result) check_mm(result, __LINE__, __FILE__);
-
-void check_mm(MMRESULT result, int line, char const * file) {
-	if (result) {
-		printf("ERROR!");
-
-		__debugbreak();
-	}
-}
 
 void midi::open() {
 	auto midi_device_count = midiInGetNumDevs();
@@ -247,8 +208,8 @@ void midi::open() {
 	CHECK_MM(midiInOpen(&midi_handle, 0, reinterpret_cast<DWORD_PTR>(midi_callback), 0, CALLBACK_FUNCTION));
 	
 	// Store pointer to input buffer for System Exclusive messages in MIDIHDR
-	midi_hdr.lpData         = (LPSTR)&SysXBuffer[0];
-	midi_hdr.dwBufferLength = sizeof(SysXBuffer);
+	midi_hdr.lpData         = nullptr;
+	midi_hdr.dwBufferLength = 0;
 	
 	// Prepare the buffer queue input buffer
 	CHECK_MM(midiInPrepareHeader(midi_handle, &midi_hdr, sizeof(MIDIHDR)));
@@ -259,22 +220,13 @@ void midi::open() {
 }
 
 void midi::close() {
-	/* We need to set a flag to tell our callback midiCallback()
-		not to do any more midiInAddBuffer(), because when we
-		call midiInReset() below, Windows will send a final
-		MIM_LONGDATA message to that callback. If we were to
-		allow midiCallback() to midiInAddBuffer() again, we'd
-		never get the driver to finish with our midiHdr
-	*/
-	SysXFlag |= 0x80;
-	
 	// Stop recording
-	midiInReset(midi_handle);
+	CHECK_MM(midiInReset(midi_handle));
 
 	/* Close the MIDI In device */
 	while (midiInClose(midi_handle) == MIDIERR_STILLPLAYING) Sleep(0);
 
-	midiInUnprepareHeader(midi_handle, &midi_hdr, sizeof(MIDIHDR));
+	CHECK_MM(midiInUnprepareHeader(midi_handle, &midi_hdr, sizeof(MIDIHDR)));
 }
 
 std::optional<midi::Event> midi::get_event() {

@@ -54,6 +54,7 @@ struct Note {
 	float start_time;
 
 	int note_idx;
+	float velocity;
 };
 
 
@@ -238,7 +239,7 @@ static Sample filter(Sample sample, float cutoff = 1000.0f, float resonance = 0.
 	return low_pass;
 }
 
-static Sample delay(Sample sample, float feedback = 0.7f) {
+static Sample delay(Sample sample, float feedback = 0.4f) {
 	static constexpr auto HISTORY_SIZE = SAMPLE_RATE * 462 / 1000;
 	static Sample history[HISTORY_SIZE];
 
@@ -312,7 +313,7 @@ int main(int argc, char * argv[]) {
 				case SDL_KEYDOWN: {
 					auto note = scancode_to_note(event.key.keysym.scancode);
 					if (note != -1) {
-						Note n = { t, note };	
+						Note n = { t, note, 1.0f };	
 						notes.insert(std::make_pair(note, n));
 					}
 
@@ -339,7 +340,7 @@ int main(int argc, char * argv[]) {
 			auto const & event = midi_event.value();
 
 			if (event.press) {
-				Note n = { t, event.note };
+				Note n = { t, event.note, 0.2f + event.velocity / 255.0f };
 				notes.insert(std::make_pair(event.note, n));
 			} else {
 				notes.erase(event.note);
@@ -358,11 +359,15 @@ int main(int argc, char * argv[]) {
 			for (auto const & [note_idx, note] : notes) {
 				float duration = t - note.start_time;
 
-				sample += play_saw(t, note_freq(note_idx), 20.0f * envelope(duration));
+				sample += 
+					play_square  (t, note_freq(note_idx + 12), note.velocity * 20.0f * envelope(duration)) +
+					play_saw     (t, note_freq(note_idx),      note.velocity * 20.0f * envelope(duration)) +
+					play_triangle(t, note_freq(note_idx - 12), note.velocity * 20.0f * envelope(duration));
 			}
 
 			sample = filter(sample, lerp(100.0f, 10000.0f, midi::controls[0x4A]), lerp(0.5f, 1.0f, midi::controls[0x47]));
 			sample = delay(sample);
+//			sample = bitcrush(sample, 8.0f);
 
 			buf[i] = sample;
 
