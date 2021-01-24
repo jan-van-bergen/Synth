@@ -361,12 +361,12 @@ int main(int argc, char * argv[]) {
 				sample += play_saw(t, note_freq(note_idx), 20.0f * envelope(duration));
 			}
 
-//			sample = filter(sample, lerp(100.0f, 10000.0f, mouse_x), lerp(0.5f, 1.0f, mouse_y));
-//			sample = delay(sample);
+			sample = filter(sample, lerp(100.0f, 10000.0f, midi::controls[0x4A]), lerp(0.5f, 1.0f, midi::controls[0x47]));
+			sample = delay(sample);
 
 			buf[i] = sample;
 
-			t += SAMPLE_RATE_INV;
+			t += SAMPLE_RATE_INV; // @TODO: FIXME
 		}
 		
 		buffers.advance_write();

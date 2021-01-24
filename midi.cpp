@@ -145,13 +145,22 @@ void CALLBACK midi_callback(HMIDIIN handle, UINT uMsg, DWORD dwInstance, DWORD d
 			auto nib_command = (dwParam1 & 0xf0) >> 4;
 			auto nib_channel = (dwParam1 & 0x0f);
 
-			auto pressed = nib_command == 9;
+			if (nib_command == 0x8 || nib_command == 0x9) {
+				auto pressed = nib_command == 9;
 
-			int note     = (dwParam1 >> 8) & 0x000000ff;
-			int velocity = (dwParam1 >> 8) & 0x000000ff;
+				int note     = (dwParam1 >> 8)  & 0x000000ff;
+				int velocity = (dwParam1 >> 16) & 0x000000ff;
 
-			buffer_events.get_write() = { pressed, note, velocity };
-			buffer_events.advance_write();
+				buffer_events.get_write() = { pressed, note, velocity };
+				buffer_events.advance_write();
+			} else if (nib_command == 0xB) {
+				int control = (dwParam1 >> 8)  & 0x000000ff;
+				int value   = (dwParam1 >> 16) & 0x000000ff;
+
+				midi::controls[control] = float(value) / 128.0f;
+
+				printf("%02x = %f\n", control, midi::controls[control]);
+			}
 
 			break;
 		}

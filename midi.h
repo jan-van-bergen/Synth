@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <optional>
+#include <unordered_map>
 
 namespace midi {
 	struct Event {
@@ -20,6 +21,8 @@ namespace midi {
 
 		static Track load(std::string const & filename);
 	};
+
+	inline std::unordered_map<int, float> controls;
 
 	void open();
 	void close();
