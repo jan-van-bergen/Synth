@@ -51,10 +51,9 @@ Sample operator/(float f, Sample const & s) { return { s.left / f, s.right / f }
 Sample Sample::lerp(Sample const & a, Sample const & b, Sample const & t) { return a + (b - a) * t; }
 
 struct Note {
-	float start_time;
-
-	int note_idx;
+	int   note;
 	float velocity;
+	int   time;
 };
 
 
@@ -183,12 +182,14 @@ static float clamp(float value, float min = 0.0f, float max = 1.0f) {
 	return value;
 }
 
-static float envelope(float t) {
+static float envelope(int time) {
 	static constexpr float attack  = 0.1f;
 	static constexpr float hold    = 0.5f;
 	static constexpr float decay   = 1.0f;
 	static constexpr float sustain = 0.5f;
 //	static constexpr float release = 1.0f;
+
+	auto t = float(time) * SAMPLE_RATE_INV;
 
 	if (t < attack) {
 		return t / attack;
@@ -294,10 +295,13 @@ int main(int argc, char * argv[]) {
 
 	auto midi = midi::Track::load("loop.mid");
 	auto midi_offset = 0;
+	auto midi_rounds = 0;
 	
-	auto t = 0.0f;
+	auto time = 0;
 	
 	std::unordered_map<int, Note> notes;
+	
+	std::unordered_map<int, float> controls;
 
 	auto mouse_x = 0.0f;
 	auto mouse_y = 0.0f;
@@ -305,15 +309,13 @@ int main(int argc, char * argv[]) {
 	auto window_is_open = true;
 
 	while (window_is_open) {
-		auto time = (double(SDL_GetPerformanceCounter()) - time_start) * time_inv_freq;
-		
 		SDL_Event event;
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
 				case SDL_KEYDOWN: {
 					auto note = scancode_to_note(event.key.keysym.scancode);
 					if (note != -1) {
-						Note n = { t, note, 1.0f };	
+						Note n = { note, 1.0f, time };	
 						notes.insert(std::make_pair(note, n));
 					}
 
@@ -333,17 +335,53 @@ int main(int argc, char * argv[]) {
 			}
 		}
 
+		/*
+		auto midi_ticks_to_samples = [](size_t time, size_t tempo, size_t ticks) -> size_t {
+			return SAMPLE_RATE * time * tempo / 1000000 / ticks;
+		};
+		
+		auto midi_length = midi_ticks_to_samples(midi.events[midi.events.size() - 1].time, midi.tempo, midi.ticks);
+		auto a = time / midi_length;
+		auto t = time % midi_length;
+
+		while (true) {
+			auto const & midi_event = midi.events[midi_offset];
+
+			auto midi_time = midi_ticks_to_samples(midi_event.time, midi.tempo, midi.ticks);
+
+			if (midi_time > t && a == midi_rounds) break;
+
+			if (midi_event.type == midi::Event::Type::PRESS) {
+				Note n = { midi_event.note.note, 1.0f, time };	
+				notes.insert(std::make_pair(midi_event.note.note, n));
+			} else if (midi_event.type == midi::Event::Type::RELEASE) {
+				 notes.erase(midi_event.note.note);
+			}
+
+			midi_offset++;
+			if (midi_offset == midi.events.size()) {
+				midi_offset = 0;
+				midi_rounds++;
+			}
+		}
+		*/
+
 		while (true) {
 			auto midi_event = midi::get_event();
 			if (!midi_event.has_value()) break;
 
 			auto const & event = midi_event.value();
 
-			if (event.press) {
-				Note n = { t, event.note, 0.2f + event.velocity / 255.0f };
-				notes.insert(std::make_pair(event.note, n));
-			} else {
-				notes.erase(event.note);
+			switch (event.type) {
+				case midi::Event::Type::PRESS: {
+					Note n = { event.note.note, 0.2f + event.note.velocity / 255.0f, time };
+					notes.insert(std::make_pair(event.note.note, n));
+					break;
+				}
+				case midi::Event::Type::RELEASE: notes.erase(event.note.note); break;
+				case midi::Event::Type::CONTROL: controls[event.control.id] = event.control.value / 127.0f; break;
+
+				default: break;
 			}
 		}
 
@@ -357,7 +395,9 @@ int main(int argc, char * argv[]) {
 			Sample sample;
 		
 			for (auto const & [note_idx, note] : notes) {
-				float duration = t - note.start_time;
+				auto duration = time - note.time;
+
+				auto t = float(time) * SAMPLE_RATE_INV;
 
 				sample += 
 					play_square  (t, note_freq(note_idx + 12), note.velocity * 20.0f * envelope(duration)) +
@@ -365,15 +405,15 @@ int main(int argc, char * argv[]) {
 					play_triangle(t, note_freq(note_idx - 12), note.velocity * 20.0f * envelope(duration));
 			}
 
-			sample = filter(sample, lerp(100.0f, 10000.0f, midi::controls[0x4A]), lerp(0.5f, 1.0f, midi::controls[0x47]));
+			sample = filter(sample, lerp(100.0f, 10000.0f, controls[0x4A]), lerp(0.5f, 1.0f, controls[0x47]));
 			sample = delay(sample);
 //			sample = bitcrush(sample, 8.0f);
 
 			buf[i] = sample;
 
-			t += SAMPLE_RATE_INV; // @TODO: FIXME
+			time++;
 		}
-		
+
 		buffers.advance_write();
 		
 		SDL_GL_SwapWindow(window);

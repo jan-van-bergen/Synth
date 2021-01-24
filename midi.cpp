@@ -3,6 +3,7 @@
 #include <Windows.h>
 
 #include <cassert>
+#include <algorithm>
 
 #include "ring_buffer.h"
 
@@ -56,13 +57,10 @@ midi::Track midi::Track::load(std::string const & filename) {
 	auto ticks      = file_header[12] << 8 | file_header[13];
 	
 	midi::Track midi;
+	midi.ticks = ticks;
 
 	auto time = 0;
 
-	auto get_time = [&]() {
-		return (float(time) * midi.tempo / ticks) / 1000000.0f;
-	};
-	
 	for (int i = 0; i < num_tracks; i++) {
 		char chunk_header[8]; fread_s(chunk_header, sizeof(chunk_header), 1, sizeof(chunk_header), file);
 		assert(memcmp(chunk_header, "MTrk", 4) == 0);
@@ -132,7 +130,7 @@ midi::Track midi::Track::load(std::string const & filename) {
 
 						bytes_parsed += 2;
 
-						midi.events.push_back({ false, note, velocity, get_time() });
+						midi.events.push_back(midi::Event::make_release(time, note, velocity));
 						
 						break;
 					}
@@ -143,7 +141,7 @@ midi::Track midi::Track::load(std::string const & filename) {
 
 						bytes_parsed += 2;
 
-						midi.events.push_back({ true, note, velocity, get_time() });
+						midi.events.push_back(midi::Event::make_press(time, note, velocity));
 						
 						break;
 					}
@@ -155,6 +153,10 @@ midi::Track midi::Track::load(std::string const & filename) {
 	}
 
 	fclose(file);
+
+	std::sort(midi.events.begin(), midi.events.end(), [](midi::Event const & a, midi::Event const & b) {
+		return a.time < b.time;	
+	});
 
 	return midi;
 }
@@ -169,18 +171,21 @@ void CALLBACK midi_callback(HMIDIIN handle, UINT msg, DWORD instance, DWORD para
 			auto nib_channel = (param_1 & 0x0f);
 
 			if (nib_command == 0x9 || nib_command == 0x8) { // Press / Release
-				auto pressed = nib_command == 9;
-
 				int note     = (param_1 >> 8)  & 0x000000ff;
 				int velocity = (param_1 >> 16) & 0x000000ff;
 
-				buffer_events.get_write() = { pressed, note, velocity };
+				auto event = nib_command == 9 ?
+					midi::Event::make_press  (0, note, velocity) :
+					midi::Event::make_release(0, note, velocity);
+
+				buffer_events.get_write() = event;
 				buffer_events.advance_write();
 			} else if (nib_command == 0xB) { // Control changed value
 				int control = (param_1 >> 8)  & 0x000000ff;
 				int value   = (param_1 >> 16) & 0x000000ff;
-
-				midi::controls[control] = float(value) / 127.0f;
+				
+				buffer_events.get_write() = midi::Event::make_control(0, control, value);
+				buffer_events.advance_write();
 			} else {
 				printf("0x%08X 0x%02X 0x%02X 0x%02X\r\n", param_2, param_1 & 0x000000ff, (param_1 >> 8) & 0x000000ff, (param_1 >> 16) & 0x000000ff);
 			}
@@ -223,7 +228,7 @@ void midi::close() {
 	// Stop recording
 	CHECK_MM(midiInReset(midi_handle));
 
-	/* Close the MIDI In device */
+	// Close MIDI In device
 	while (midiInClose(midi_handle) == MIDIERR_STILLPLAYING) Sleep(0);
 
 	CHECK_MM(midiInUnprepareHeader(midi_handle, &midi_hdr, sizeof(MIDIHDR)));

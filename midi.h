@@ -2,27 +2,44 @@
 #include <string>
 #include <vector>
 #include <optional>
-#include <unordered_map>
 
 namespace midi {
 	struct Event {
-		bool press;
+		enum struct Type {
+			PRESS   = 0x9,
+			RELEASE = 0x8,
 
-		int note;
-		int velocity;
+			CONTROL = 0xb
+		} type;
+						
+		int time;
 
-		float time;
+		union {
+			struct {
+				int note;
+				int velocity;
+			} note; // Press and Release
+
+			struct {
+				int id;
+				int value;
+			} control;
+		};
+
+		static Event make_press  (int time, int note, int velocity) { return { Type::PRESS,   time, note, velocity }; }
+		static Event make_release(int time, int note, int velocity) { return { Type::RELEASE, time, note, velocity }; }
+
+		static Event make_control(int time, int id, int value) { return { Type::CONTROL, time, id, value }; }
 	};
 
 	struct Track {
+		int ticks;
 		int tempo;
 
 		std::vector<Event> events;
 
 		static Track load(std::string const & filename);
 	};
-
-	inline std::unordered_map<int, float> controls;
 
 	void open();
 	void close();
