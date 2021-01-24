@@ -203,6 +203,8 @@ static MIDIHDR midi_hdr;
 void midi::open() {
 	auto midi_device_count = midiInGetNumDevs();
 
+	if (midi_device_count == 0) return;
+
 	for (int i = 0; i < midi_device_count; i++) {
 		MIDIINCAPS midi_in_caps;
 		if (!midiInGetDevCaps(i, &midi_in_caps, sizeof(MIDIINCAPS))) {
@@ -225,13 +227,15 @@ void midi::open() {
 }
 
 void midi::close() {
-	// Stop recording
-	CHECK_MM(midiInReset(midi_handle));
+	if (midi_handle) {
+		// Stop recording
+		CHECK_MM(midiInReset(midi_handle));
 
-	// Close MIDI In device
-	while (midiInClose(midi_handle) == MIDIERR_STILLPLAYING) Sleep(0);
+		// Close MIDI In device
+		while (midiInClose(midi_handle) == MIDIERR_STILLPLAYING) Sleep(0);
 
-	CHECK_MM(midiInUnprepareHeader(midi_handle, &midi_hdr, sizeof(MIDIHDR)));
+		CHECK_MM(midiInUnprepareHeader(midi_handle, &midi_hdr, sizeof(MIDIHDR)));
+	}
 }
 
 std::optional<midi::Event> midi::get_event() {

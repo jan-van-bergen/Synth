@@ -94,9 +94,12 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2test.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glew32.lib;glew32s.lib;SDL2.lib;SDL2main.lib;SDL2test.lib;winmm.lib;OpenGL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>lib</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /E /Y ".\dll" "$(OutputPath)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -114,9 +117,12 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2test.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glew32.lib;glew32s.lib;SDL2.lib;SDL2main.lib;SDL2test.lib;winmm.lib;OpenGL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>lib</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /E /Y ".\dll" "$(OutputPath)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -130,9 +136,12 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2test.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glew32.lib;glew32s.lib;SDL2.lib;SDL2main.lib;SDL2test.lib;winmm.lib;OpenGL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>lib</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /E /Y ".\dll" "$(OutputPath)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -150,11 +159,21 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2test.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glew32.lib;glew32s.lib;SDL2.lib;SDL2main.lib;SDL2test.lib;winmm.lib;OpenGL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>lib</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /E /Y ".\dll" "$(OutputPath)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="include\Imgui\imgui.cpp" />
+    <ClCompile Include="include\Imgui\imgui_demo.cpp" />
+    <ClCompile Include="include\ImGui\imgui_draw.cpp" />
+    <ClCompile Include="include\Imgui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="include\Imgui\imgui_impl_sdl.cpp" />
+    <ClCompile Include="include\ImGui\imgui_tables.cpp" />
+    <ClCompile Include="include\Imgui\imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="midi.cpp" />
   </ItemGroup>

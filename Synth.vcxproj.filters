@@ -3,9 +3,35 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="midi.cpp" />
+    <ClCompile Include="include\Imgui\imgui.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="include\Imgui\imgui_demo.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="include\Imgui\imgui_impl_opengl3.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="include\Imgui\imgui_impl_sdl.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="include\Imgui\imgui_widgets.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="include\ImGui\imgui_draw.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="include\ImGui\imgui_tables.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="midi.h" />
     <ClInclude Include="ring_buffer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="ImGui">
+      <UniqueIdentifier>{883751f0-93d7-40d1-aad9-346efd403d0f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

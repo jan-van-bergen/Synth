@@ -5,10 +5,17 @@
 
 #include <unordered_map>
 
+#include <GL/glew.h>
 #include <SDL2/SDL.h>
+
+#include <ImGui/imgui.h>
+#include <ImGui/imgui_impl_sdl.h>
+#include <ImGui/imgui_impl_opengl3.h>
 
 #include "midi.h"
 #include "ring_buffer.h"
+
+// extern "C" { _declspec(dllexport) unsigned NvOptimusEnablement = true; }
 
 struct Sample {
 	float left;
@@ -272,11 +279,28 @@ static void sdl_audio_callback(void * user_data, Uint8 * stream, int len) {
 int main(int argc, char * argv[]) {
 	SDL_Init(SDL_INIT_EVERYTHING);
 
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+
 	auto window  = SDL_CreateWindow("Synthesizer", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_OPENGL);
 	auto context = SDL_GL_CreateContext(window);
-
+	
+	SDL_SetWindowResizable(window, SDL_TRUE);
+	
 	SDL_GL_SetSwapInterval(0);
 
+	auto status = glewInit();
+	if (status != GLEW_OK) {
+		printf("Glew failed to initialize!\n");
+		abort();
+	}
+
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+
+	// Setup Platform/Renderer bindings
+	ImGui_ImplSDL2_InitForOpenGL(window, context);
+	ImGui_ImplOpenGL3_Init("#version 330");
+	
 	SDL_AudioSpec audio_spec = { };
 	audio_spec.freq = SAMPLE_RATE;
 	audio_spec.format = AUDIO_S8;
@@ -302,6 +326,7 @@ int main(int argc, char * argv[]) {
 	std::unordered_map<int, Note> notes;
 	
 	std::unordered_map<int, float> controls;
+	controls[0x4A] = 0.5f;
 
 	auto mouse_x = 0.0f;
 	auto mouse_y = 0.0f;
@@ -311,6 +336,8 @@ int main(int argc, char * argv[]) {
 	while (window_is_open) {
 		SDL_Event event;
 		while (SDL_PollEvent(&event)) {
+			ImGui_ImplSDL2_ProcessEvent(&event);
+
 			switch (event.type) {
 				case SDL_KEYDOWN: {
 					auto note = scancode_to_note(event.key.keysym.scancode);
@@ -416,10 +443,42 @@ int main(int argc, char * argv[]) {
 
 		buffers.advance_write();
 		
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplSDL2_NewFrame(window);
+		ImGui::NewFrame();
+
+		ImGui::SetNextWindowPos (ImVec2(0, 0));
+		ImGui::SetNextWindowSize(ImVec2(WINDOW_WIDTH, WINDOW_HEIGHT));
+
+		bool window_open;
+		if (ImGui::Begin("Node Graph", &window_open, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse)) {
+			if (ImGui::BeginMenuBar()) {
+				if (ImGui::BeginMenu("File")) {
+				
+					ImGui::EndMenu();
+				}
+			
+				ImGui::EndMenuBar();
+			}
+
+			auto draw_list = ImGui::GetWindowDrawList();
+			draw_list->AddRectFilled(ImVec2(100, 100), ImVec2(200, 200), 0xff0000ff, 4.0f);
+		}
+		ImGui::End();
+
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 		SDL_GL_SwapWindow(window);
 	}
 
 	midi::close();
+	
+	ImGui_ImplSDL2_Shutdown();
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui::DestroyContext();
 
 	SDL_CloseAudioDevice(device);
 	SDL_GL_DeleteContext(context);
