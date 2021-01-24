@@ -2,19 +2,24 @@
 #include <string>
 #include <vector>
 
-struct MidiTrack {
-	struct Event {
-		bool press;
+namespace midi {
+	struct Track {
+		struct Event {
+			bool press;
 
-		int note;
-		int velocity;
+			int note;
+			int velocity;
 
-		float time;
+			float time;
+		};
+
+		int tempo;
+
+		std::vector<Event> events;
+
+		static Track load(std::string const & filename);
 	};
 
-	int tempo;
-
-	std::vector<Event> events;
-
-	static MidiTrack load(std::string const & filename);
-};
+	void open();
+	void close();
+}

@@ -1,10 +1,12 @@
 #include "midi.h"
 
+#include <Windows.h>
+
 #include <cassert>
 
 // Reference: https://faydoc.tripod.com/formats/mid.htm
 
-MidiTrack MidiTrack::load(std::string const & filename) {
+midi::Track midi::Track::load(std::string const & filename) {
 	FILE * file; fopen_s(&file, filename.c_str(), "rb");
 	if (file == nullptr) abort();
 
@@ -15,7 +17,7 @@ MidiTrack MidiTrack::load(std::string const & filename) {
 	auto num_tracks = file_header[10] << 8 | file_header[11];
 	auto ticks      = file_header[12] << 8 | file_header[13];
 	
-	MidiTrack midi;
+	midi::Track midi;
 
 	auto time = 0;
 
@@ -117,4 +119,136 @@ MidiTrack MidiTrack::load(std::string const & filename) {
 	fclose(file);
 
 	return midi;
+}
+
+// Based on: http://midi.teragonaudio.com/tech/lowmidi.htm
+static unsigned char SysXBuffer[256];
+static unsigned char SysXFlag = 0;
+
+void CALLBACK midi_callback(HMIDIIN handle, UINT uMsg, DWORD dwInstance, DWORD dwParam1, DWORD dwParam2) {
+	TCHAR			buffer[80];
+	unsigned char 	bytes;
+
+	/* Determine why Windows called me */
+	switch (uMsg) {
+		/* Received some regular MIDI message */
+		case MIM_DATA: {
+			/* Display the time stamp, and the bytes. (Note: I always display 3 bytes even for
+			Midi messages that have less) */
+			wsprintf(&buffer[0], L"0x%08X 0x%02X 0x%02X 0x%02X\r\n", dwParam2, dwParam1 & 0x000000FF, (dwParam1>>8) & 0x000000FF, (dwParam1>>16) & 0x000000FF);
+			_cputws(&buffer[0]);
+
+			break;
+		}
+
+		/* Received all or part of some System Exclusive message */
+		case MIM_LONGDATA: {
+			/* If this application is ready to close down, then don't midiInAddBuffer() again */
+			if (!(SysXFlag & 0x80)) {
+				/*	Assign address of MIDIHDR to a LPMIDIHDR variable. Makes it easier to access the
+					field that contains the pointer to our block of MIDI events */
+				auto lpMIDIHeader = (LPMIDIHDR)dwParam1;
+
+				/* Get address of the MIDI event that caused this call */
+				auto ptr = (unsigned char *)(lpMIDIHeader->lpData);
+
+				/* Is this the first block of System Exclusive bytes? */
+				if (!SysXFlag) {
+					/* Print out a noticeable heading as well as the timestamp of the first block.
+						(But note that other, subsequent blocks will have their own time stamps). */
+					printf("*************** System Exclusive **************\r\n0x%08X ", dwParam2);
+
+					/* Indicate we've begun handling a particular System Exclusive message */
+					SysXFlag |= 0x01;
+				}
+
+				/* Is this the last block (ie, the end of System Exclusive byte is here in the buffer)? */
+				if (*(ptr + (lpMIDIHeader->dwBytesRecorded - 1)) == 0xF7) {
+					/* Indicate we're done handling this particular System Exclusive message */
+					SysXFlag &= (~0x01);
+				}
+
+				/* Display the bytes -- 16 per line */
+				bytes = 16;
+
+				while((lpMIDIHeader->dwBytesRecorded--)) {
+					if (!(--bytes)) {
+						wsprintf(&buffer[0], L"0x%02X\r\n", *(ptr)++);
+						bytes = 16;
+					} else {
+						wsprintf(&buffer[0], L"0x%02X ", *(ptr)++);
+					}
+
+					_cputws(&buffer[0]);
+				}
+
+				/* Was this the last block of System Exclusive bytes? */
+				if (!SysXFlag) {
+					/* Print out a noticeable ending */
+					_cputws(L"\r\n******************************************\r\n");
+				}
+
+				/* Queue the MIDIHDR for more input */
+				midiInAddBuffer(handle, lpMIDIHeader, sizeof(MIDIHDR));
+			}
+
+			break;
+		}
+	}
+}
+
+static HMIDIIN midi_handle;
+static MIDIHDR midi_hdr;
+
+#define CHECK_MM(result) check_mm(result, __LINE__, __FILE__);
+
+void check_mm(MMRESULT result, int line, char const * file) {
+	if (result) {
+		printf("ERROR!");
+
+		__debugbreak();
+	}
+}
+
+void midi::open() {
+	auto midi_device_count = midiInGetNumDevs();
+
+	for (int i = 0; i < midi_device_count; i++) {
+		MIDIINCAPS midi_in_caps;
+		if (!midiInGetDevCaps(i, &midi_in_caps, sizeof(MIDIINCAPS))) {
+			printf("MIDI Device %i: %ls\r\n", i, midi_in_caps.szPname);
+		}
+	}
+	
+	CHECK_MM(midiInOpen(&midi_handle, 0, reinterpret_cast<DWORD_PTR>(midi_callback), 0, CALLBACK_FUNCTION));
+	
+	// Store pointer to input buffer for System Exclusive messages in MIDIHDR
+	midi_hdr.lpData         = (LPSTR)&SysXBuffer[0];
+	midi_hdr.dwBufferLength = sizeof(SysXBuffer);
+	
+	// Prepare the buffer queue input buffer
+	CHECK_MM(midiInPrepareHeader(midi_handle, &midi_hdr, sizeof(MIDIHDR)));
+	CHECK_MM(midiInAddBuffer    (midi_handle, &midi_hdr, sizeof(MIDIHDR)));
+
+	// Start recording MIDI
+	CHECK_MM(midiInStart(midi_handle));
+}
+
+void midi::close() {
+	/* We need to set a flag to tell our callback midiCallback()
+		not to do any more midiInAddBuffer(), because when we
+		call midiInReset() below, Windows will send a final
+		MIM_LONGDATA message to that callback. If we were to
+		allow midiCallback() to midiInAddBuffer() again, we'd
+		never get the driver to finish with our midiHdr
+	*/
+	SysXFlag |= 0x80;
+	
+	// Stop recording
+	midiInReset(midi_handle);
+
+	/* Close the MIDI In device */
+	while (midiInClose(midi_handle) == MIDIERR_STILLPLAYING) Sleep(0);
+
+	midiInUnprepareHeader(midi_handle, &midi_hdr, sizeof(MIDIHDR));
 }

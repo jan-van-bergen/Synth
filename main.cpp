@@ -242,9 +242,10 @@ static Sample filter(Sample sample, float cutoff = 1000.0f, float resonance = 0.
 	return low_pass;
 }
 
-static float delay(float sample, float feedback = 0.7f) {
+static Sample delay(Sample sample, float feedback = 0.7f) {
 	static constexpr auto HISTORY_SIZE = SAMPLE_RATE * 462 / 1000;
-	static float history[HISTORY_SIZE];
+	static Sample history[HISTORY_SIZE];
+
 	static int offset = 0;
 
 	sample = sample + feedback * history[offset];
@@ -297,7 +298,9 @@ int main(int argc, char * argv[]) {
 
 	SDL_PauseAudioDevice(device, false);
 
-	auto midi = MidiTrack::load("loop.mid");
+	midi::open();
+
+	auto midi = midi::Track::load("loop.mid");
 	auto midi_offset = 0;
 	
 	auto t = 0.0f;
@@ -370,7 +373,7 @@ int main(int argc, char * argv[]) {
 			}
 
 //			sample = filter(sample, lerp(100.0f, 10000.0f, mouse_x), lerp(0.5f, 1.0f, mouse_y));
-//			sample = delay(sample);
+			sample = delay(sample);
 
 			buf[i] = sample;
 
@@ -384,6 +387,8 @@ int main(int argc, char * argv[]) {
 		
 		SDL_GL_SwapWindow(window);
 	}
+
+	midi::close();
 
 	SDL_CloseAudioDevice(device);
 	SDL_GL_DeleteContext(context);
