@@ -4,6 +4,8 @@
 
 #include <cassert>
 
+#include "ring_buffer.h"
+
 // Reference: https://faydoc.tripod.com/formats/mid.htm
 
 midi::Track midi::Track::load(std::string const & filename) {
@@ -125,6 +127,8 @@ midi::Track midi::Track::load(std::string const & filename) {
 static unsigned char SysXBuffer[256];
 static unsigned char SysXFlag = 0;
 
+static RingBuffer<midi::Event, 1024> buffer_events;
+
 void CALLBACK midi_callback(HMIDIIN handle, UINT uMsg, DWORD dwInstance, DWORD dwParam1, DWORD dwParam2) {
 	TCHAR			buffer[80];
 	unsigned char 	bytes;
@@ -137,6 +141,17 @@ void CALLBACK midi_callback(HMIDIIN handle, UINT uMsg, DWORD dwInstance, DWORD d
 			Midi messages that have less) */
 			wsprintf(&buffer[0], L"0x%08X 0x%02X 0x%02X 0x%02X\r\n", dwParam2, dwParam1 & 0x000000FF, (dwParam1>>8) & 0x000000FF, (dwParam1>>16) & 0x000000FF);
 			_cputws(&buffer[0]);
+
+			auto nib_command = (dwParam1 & 0xf0) >> 4;
+			auto nib_channel = (dwParam1 & 0x0f);
+
+			auto pressed = nib_command == 9;
+
+			int note     = (dwParam1 >> 8) & 0x000000ff;
+			int velocity = (dwParam1 >> 8) & 0x000000ff;
+
+			buffer_events.get_write() = { pressed, note, velocity };
+			buffer_events.advance_write();
 
 			break;
 		}
@@ -251,4 +266,15 @@ void midi::close() {
 	while (midiInClose(midi_handle) == MIDIERR_STILLPLAYING) Sleep(0);
 
 	midiInUnprepareHeader(midi_handle, &midi_hdr, sizeof(MIDIHDR));
+}
+
+std::optional<midi::Event> midi::get_event() {
+	if (buffer_events.can_read()) {
+		auto event = buffer_events.get_read();
+		buffer_events.advance_read();
+
+		return event;
+	} else {
+		return { };
+	}
 }

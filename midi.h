@@ -1,18 +1,19 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <optional>
 
 namespace midi {
+	struct Event {
+		bool press;
+
+		int note;
+		int velocity;
+
+		float time;
+	};
+
 	struct Track {
-		struct Event {
-			bool press;
-
-			int note;
-			int velocity;
-
-			float time;
-		};
-
 		int tempo;
 
 		std::vector<Event> events;
@@ -22,4 +23,6 @@ namespace midi {
 
 	void open();
 	void close();
+
+	std::optional<Event> get_event();
 }

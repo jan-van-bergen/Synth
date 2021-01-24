@@ -3,12 +3,12 @@
 #include <cmath>
 #include <cassert>
 
-#include <atomic>
 #include <unordered_map>
 
 #include <SDL2/SDL.h>
 
 #include "midi.h"
+#include "ring_buffer.h"
 
 struct Sample {
 	float left;
@@ -68,11 +68,7 @@ static constexpr auto SAMPLE_RATE_INV = 1.0f / float(SAMPLE_RATE);
 static constexpr int BUFFER_SIZE  = 1024;
 static constexpr int BUFFER_COUNT = 3;
 
-static Sample buffers[BUFFER_COUNT][BUFFER_SIZE];
-
-static std::atomic<int> buffer_read  = 0;
-static std::atomic<int> buffer_write = 0;
-
+static RingBuffer<Sample[BUFFER_SIZE], BUFFER_COUNT> buffers;
 
 static constexpr auto WINDOW_WIDTH  = 1280;
 static constexpr auto WINDOW_HEIGHT = 720;
@@ -260,19 +256,14 @@ static Sample delay(Sample sample, float feedback = 0.7f) {
 static void sdl_audio_callback(void * user_data, Uint8 * stream, int len) {
 	assert(len == 2 * BUFFER_SIZE);
 
-	auto buffer_curr = buffer_read.load();
-	while (buffer_curr == buffer_write.load()) { }
-	
-	assert(buffer_curr >= 0);
-
-	auto buf = buffers[buffer_curr];
+	auto buf = buffers.get_read();
 
 	for (int i = 0; i < BUFFER_SIZE; i++) {
 		stream[2*i    ] = (char)clamp(buf[i].left,  -128.0f, 127.0f);
 		stream[2*i + 1] = (char)clamp(buf[i].right, -128.0f, 127.0f);
 	}
 	
-	buffer_read.store((buffer_curr + 1) % BUFFER_COUNT);
+	buffers.advance_read();
 }
 
 
@@ -341,27 +332,25 @@ int main(int argc, char * argv[]) {
 			}
 		}
 
-		//while (midi_offset < midi.events.size()) {
-		//	auto const & event = midi.events[midi_offset];
+		while (true) {
+			auto midi_event = midi::get_event();
+			if (!midi_event.has_value()) break;
 
-		//	if (event.time > time) break;
+			auto const & event = midi_event.value();
 
-		//	if (event.press) {
-		//		Note n = { t, event.note };
-		//		notes.insert(std::make_pair(event.note, n));
-		//	} else {
-		//		notes.erase(event.note);
-		//	}
+			if (event.press) {
+				Note n = { t, event.note };
+				notes.insert(std::make_pair(event.note, n));
+			} else {
+				notes.erase(event.note);
+			}
+		}
 
-		//	midi_offset++;
-		//}
-		
 		int x, y; SDL_GetMouseState(&x, &y);
 		mouse_x = float(x) / float(WINDOW_WIDTH);
 		mouse_y = float(y) / float(WINDOW_HEIGHT);
 
-		auto buffer_curr = buffer_write.load();
-		auto buf         = buffers[buffer_curr];
+		auto buf = buffers.get_write();
 		
 		for (int i = 0; i < BUFFER_SIZE; i++) {
 			Sample sample;
@@ -373,17 +362,14 @@ int main(int argc, char * argv[]) {
 			}
 
 //			sample = filter(sample, lerp(100.0f, 10000.0f, mouse_x), lerp(0.5f, 1.0f, mouse_y));
-			sample = delay(sample);
+//			sample = delay(sample);
 
 			buf[i] = sample;
 
 			t += SAMPLE_RATE_INV;
 		}
 		
-		auto buffer_next = (buffer_curr + 1) % BUFFER_COUNT;
-		while (buffer_next == buffer_read.load()) { }
-		
-		buffer_write.store(buffer_next);
+		buffers.advance_write();
 		
 		SDL_GL_SwapWindow(window);
 	}

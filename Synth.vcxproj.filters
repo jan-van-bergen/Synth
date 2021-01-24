@@ -6,5 +6,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="midi.h" />
+    <ClInclude Include="ring_buffer.h" />
   </ItemGroup>
 </Project>
