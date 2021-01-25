@@ -112,8 +112,7 @@ int main(int argc, char * argv[]) {
 	auto filter    = synth.add_component<FilterComponent>();
 	auto delay     = synth.add_component<DelayComponent>();
 	auto speaker   = synth.add_component<SpeakerComponent>();
-	synth.add_component<FilterComponent>();
-
+	
 	synth.connect(oscilator->outputs[0], filter ->inputs[0]);
 	synth.connect(filter   ->outputs[0], delay  ->inputs[0]);
 	synth.connect(delay    ->outputs[0], speaker->inputs[0]);

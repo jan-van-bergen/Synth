@@ -165,7 +165,7 @@ void Synth::update(Sample buf[BLOCK_SIZE]) {
 		for (auto const & input : sink->inputs) {
 			for (auto const & [other, weight] : input.others) {
 				for (int i = 0; i < BLOCK_SIZE; i++) {
-					buf[i] += other->values[i];
+					buf[i] += weight * other->values[i];
 				}
 			}
 		}
