@@ -148,11 +148,32 @@ void Synth::render() {
 	}
 
 	auto draw_list = ImGui::GetForegroundDrawList();
-		
+	
+	// Draw Hermite Splite between Connectors
 	for (auto const & connection : connections) {
-		draw_list->PathLineTo(ImVec2(connection.in .pos[0], connection.in .pos[1]));
-		draw_list->PathLineTo(ImVec2(connection.out.pos[0], connection.out.pos[1]));
-		draw_list->PathStroke(ImColor(200, 200, 100), false, 3.0f);
+		auto p1 = ImVec2(connection.in .pos[0], connection.in .pos[1]);
+		auto p2 = ImVec2(connection.out.pos[0], connection.out.pos[1]);
+
+		auto t1 = ImVec2(-100.0f, 0.0f);
+		auto t2 = ImVec2(-100.0f, 0.0f);
+
+		static constexpr auto NUM_STEPS = 20;
+
+		for (int s = 0; s <= NUM_STEPS; s++) {
+			float t = float(s) / float(NUM_STEPS);
+
+			float h1 = +2.0f * t * t * t - 3.0f * t * t + 1.0f;
+			float h2 = -2.0f * t * t * t + 3.0f * t * t;
+			float h3 =         t * t * t - 2.0f * t * t + t;
+			float h4 =         t * t * t -        t * t;
+
+			draw_list->PathLineTo(ImVec2(
+				h1 * p1.x + h2 * p2.x + h3 * t1.x + h4 * t2.x, 
+				h1 * p1.y + h2 * p2.y + h3 * t1.y + h4 * t2.y
+			));
+		}
+
+		draw_list->PathStroke(ImColor (200, 200, 100), false, 3.0f);
 	}
 }
 
