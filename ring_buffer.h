@@ -14,6 +14,8 @@ private:
 	int curr_write = 0;
 	
 public:
+	static constexpr int Size = N;
+
 	bool can_read() const {
 		return read.load() != write.load();
 	}

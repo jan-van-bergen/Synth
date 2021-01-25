@@ -24,10 +24,14 @@
     <ClCompile Include="include\ImGui\imgui_tables.cpp">
       <Filter>ImGui</Filter>
     </ClCompile>
+    <ClCompile Include="components.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="midi.h" />
     <ClInclude Include="ring_buffer.h" />
+    <ClInclude Include="components.h" />
+    <ClInclude Include="util.h" />
+    <ClInclude Include="sample.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="ImGui">
