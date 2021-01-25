@@ -7,6 +7,14 @@
 
 #include "util.h"
 
+Sample ConnectorIn::get_value(int i) const {
+	if (other) {
+		return other->values[i];
+	} else {
+		return 0.0f;
+	}
+}
+
 void OscilatorComponent::update(Synth const & synth) {
 	auto envelope = [](int time) -> float {
 		static constexpr float attack  = 0.1f;
@@ -68,6 +76,31 @@ void OscilatorComponent::render(Synth const & synth) {
 
 		ImGui::EndCombo();
 	}
+}
+
+void FilterComponent::update(Synth const & synth) {
+	auto g = std::tan(PI * cutoff * SAMPLE_RATE_INV); // Gain
+	auto R = 1.0f - resonance;                        // Damping
+    
+	outputs[0].clear();
+
+	for (int i = 0; i < BLOCK_SIZE; i++) {
+		auto sample = inputs[0].get_value(i);
+
+		auto high_pass = (sample - (2.0f * R + g) * state_1 - state_2) / (1.0f + (2.0f * R * g) + g * g);
+		auto band_pass = high_pass * g + state_1;
+		auto  low_pass = band_pass * g + state_2;
+	
+		state_1 = g * high_pass + band_pass;
+		state_2 = g * band_pass + low_pass;
+
+		outputs[0].values[i] = low_pass;
+	}
+}
+
+void FilterComponent::render(Synth const & synth) {
+	ImGui::SliderFloat("Cutoff", &cutoff, 20.0f, 10000.0f);
+	ImGui::SliderFloat("Resonance", &resonance, 0.0f, 1.0f);
 }
 
 void SpeakerComponent::update(Synth const & synth) {
@@ -154,8 +187,8 @@ void Synth::render() {
 		auto p1 = ImVec2(connection.in .pos[0], connection.in .pos[1]);
 		auto p2 = ImVec2(connection.out.pos[0], connection.out.pos[1]);
 
-		auto t1 = ImVec2(-100.0f, 0.0f);
-		auto t2 = ImVec2(-100.0f, 0.0f);
+		auto t1 = ImVec2(-200.0f, 0.0f);
+		auto t2 = ImVec2(-200.0f, 0.0f);
 
 		static constexpr auto NUM_STEPS = 20;
 

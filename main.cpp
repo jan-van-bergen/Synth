@@ -44,23 +44,6 @@ static float distort(float signal, float amount = 0.2f) {
 	}
 }
 
-static Sample filter(Sample sample, float cutoff = 1000.0f, float resonance = 0.5f) {
-	static Sample z1;
-	static Sample z2;
-
-	auto g = std::tan(PI * cutoff * SAMPLE_RATE_INV); // Gain
-	auto R = 1.0f - resonance;                        // Damping
-    
-	auto high_pass = (sample - (2.0f * R + g) * z1 - z2) / (1.0f + (2.0f * R * g) + g * g);
-	auto band_pass = high_pass * g + z1;
-	auto  low_pass = band_pass * g + z2;
-	
-	z1 = g * high_pass + band_pass;
-	z2 = g * band_pass + low_pass;
-
-	return low_pass;
-}
-
 static Sample delay(Sample sample, float feedback = 0.4f) {
 	static constexpr auto HISTORY_SIZE = SAMPLE_RATE * 462 / 1000;
 	static Sample history[HISTORY_SIZE];
@@ -140,9 +123,11 @@ int main(int argc, char * argv[]) {
 
 	Synth synth;
 	auto oscilator = synth.add_component<OscilatorComponent>();
+	auto filter    = synth.add_component<FilterComponent>();
 	auto speaker   = synth.add_component<SpeakerComponent>();
 
-	synth.connect(oscilator->outputs[0], speaker->inputs[0]);
+	synth.connect(oscilator->outputs[0], filter->inputs[0]);
+	synth.connect(filter->outputs[0], speaker->inputs[0]);
 	
 	auto window_is_open = true;
 

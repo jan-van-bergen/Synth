@@ -24,9 +24,11 @@ struct Connector {
 
 struct ConnectorIn : Connector {
 	struct ConnectorOut * other = nullptr; 
-	float pos[2]; 
+	float pos[2];
 	
 	ConnectorIn(Component * component, std::string const & name) : Connector(component, name) { }
+
+	Sample get_value(int i) const;
 };
 
 struct ConnectorOut : Connector {
@@ -72,6 +74,20 @@ struct OscilatorComponent : Component {
 
 	void update(struct Synth const & synth) override;
 	void render(struct Synth const & synth) override;
+};
+
+struct FilterComponent : Component {
+	float cutoff = 1000.0f;
+	float resonance = 0.5f;
+
+	FilterComponent() : Component("Filter", { { this, "In" } }, { { this, "Out" } }) { }
+	
+	void update(struct Synth const & synth) override;
+	void render(struct Synth const & synth) override;
+
+private:
+	Sample state_1;
+	Sample state_2;
 };
 
 struct SpeakerComponent : Component{
