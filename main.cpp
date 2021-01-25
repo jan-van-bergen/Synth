@@ -44,20 +44,6 @@ static float distort(float signal, float amount = 0.2f) {
 	}
 }
 
-static Sample delay(Sample sample, float feedback = 0.4f) {
-	static constexpr auto HISTORY_SIZE = SAMPLE_RATE * 462 / 1000;
-	static Sample history[HISTORY_SIZE];
-
-	static int offset = 0;
-
-	sample = sample + feedback * history[offset];
-	history[offset] = sample;
-	
-	offset = (offset + 1) % HISTORY_SIZE;
-
-	return sample;
-}
-
 
 static void sdl_audio_callback(void * user_data, Uint8 * stream, int len) {
 	assert(len == 2 * BLOCK_SIZE);
@@ -124,10 +110,12 @@ int main(int argc, char * argv[]) {
 	Synth synth;
 	auto oscilator = synth.add_component<OscilatorComponent>();
 	auto filter    = synth.add_component<FilterComponent>();
+	auto delay     = synth.add_component<DelayComponent>();
 	auto speaker   = synth.add_component<SpeakerComponent>();
 
 	synth.connect(oscilator->outputs[0], filter->inputs[0]);
-	synth.connect(filter->outputs[0], speaker->inputs[0]);
+	synth.connect(filter->outputs[0], delay->inputs[0]);
+	synth.connect(delay->outputs[0], speaker->inputs[0]);
 	
 	auto window_is_open = true;
 

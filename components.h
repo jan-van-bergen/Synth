@@ -90,6 +90,21 @@ private:
 	Sample state_2;
 };
 
+struct DelayComponent : Component {
+	float feedback = 0.7f;
+
+	DelayComponent() : Component("Delay", { { this, "In" } }, { { this, "Out" } }) { }
+	
+	void update(struct Synth const & synth) override;
+	void render(struct Synth const & synth) override;
+
+private:
+	static constexpr int HISTORY_SIZE = SAMPLE_RATE * 462 / 1000;
+	Sample history[HISTORY_SIZE];
+
+	int offset = 0;
+};
+
 struct SpeakerComponent : Component{
 	SpeakerComponent() : Component("Speaker", { { this, "Input" } }, { }) { }
 	

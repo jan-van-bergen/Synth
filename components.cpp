@@ -103,6 +103,25 @@ void FilterComponent::render(Synth const & synth) {
 	ImGui::SliderFloat("Resonance", &resonance, 0.0f, 1.0f);
 }
 
+void DelayComponent::update(Synth const & synth) {
+	outputs[0].clear();
+
+	for (int i = 0; i < BLOCK_SIZE; i++) {
+		auto sample = inputs[0].get_value(i);
+
+		sample = sample + feedback * history[offset];
+		history[offset] = sample;
+	
+		offset = (offset + 1) % HISTORY_SIZE;
+
+		outputs[0].values[i] = sample;
+	}
+}
+
+void DelayComponent::render(Synth const & synth) {
+	ImGui::SliderFloat("Feedback", &feedback, 0.0f, 1.0f);
+}
+
 void SpeakerComponent::update(Synth const & synth) {
 	
 }
@@ -209,28 +228,6 @@ void Synth::render() {
 		draw_list->PathStroke(ImColor (200, 200, 100), false, 3.0f);
 	}
 }
-
-/*
-void Synth::render_oscilators() {
-	
-}
-
-void Synth::render_speakers() {
-	for (int i = 0; i < speakers.size(); i++) {
-		auto & speaker = speakers[i];
-
-//		ImGui::PushID(i);
-
-		if (ImGui::Begin(i == 0 ? "Speaker##1" : "Speaker##2")) {
-			for (auto & input  : speaker.inputs)  render_connector_in (input);
-			for (auto & output : speaker.outputs) render_connector_out(output);
-		}
-		ImGui::End();
-
-//		ImGui::PopID();
-	}
-}
-*/
 
 static constexpr auto CONNECTOR_SIZE = 16.0f;
 
