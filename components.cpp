@@ -10,21 +10,15 @@
 static constexpr auto CONNECTOR_SIZE = 16.0f;
 
 Sample ConnectorIn::get_value(int i) const {
-	if (other) {
-		return other->values[i];
-	} else {
-		return 0.0f;
-	}
+	Sample sample = 0.0f;
+
+	for (auto const & [other, weight] : others) sample += weight * other->values[i];
+	
+	return sample;
 }
 
 void OscilatorComponent::update(Synth const & synth) {
-	auto envelope = [](int time) -> float {
-		static constexpr float attack  = 0.1f;
-		static constexpr float hold    = 0.5f;
-		static constexpr float decay   = 1.0f;
-		static constexpr float sustain = 0.5f;
-//		static constexpr float release = 1.0f;
-
+	auto envelope = [](int time, float attack, float hold, float decay, float sustain) -> float {
 		auto t = float(time) * SAMPLE_RATE_INV;
 
 		if (t < attack) {
@@ -56,10 +50,10 @@ void OscilatorComponent::update(Synth const & synth) {
 			auto t = float(time) * SAMPLE_RATE_INV;
 
 			switch (waveform_index) {
-				case 0: outputs[0].values[i] += util::generate_sine    (t, util::note_freq(note.note), note.velocity * 20.0f * envelope(duration)); break;
-				case 1: outputs[0].values[i] += util::generate_square  (t, util::note_freq(note.note), note.velocity * 20.0f * envelope(duration)); break;
-				case 2: outputs[0].values[i] += util::generate_triangle(t, util::note_freq(note.note), note.velocity * 20.0f * envelope(duration)); break;
-				case 3: outputs[0].values[i] += util::generate_saw     (t, util::note_freq(note.note), note.velocity * 20.0f * envelope(duration)); break;
+				case 0: outputs[0].values[i] += util::generate_sine    (t, util::note_freq(note.note + transpose), note.velocity * 20.0f * envelope(duration, env_attack, env_hold, env_decay, env_sustain)); break;
+				case 1: outputs[0].values[i] += util::generate_square  (t, util::note_freq(note.note + transpose), note.velocity * 20.0f * envelope(duration, env_attack, env_hold, env_decay, env_sustain)); break;
+				case 2: outputs[0].values[i] += util::generate_triangle(t, util::note_freq(note.note + transpose), note.velocity * 20.0f * envelope(duration, env_attack, env_hold, env_decay, env_sustain)); break;
+				case 3: outputs[0].values[i] += util::generate_saw     (t, util::note_freq(note.note + transpose), note.velocity * 20.0f * envelope(duration, env_attack, env_hold, env_decay, env_sustain)); break;
 
 				default: abort();
 			}
@@ -79,6 +73,13 @@ void OscilatorComponent::render(Synth const & synth) {
 
 		ImGui::EndCombo();
 	}
+
+	ImGui::DragInt("Transpose", &transpose, 1.0f / 12.0f);
+
+	ImGui::SliderFloat("Attack",  &env_attack,  0.0f, 4.0f);
+	ImGui::SliderFloat("Hold",    &env_hold,    0.0f, 4.0f);
+	ImGui::SliderFloat("Decay",   &env_decay,   0.0f, 4.0f);
+	ImGui::SliderFloat("Sustain", &env_sustain, 0.0f, 1.0f);
 }
 
 void FilterComponent::update(Synth const & synth) {
@@ -148,19 +149,23 @@ void Synth::update(Sample buf[BLOCK_SIZE]) {
 		component->update(*this);
 
 		for (auto & output : component->outputs) {
-			if (output.other && !seen.contains(output.other->component)) {
-				queue.push(output.other->component);
+			for (auto other : output.others) {
+				if (!seen.contains(other->component)) {
+					queue.push(other->component);
+				}
 			}
 		}
 	}
 	
 	time += BLOCK_SIZE;
 
+	memset(buf, 0, BLOCK_SIZE * sizeof(Sample));
+
 	for (auto const & sink : sinks) {
 		for (auto const & input : sink->inputs) {
-			if (input.other) {
+			for (auto const & [other, weight] : input.others) {
 				for (int i = 0; i < BLOCK_SIZE; i++) {
-					buf[i] = input.other->values[i];
+					buf[i] += other->values[i];
 				}
 			}
 		}
@@ -172,15 +177,20 @@ void Synth::render() {
 	drag_handled = false;
 
 	if (ImGui::BeginMainMenuBar()) {
-		if (ImGui::BeginMenu("File")) {		
+		if (ImGui::BeginMenu("File")) {
 			ImGui::EndMenu();
 		}
 			
-		if (ImGui::BeginMenu("Edit")) {		
+		if (ImGui::BeginMenu("Edit")) {
 			ImGui::EndMenu();
 		}
 
-		if (ImGui::BeginMenu("Components")) {		
+		if (ImGui::BeginMenu("Components")) {
+			if (ImGui::MenuItem("Oscilator")) add_component<OscilatorComponent>();
+			if (ImGui::MenuItem("Filter"))    add_component<FilterComponent>();   
+			if (ImGui::MenuItem("Delay"))     add_component<DelayComponent>();    
+			if (ImGui::MenuItem("Speaker"))   add_component<SpeakerComponent>();  
+
 			ImGui::EndMenu();
 		}
 
@@ -208,27 +218,22 @@ void Synth::render() {
 		ImGui::End();
 
 		if (hidden) {
-
 			for (auto & input : component->inputs) {
-				if (input.other) {
-					input.pos[0] = pos.x;
-					input.pos[1] = pos.y + 0.5f * CONNECTOR_SIZE;
+				input.pos[0] = pos.x;
+				input.pos[1] = pos.y + 0.5f * CONNECTOR_SIZE;
 
-					connections.push_back({ input.other, &input });
-				}
+				for (auto const & [other, weight] : input.others) connections.push_back({ other, &input });
 			}
 			for (auto & output : component->outputs) {
-				if (output.other) {
-					output.pos[0] = pos.x;
-					output.pos[1] = pos.y + 0.5f * CONNECTOR_SIZE;
+				output.pos[0] = pos.x;
+				output.pos[1] = pos.y + 0.5f * CONNECTOR_SIZE;
 
-					connections.push_back({ &output, output.other });
-				}
+				for (auto other : output.others) connections.push_back({ &output, other });
 			}
 		}
 	}
 
-	auto draw_hermite = [](ImVec2 a, ImVec2 b, ImColor colour) {
+	auto draw_connection = [](ImVec2 a, ImVec2 b, ImColor colour) {
 		auto draw_list = ImGui::GetForegroundDrawList();
 
 		const auto t1 = ImVec2(200.0f, 0.0f);
@@ -266,20 +271,41 @@ void Synth::render() {
 		return intersects;
 	};
 
+	auto idx = 0;
+
 	// Draw Hermite Splite between Connectors
 	for (auto const & connection : connections) {
-		auto p1 = ImVec2(connection.first ->pos[0], connection.first ->pos[1]);
-		auto p2 = ImVec2(connection.second->pos[0], connection.second->pos[1]);
+		auto a = ImVec2(connection.first ->pos[0], connection.first ->pos[1]);
+		auto b = ImVec2(connection.second->pos[0], connection.second->pos[1]);
 
 		auto selected = selected_connection.has_value() &&
 			selected_connection.value().first  == connection.first &&
 			selected_connection.value().second == connection.second;
 
-		auto intersects = draw_hermite(p1, p2, selected ? ImColor(255, 100, 100) : ImColor(200, 200, 100));
+		auto intersects = draw_connection(a, b, selected ? ImColor(255, 100, 100) : ImColor(200, 200, 100));
 
 		if (intersects && ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
 			selected_connection = connection;
 		}
+		
+		static constexpr auto width = 64.0f;
+
+		ImGui::SetNextWindowPos (ImVec2(a.x + 0.5f * (b.x - a.x), a.y + 0.5f * (b.y - a.y)));
+		ImGui::SetNextWindowSize(ImVec2(width, 16));
+		
+		float * connection_weight = nullptr;
+
+		for (auto & [other, weight] : connection.second->others) {
+			if (other == connection.first) {
+				connection_weight = &weight;
+				break;
+			}
+		}
+
+		char test[32]; sprintf_s(test, "Connection##%i", idx++);
+		ImGui::Begin(test, nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoScrollbar);
+		ImGui::SliderFloat("", connection_weight, 0.0f, 1.0f);
+		ImGui::End();
 	}
 
 	auto const & io = ImGui::GetIO();
@@ -288,15 +314,14 @@ void Synth::render() {
 
 	if (ImGui::IsKeyPressed(SDL_SCANCODE_DELETE)) {
 		if (selected_connection.has_value()) {
-			selected_connection.value().first ->other = nullptr;
-			selected_connection.value().second->other = nullptr;
+			disconnect(*selected_connection.value().first, *selected_connection.value().second);
 
 			selected_connection = { };
 		}
 	}
 
 	if (dragging) {
-		draw_hermite(ImVec2(dragging->pos[0], dragging->pos[1]), io.MousePos, ImColor(200, 200, 100));
+		draw_connection(ImVec2(dragging->pos[0], dragging->pos[1]), io.MousePos, ImColor(200, 200, 100));
 	}
 }
 
@@ -308,7 +333,9 @@ void Synth::render_connector_in(ConnectorIn & in) {
 
 	if (ImGui::SmallButton("")) {
 		if (dragging) {
-			connect(*reinterpret_cast<ConnectorOut *>(dragging), in);
+			if (!dragging->is_input) {
+				connect(*reinterpret_cast<ConnectorOut *>(dragging), in);
+			}
 
 			dragging = nullptr;
 		} else {
@@ -320,14 +347,10 @@ void Synth::render_connector_in(ConnectorIn & in) {
 	ImGui::SameLine(ImGui::GetWindowWidth() - size.x - 20);
 	ImGui::Text(label);
 
-	if (in.other) {
-		assert(in.other->other == &in);
+//	for (auto other : in.others) assert(std::find(other->others.begin(), other->others.end(), &in) != other->others.end());
 
-		in.pos[0] = pos.x;
-		in.pos[1] = pos.y + 0.5f * CONNECTOR_SIZE;
-
-//		connections.push_back({ in.other, &in });
-	}
+	in.pos[0] = pos.x;
+	in.pos[1] = pos.y + 0.5f * CONNECTOR_SIZE;
 }
 
 void Synth::render_connector_out(ConnectorOut & out) {
@@ -350,26 +373,28 @@ void Synth::render_connector_out(ConnectorOut & out) {
 		}
 	}*/
 
-	if (ImGui::SmallButton("")) printf("bruh");
+	ImGui::SmallButton("");
 
 	if (ImGui::IsItemHovered()) {
 		if (ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
 			if (!dragging) dragging = &out;
 		} else if (ImGui::IsMouseReleased(ImGuiMouseButton_Left)) {
 			if (dragging != &out) {
-				connect(out, *reinterpret_cast<ConnectorIn *>(dragging));
+				if (dragging->is_input) {
+					connect(out, *reinterpret_cast<ConnectorIn *>(dragging));
+				}
 
 				dragging = nullptr;
 			}
 		}
 	}
 
-	if (out.other) {
-		assert(out.other->other == &out);
+	for (auto other : out.others) {
+//		assert(std::find(other->others.begin(), other->others.end(), &out) != other->others.end());
 
-		out.pos[0] = pos.x;
-		out.pos[1] = pos.y + 0.5f * CONNECTOR_SIZE;
-
-		connections.push_back({ &out, out.other });
+		connections.push_back({ &out, other });
 	}
+
+	out.pos[0] = pos.x;
+	out.pos[1] = pos.y + 0.5f * CONNECTOR_SIZE;
 }

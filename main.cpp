@@ -124,7 +124,7 @@ int main(int argc, char * argv[]) {
 		SDL_Event event;
 		while (SDL_PollEvent(&event)) {
 			ImGui_ImplSDL2_ProcessEvent(&event);
-
+			
 			switch (event.type) {
 				case SDL_KEYDOWN: {
 					auto note = util::scancode_to_note(event.key.keysym.scancode);

@@ -17,29 +17,33 @@ struct Note {
 struct Component;
 
 struct Connector {
-	Component * component;
+	const bool is_input;
 
-	float pos[2];
+	Component * component;
 
 	std::string name;
 
-	Connector(Component * component, std::string const & name) : component(component), name(name) { }
+	float pos[2];
+
+	std::vector<Connector *> connected;
+
+	Connector(bool is_input, Component * component, std::string const & name) : is_input(is_input), component(component), name(name) { }
 };
 
 struct ConnectorIn : Connector {
-	struct ConnectorOut * other = nullptr; 
+	std::vector<std::pair<struct ConnectorOut *, float>> others; 
 	
-	ConnectorIn(Component * component, std::string const & name) : Connector(component, name) { }
+	ConnectorIn(Component * component, std::string const & name) : Connector(true, component, name) { }
 
 	Sample get_value(int i) const;
 };
 
 struct ConnectorOut : Connector {
-	struct ConnectorIn * other = nullptr; 
+	std::vector<struct ConnectorIn *> others; 
 	
 	Sample values[BLOCK_SIZE];
 
-	ConnectorOut(Component * component, std::string const & name) : Connector(component, name) {
+	ConnectorOut(Component * component, std::string const & name) : Connector(false, component, name) {
 		clear();
 	}
 
@@ -59,12 +63,17 @@ struct Component {
 };
 
 struct OscilatorComponent : Component {
-//	enum struct Waveform { SINE, SQUARE, TRIANGLE, SAWTOOTH } waveform = Waveform::SINE;
-
 	static constexpr const char * options[] = { "Sine", "Square", "Triangle", "Sawtooth" };
 
 	int waveform_index = 3;
 	
+	int transpose = 0;
+
+	// Envelope
+	float env_attack  = 0.1f;
+	float env_hold    = 0.5f;
+	float env_decay   = 1.0f;
+	float env_sustain = 0.5f;
 
 	OscilatorComponent() : Component("Oscilator", { }, { { this, "Out" } }) { }
 
@@ -134,13 +143,15 @@ struct Synth {
 	void render();
 	
 	void connect(ConnectorOut & out, ConnectorIn & in) {
-		out.other = &in;
-		in .other = &out;
+		out.others.push_back(&in);
+		in .others.push_back(std::make_pair(&out, 1.0f));
 	}
 
 	void disconnect(ConnectorOut & out, ConnectorIn & in) {
-		out.other = nullptr;
-		in .other = nullptr;
+		out.others.erase(std::find   (out.others.begin(), out.others.end(), &in));
+		in .others.erase(std::find_if(in .others.begin(), in .others.end(), [&out](auto pair) {
+			return pair.first == &out;	
+		}));
 	}
 
 	void note_press(int note, float velocity = 1.0f) {
