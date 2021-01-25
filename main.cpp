@@ -112,10 +112,11 @@ int main(int argc, char * argv[]) {
 	auto filter    = synth.add_component<FilterComponent>();
 	auto delay     = synth.add_component<DelayComponent>();
 	auto speaker   = synth.add_component<SpeakerComponent>();
+	synth.add_component<FilterComponent>();
 
-	synth.connect(oscilator->outputs[0], filter->inputs[0]);
-	synth.connect(filter->outputs[0], delay->inputs[0]);
-	synth.connect(delay->outputs[0], speaker->inputs[0]);
+	synth.connect(oscilator->outputs[0], filter ->inputs[0]);
+	synth.connect(filter   ->outputs[0], delay  ->inputs[0]);
+	synth.connect(delay    ->outputs[0], speaker->inputs[0]);
 	
 	auto window_is_open = true;
 
@@ -203,11 +204,6 @@ int main(int argc, char * argv[]) {
 		mouse_y = float(y) / float(WINDOW_HEIGHT);
 
 		auto buf = buffers.get_write();
-			
-//			sample = filter(sample, lerp(100.0f, 10000.0f, controls[0x4A]), lerp(0.5f, 1.0f, controls[0x47]));
-//			sample = delay(sample);
-//			sample = bitcrush(sample, 8.0f);
-
 		synth.update(buf);
 
 		buffers.advance_write();
@@ -217,9 +213,6 @@ int main(int argc, char * argv[]) {
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplSDL2_NewFrame(window);
 		ImGui::NewFrame();
-
-		// ImGui::SetNextWindowPos (ImVec2(0, 0));
-		// ImGui::SetNextWindowSize(ImVec2(WINDOW_WIDTH, WINDOW_HEIGHT));
 
 		synth.render();
 

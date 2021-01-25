@@ -1,8 +1,10 @@
 #pragma once
 #include <string>
 #include <vector>
-#include <unordered_map>
+#include <optional>
+
 #include <memory>
+#include <unordered_map>
 
 #include "sample.h"
 
@@ -17,6 +19,8 @@ struct Component;
 struct Connector {
 	Component * component;
 
+	float pos[2];
+
 	std::string name;
 
 	Connector(Component * component, std::string const & name) : component(component), name(name) { }
@@ -24,7 +28,6 @@ struct Connector {
 
 struct ConnectorIn : Connector {
 	struct ConnectorOut * other = nullptr; 
-	float pos[2];
 	
 	ConnectorIn(Component * component, std::string const & name) : Connector(component, name) { }
 
@@ -33,7 +36,6 @@ struct ConnectorIn : Connector {
 
 struct ConnectorOut : Connector {
 	struct ConnectorIn * other = nullptr; 
-	float pos[2];
 	
 	Sample values[BLOCK_SIZE];
 
@@ -43,12 +45,6 @@ struct ConnectorOut : Connector {
 
 	void clear() { memset(values, 0, sizeof(values)); }
 };
-
-struct Connection {
-	ConnectorIn  & in;
-	ConnectorOut & out;
-};
-
 
 struct Component {
 	std::string name;
@@ -67,8 +63,8 @@ struct OscilatorComponent : Component {
 
 	static constexpr const char * options[] = { "Sine", "Square", "Triangle", "Sawtooth" };
 
-	const char * waveform_name = options[0];
-	int          waveform_index = 0;
+	int waveform_index = 3;
+	
 
 	OscilatorComponent() : Component("Oscilator", { }, { { this, "Out" } }) { }
 
@@ -160,10 +156,13 @@ struct Synth {
 	}
 
 private:
-	friend OscilatorComponent;
-	friend SpeakerComponent;
-	
+	using Connection = std::pair<ConnectorOut *, ConnectorIn *>;
+
 	std::vector<Connection> connections;
+	std::optional<Connection> selected_connection;
+
+	Connector * dragging = nullptr;
+	bool        drag_handled;
 
 	void render_oscilators();
 	void render_speakers();
