@@ -6,6 +6,8 @@
 #include <memory>
 #include <unordered_map>
 
+#include <SDL2/SDL.h>
+
 #include "sample.h"
 
 struct Note {
@@ -63,7 +65,7 @@ struct Component {
 };
 
 struct OscilatorComponent : Component {
-	static constexpr const char * options[] = { "Sine", "Square", "Triangle", "Sawtooth" };
+	static constexpr const char * waveform_names[] = { "Sine", "Square", "Triangle", "Sawtooth" };
 
 	int waveform_index = 3;
 	
@@ -81,7 +83,32 @@ struct OscilatorComponent : Component {
 	void render(struct Synth const & synth) override;
 };
 
+struct SamplerComponent : Component {
+	std::vector<Sample> samples;
+
+	SamplerComponent() : Component("Sampler", { }, { { this, "Out" } }) {
+		Uint32        wav_length;
+		Uint8       * wav_buffer;
+		SDL_AudioSpec wav_spec;
+
+		if (SDL_LoadWAV("beat_130.wav", &wav_spec, &wav_buffer, &wav_length) == nullptr) abort();
+
+		if (wav_spec.format != AUDIO_F32LSB) abort();
+
+		samples.resize(wav_length / sizeof(Sample));
+		memcpy(samples.data(), wav_buffer, wav_length);
+
+		SDL_FreeWAV(wav_buffer);
+	}
+
+	void update(struct Synth const & synth) override;
+	void render(struct Synth const & synth) override;
+};
+
 struct FilterComponent : Component {
+	static constexpr char const * filter_names[] = { "Low Pass", "High Pass", "Band Pass" };
+	int filter_type = 0;
+
 	float cutoff = 1000.0f;
 	float resonance = 0.5f;
 

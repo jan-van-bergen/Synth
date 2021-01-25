@@ -49,11 +49,14 @@ void OscilatorComponent::update(Synth const & synth) {
 
 			auto t = float(time) * SAMPLE_RATE_INV;
 
+			auto frequency = util::note_freq(note.note + transpose);
+			auto amplitude = 20.0f * note.velocity * envelope(duration, env_attack, env_hold, env_decay, env_sustain);
+
 			switch (waveform_index) {
-				case 0: outputs[0].values[i] += util::generate_sine    (t, util::note_freq(note.note + transpose), note.velocity * 20.0f * envelope(duration, env_attack, env_hold, env_decay, env_sustain)); break;
-				case 1: outputs[0].values[i] += util::generate_square  (t, util::note_freq(note.note + transpose), note.velocity * 20.0f * envelope(duration, env_attack, env_hold, env_decay, env_sustain)); break;
-				case 2: outputs[0].values[i] += util::generate_triangle(t, util::note_freq(note.note + transpose), note.velocity * 20.0f * envelope(duration, env_attack, env_hold, env_decay, env_sustain)); break;
-				case 3: outputs[0].values[i] += util::generate_saw     (t, util::note_freq(note.note + transpose), note.velocity * 20.0f * envelope(duration, env_attack, env_hold, env_decay, env_sustain)); break;
+				case 0: outputs[0].values[i] += util::generate_sine    (t, frequency, amplitude); break;
+				case 1: outputs[0].values[i] += util::generate_square  (t, frequency, amplitude); break;
+				case 2: outputs[0].values[i] += util::generate_triangle(t, frequency, amplitude); break;
+				case 3: outputs[0].values[i] += util::generate_saw     (t, frequency, amplitude); break;
 
 				default: abort();
 			}
@@ -62,11 +65,9 @@ void OscilatorComponent::update(Synth const & synth) {
 }
 
 void OscilatorComponent::render(Synth const & synth) {
-	const char * waveform_name = options[waveform_index];
-
-	if (ImGui::BeginCombo("Waveform", waveform_name)) {
-		for (int j = 0; j < IM_ARRAYSIZE(OscilatorComponent::options); j++) {
-			if (ImGui::Selectable(OscilatorComponent::options[j], waveform_index == j)) {
+	if (ImGui::BeginCombo("Waveform", waveform_names[waveform_index])) {
+		for (int j = 0; j < IM_ARRAYSIZE(waveform_names); j++) {
+			if (ImGui::Selectable(waveform_names[j], waveform_index == j)) {
 				waveform_index = j;
 			}
 		}
@@ -80,6 +81,20 @@ void OscilatorComponent::render(Synth const & synth) {
 	ImGui::SliderFloat("Hold",    &env_hold,    0.0f, 4.0f);
 	ImGui::SliderFloat("Decay",   &env_decay,   0.0f, 4.0f);
 	ImGui::SliderFloat("Sustain", &env_sustain, 0.0f, 1.0f);
+}
+
+void SamplerComponent::update(Synth const & synth) {
+	outputs[0].clear();
+
+	for (int i = 0; i < BLOCK_SIZE; i++) {
+		auto time = (synth.time + i) % samples.size();
+
+		outputs[0].values[i] = 100 * samples[time];
+	}
+}
+
+void SamplerComponent::render(Synth const & synth) {
+	
 }
 
 void FilterComponent::update(Synth const & synth) {
@@ -98,11 +113,27 @@ void FilterComponent::update(Synth const & synth) {
 		state_1 = g * high_pass + band_pass;
 		state_2 = g * band_pass + low_pass;
 
-		outputs[0].values[i] = low_pass;
+		if (filter_type == 0) {
+			outputs[0].values[i] = low_pass;
+		} else if (filter_type == 1) {
+			outputs[0].values[i] = high_pass;
+		} else {
+			outputs[0].values[i] = band_pass;
+		}
 	}
 }
 
 void FilterComponent::render(Synth const & synth) {
+	if (ImGui::BeginCombo("Type", filter_names[filter_type])) {
+		for (int j = 0; j < IM_ARRAYSIZE(filter_names); j++) {
+			if (ImGui::Selectable(filter_names[j], filter_type == j)) {
+				filter_type = j;
+			}
+		}
+
+		ImGui::EndCombo();
+	}
+
 	ImGui::SliderFloat("Cutoff",    &cutoff,   20.0f, 10000.0f);
 	ImGui::SliderFloat("Resonance", &resonance, 0.0f, 1.0f);
 }
@@ -187,9 +218,12 @@ void Synth::render() {
 
 		if (ImGui::BeginMenu("Components")) {
 			if (ImGui::MenuItem("Oscilator")) add_component<OscilatorComponent>();
-			if (ImGui::MenuItem("Filter"))    add_component<FilterComponent>();   
-			if (ImGui::MenuItem("Delay"))     add_component<DelayComponent>();    
-			if (ImGui::MenuItem("Speaker"))   add_component<SpeakerComponent>();  
+			if (ImGui::MenuItem("Sampler"))   add_component<SamplerComponent>();
+			
+			if (ImGui::MenuItem("Filter")) add_component<FilterComponent>();   
+			if (ImGui::MenuItem("Delay"))  add_component<DelayComponent>();    
+			
+			if (ImGui::MenuItem("Speaker")) add_component<SpeakerComponent>();  
 
 			ImGui::EndMenu();
 		}
