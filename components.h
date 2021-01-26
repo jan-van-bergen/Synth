@@ -64,6 +64,16 @@ struct Component {
 	virtual void render(struct Synth const & synth) = 0;
 };
 
+struct SequencerComponent : Component {
+	static constexpr auto TRACK_SIZE = 16;
+	bool track[TRACK_SIZE] = { };
+
+	SequencerComponent() : Component("Sequencer", { }, { { this, "Out" } }) { }
+
+	void update(struct Synth const & synth) override;
+	void render(struct Synth const & synth) override;
+};
+
 struct OscilatorComponent : Component {
 	static constexpr const char * waveform_names[] = { "Sine", "Square", "Triangle", "Sawtooth" };
 
@@ -85,21 +95,16 @@ struct OscilatorComponent : Component {
 
 struct SamplerComponent : Component {
 	std::vector<Sample> samples;
+	int current_sample = 0;
 
-	SamplerComponent() : Component("Sampler", { }, { { this, "Out" } }) {
-		Uint32        wav_length;
-		Uint8       * wav_buffer;
-		SDL_AudioSpec wav_spec;
+	char filename[128];
 
-		if (SDL_LoadWAV("beat_130.wav", &wav_spec, &wav_buffer, &wav_length) == nullptr) abort();
-
-		if (wav_spec.format != AUDIO_F32LSB) abort();
-
-		samples.resize(wav_length / sizeof(Sample));
-		memcpy(samples.data(), wav_buffer, wav_length);
-
-		SDL_FreeWAV(wav_buffer);
+	SamplerComponent() : Component("Sampler", { { this, "Trigger" } }, { { this, "Out" } }) {
+		strcpy_s(filename, "samples/kick.wav");
+		load();
 	}
+	
+	void load();
 
 	void update(struct Synth const & synth) override;
 	void render(struct Synth const & synth) override;
@@ -123,18 +128,23 @@ private:
 };
 
 struct DelayComponent : Component {
+	int   steps    = 3;
 	float feedback = 0.7f;
 
-	DelayComponent() : Component("Delay", { { this, "In" } }, { { this, "Out" } }) { }
+	std::vector<Sample> history;
+	int offset = 0;
+
+	DelayComponent() : Component("Delay", { { this, "In" } }, { { this, "Out" } }) {
+		update_history_size();
+	}
+
+	void update_history_size() {
+		history.resize(115 * SAMPLE_RATE * steps / 1000);
+		offset %= history.size();
+	}
 	
 	void update(struct Synth const & synth) override;
 	void render(struct Synth const & synth) override;
-
-private:
-	static constexpr int HISTORY_SIZE = SAMPLE_RATE * 462 / 1000;
-	Sample history[HISTORY_SIZE];
-
-	int offset = 0;
 };
 
 struct SpeakerComponent : Component{
@@ -201,9 +211,6 @@ private:
 
 	Connector * dragging = nullptr;
 	bool        drag_handled;
-
-	void render_oscilators();
-	void render_speakers();
 
 	void render_connector_in (ConnectorIn  & in);
 	void render_connector_out(ConnectorOut & out);

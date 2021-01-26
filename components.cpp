@@ -17,6 +17,36 @@ Sample ConnectorIn::get_value(int i) const {
 	return sample;
 }
 
+void SequencerComponent::update(Synth const & synth) {
+	outputs[0].clear();
+
+	for (int i = 0; i < BLOCK_SIZE; i++) {
+		static constexpr auto SIXTEENTH_NOTE = 115 * SAMPLE_RATE / 1000;
+
+		auto time = (synth.time + i) % (SIXTEENTH_NOTE * TRACK_SIZE);
+
+		auto step = time / SIXTEENTH_NOTE;
+		auto hit  = time % SIXTEENTH_NOTE == 0;
+
+		if (hit && track[step]) {
+			outputs[0].values[i] = 1.0f;
+		}
+	}
+}
+
+void SequencerComponent::render(Synth const & synth) {
+	char label[32];
+
+	for (int i = 0; i < TRACK_SIZE; i++) {
+		sprintf_s(label, "[%c]##%i", track[i] ? 'x' : ' ', i);
+
+		if (ImGui::Button(label)) {
+			track[i] = !track[i];
+		}
+		ImGui::SameLine();
+	}
+}
+
 void OscilatorComponent::update(Synth const & synth) {
 	auto envelope = [](int time, float attack, float hold, float decay, float sustain) -> float {
 		auto t = float(time) * SAMPLE_RATE_INV;
@@ -83,18 +113,94 @@ void OscilatorComponent::render(Synth const & synth) {
 	ImGui::SliderFloat("Sustain", &env_sustain, 0.0f, 1.0f);
 }
 
+void SamplerComponent::load() {
+	Uint32        wav_length;
+	Uint8       * wav_buffer;
+	SDL_AudioSpec wav_spec;
+
+	if (SDL_LoadWAV(filename, &wav_spec, &wav_buffer, &wav_length) == nullptr) {
+		printf("ERROR: Unable to load sample '%s'!\n", filename);
+		return;
+	}
+
+	if (wav_spec.channels != 1 && wav_spec.channels != 2) {
+		printf("ERROR: Sample '%s' has %i channels! Should be either 1 (Mono) or 2 (Stereo)\n", filename, wav_spec.channels);
+		return;
+	}
+
+	switch (wav_spec.format) {
+		case AUDIO_F32LSB: {
+			samples.resize(wav_length / (wav_spec.channels * sizeof(float)));
+
+			if (wav_spec.channels == 1) { // Mono
+				for (int i = 0; i < samples.size(); i++) {
+					float sample;
+					memcpy(&sample, wav_buffer + i * sizeof(float), sizeof(float));
+
+					samples[i] = sample;
+				}
+			} else { // Stereo
+				samples.resize(wav_length / sizeof(Sample));
+				memcpy(samples.data(), wav_buffer, wav_length);
+			}
+
+			break;
+		}
+
+		case AUDIO_S32LSB: {
+			samples.resize(wav_length / (wav_spec.channels * sizeof(int)));
+
+			if (wav_spec.channels == 1) { // Mono
+				for (int i = 0; i < samples.size(); i++) {
+					int sample;
+					memcpy(&sample,  wav_buffer + i * sizeof(int), sizeof(int));
+					
+					samples[i] = float(sample) / float(std::numeric_limits<int>::max());
+				}
+			} else { // Stereo
+				for (int i = 0; i < samples.size(); i++) {
+					auto offset = 2 * i;
+
+					int left, right;
+					memcpy(&left,  wav_buffer + (offset)     * sizeof(int), sizeof(int));
+					memcpy(&right, wav_buffer + (offset + 1) * sizeof(int), sizeof(int));
+
+					samples[i].left  = float(left)  / float(std::numeric_limits<int>::max());
+					samples[i].right = float(right) / float(std::numeric_limits<int>::max());
+				}
+			}
+
+			break;
+		}
+
+		default: printf("ERROR: Sample '%s' has unsupported format 0x%x\n", filename, wav_spec.format);
+	}
+
+	SDL_FreeWAV(wav_buffer);
+}
+
 void SamplerComponent::update(Synth const & synth) {
 	outputs[0].clear();
 
 	for (int i = 0; i < BLOCK_SIZE; i++) {
-		auto time = (synth.time + i) % samples.size();
+		static constexpr auto EPSILON = 0.001f;
 
-		outputs[0].values[i] = 100 * samples[time];
+		auto abs = Sample::abs(inputs[0].get_value(i));
+		if (abs.left > EPSILON && abs.right > EPSILON) current_sample = 0; // Trigger sample on input
+
+		if (current_sample < samples.size()) {
+			outputs[0].values[i] = 127.0f * samples[current_sample];
+		}
+
+		current_sample++;
 	}
 }
 
 void SamplerComponent::render(Synth const & synth) {
+	ImGui::InputText("File", filename, sizeof(filename));
+	ImGui::SameLine();
 	
+	if (ImGui::Button("Load")) load();
 }
 
 void FilterComponent::update(Synth const & synth) {
@@ -147,13 +253,16 @@ void DelayComponent::update(Synth const & synth) {
 		sample = sample + feedback * history[offset];
 		history[offset] = sample;
 	
-		offset = (offset + 1) % HISTORY_SIZE;
+		offset = (offset + 1) % history.size();
 
 		outputs[0].values[i] = sample;
 	}
 }
 
 void DelayComponent::render(Synth const & synth) {
+	if (ImGui::SliderInt("Steps", &steps, 1, 8)) {
+		 update_history_size();
+	}
 	ImGui::SliderFloat("Feedback", &feedback, 0.0f, 1.0f);
 }
 
@@ -169,7 +278,8 @@ void Synth::update(Sample buf[BLOCK_SIZE]) {
 	std::queue<Component *> queue;
 	for (auto source : sources) queue.push(source);
 
-	std::unordered_set<Component *> seen;
+	std::unordered_set<Component *>      seen;
+	std::unordered_map<Component *, int> num_inputs_satisfied;
 
 	while (!queue.empty()) {
 		auto component = queue.front();
@@ -182,7 +292,11 @@ void Synth::update(Sample buf[BLOCK_SIZE]) {
 		for (auto & output : component->outputs) {
 			for (auto other : output.others) {
 				if (!seen.contains(other->component)) {
-					queue.push(other->component);
+					auto inputs = ++num_inputs_satisfied[other->component];
+
+					if (inputs == other->others.size()) {
+						queue.push(other->component);
+					}
 				}
 			}
 		}
@@ -217,6 +331,8 @@ void Synth::render() {
 		}
 
 		if (ImGui::BeginMenu("Components")) {
+			if (ImGui::MenuItem("Sequencer")) add_component<SequencerComponent>();
+
 			if (ImGui::MenuItem("Oscilator")) add_component<OscilatorComponent>();
 			if (ImGui::MenuItem("Sampler"))   add_component<SamplerComponent>();
 			
