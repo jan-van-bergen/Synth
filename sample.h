@@ -15,11 +15,8 @@ struct Sample {
 	Sample(float f)          : left(f), right(f) { }
 	Sample(float l, float r) : left(l), right(r) { }
 
-	static Sample floor(Sample const & s) { return { std::floor(s.left), std::floor(s.right) }; }
-
-	static Sample abs(Sample const & s) { return { std::fabsf(s.left), std::fabsf(s.right) }; }
-
-	static Sample lerp(Sample const & a, Sample const & b, Sample const & t);
+	template<typename Function>
+	static Sample apply_function(Function func, Sample const & sample) { return { func(sample.left), func(sample.right) }; }
 
 	void operator+=(Sample const & other) { left += other.left; right += other.right; }
 	void operator-=(Sample const & other) { left -= other.left; right -= other.right; }
@@ -49,5 +46,3 @@ inline Sample operator/(float f, Sample const & s) { return { s.left / f, s.righ
 
 inline bool operator==(Sample const & a, Sample const & b) { return a.left == b.left && a.right == b.right; }
 inline bool operator!=(Sample const & a, Sample const & b) { return a.left != b.left || a.right != b.right; }
-
-inline Sample Sample::lerp(Sample const & a, Sample const & b, Sample const & t) { return a + (b - a) * t; }

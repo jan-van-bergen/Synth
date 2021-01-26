@@ -66,7 +66,7 @@ struct Component {
 
 struct SequencerComponent : Component {
 	static constexpr auto TRACK_SIZE = 16;
-	bool track[TRACK_SIZE] = { };
+	float steps[TRACK_SIZE] = { };
 
 	SequencerComponent() : Component("Sequencer", { }, { { this, "Out" } }) { }
 
@@ -97,6 +97,8 @@ struct SamplerComponent : Component {
 	std::vector<Sample> samples;
 	int current_sample = 0;
 
+	float velocity = 1.0f;
+
 	char filename[128];
 
 	SamplerComponent() : Component("Sampler", { { this, "Trigger" } }, { { this, "Out" } }) {
@@ -111,7 +113,7 @@ struct SamplerComponent : Component {
 };
 
 struct FilterComponent : Component {
-	static constexpr char const * filter_names[] = { "Low Pass", "High Pass", "Band Pass" };
+	static constexpr char const * filter_names[] = { "Low Pass", "High Pass", "Band Pass", "None" };
 	int filter_type = 0;
 
 	float cutoff = 1000.0f;
@@ -125,6 +127,15 @@ struct FilterComponent : Component {
 private:
 	Sample state_1;
 	Sample state_2;
+};
+
+struct DistortionComponent : Component {
+	float amount = 0.5f;
+
+	DistortionComponent() : Component("Distortion", { { this, "In" } }, { { this, "Out" } }) { }
+
+	void update(struct Synth const & synth) override;
+	void render(struct Synth const & synth) override;
 };
 
 struct DelayComponent : Component {

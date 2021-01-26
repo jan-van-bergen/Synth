@@ -28,9 +28,7 @@ void SequencerComponent::update(Synth const & synth) {
 		auto step = time / SIXTEENTH_NOTE;
 		auto hit  = time % SIXTEENTH_NOTE == 0;
 
-		if (hit && track[step]) {
-			outputs[0].values[i] = 1.0f;
-		}
+		if (hit) outputs[0].values[i] = steps[step];
 	}
 }
 
@@ -38,12 +36,18 @@ void SequencerComponent::render(Synth const & synth) {
 	char label[32];
 
 	for (int i = 0; i < TRACK_SIZE; i++) {
-		sprintf_s(label, "[%c]##%i", track[i] ? 'x' : ' ', i);
-
-		if (ImGui::Button(label)) {
-			track[i] = !track[i];
+		if ((i / 4) % 2 == 0) {
+			ImGui::PushStyleColor(ImGuiCol_SliderGrab, ImColor(250, 100, 100, 100).Value);
+		} else {
+			ImGui::PushStyleColor(ImGuiCol_SliderGrab, ImColor(250, 250, 250, 100).Value);
 		}
+		
+		sprintf_s(label, "##%i", i);
+
+		ImGui::VSliderFloat(label, ImVec2(16, 64), &steps[i], 0.0f, 1.0f);
 		ImGui::SameLine();
+		
+		ImGui::PopStyleColor();
 	}
 }
 
@@ -185,11 +189,14 @@ void SamplerComponent::update(Synth const & synth) {
 	for (int i = 0; i < BLOCK_SIZE; i++) {
 		static constexpr auto EPSILON = 0.001f;
 
-		auto abs = Sample::abs(inputs[0].get_value(i));
-		if (abs.left > EPSILON && abs.right > EPSILON) current_sample = 0; // Trigger sample on input
+		auto abs = Sample::apply_function(std::fabsf, inputs[0].get_value(i));
+		if (abs.left > EPSILON && abs.right > EPSILON) {
+			velocity = 127.0f * abs.left;
+			current_sample = 0; // Trigger sample on input
+		}
 
 		if (current_sample < samples.size()) {
-			outputs[0].values[i] = 127.0f * samples[current_sample];
+			outputs[0].values[i] = velocity * samples[current_sample];
 		}
 
 		current_sample++;
@@ -207,12 +214,14 @@ void FilterComponent::update(Synth const & synth) {
 	auto g = std::tan(PI * cutoff * SAMPLE_RATE_INV); // Gain
 	auto R = 1.0f - resonance;                        // Damping
     
+	auto denom_inv = 1.0f / (1.0f + (2.0f * R * g) + g * g);
+
 	outputs[0].clear();
 
 	for (int i = 0; i < BLOCK_SIZE; i++) {
 		auto sample = inputs[0].get_value(i);
 
-		auto high_pass = (sample - (2.0f * R + g) * state_1 - state_2) / (1.0f + (2.0f * R * g) + g * g);
+		auto high_pass = (sample - (2.0f * R + g) * state_1 - state_2) * denom_inv;
 		auto band_pass = high_pass * g + state_1;
 		auto  low_pass = band_pass * g + state_2;
 	
@@ -223,8 +232,10 @@ void FilterComponent::update(Synth const & synth) {
 			outputs[0].values[i] = low_pass;
 		} else if (filter_type == 1) {
 			outputs[0].values[i] = high_pass;
-		} else {
+		} else if (filter_type == 2) {
 			outputs[0].values[i] = band_pass;
+		} else {
+			outputs[0].values[i] = sample; // Unfiltered
 		}
 	}
 }
@@ -242,6 +253,26 @@ void FilterComponent::render(Synth const & synth) {
 
 	ImGui::SliderFloat("Cutoff",    &cutoff,   20.0f, 10000.0f);
 	ImGui::SliderFloat("Resonance", &resonance, 0.0f, 1.0f);
+}
+
+void DistortionComponent::update(Synth const & synth) {
+	outputs[0].clear();
+
+	auto threshold = 1.00001f - amount;
+
+	for (int i = 0; i < BLOCK_SIZE; i++) {
+		auto sample = inputs[0].get_value(i) / 127.0f;
+
+		auto distort = [threshold](float sample) {
+			return util::clamp(sample, -threshold, threshold) / threshold;
+		};
+		
+		outputs[0].values[i] = 127.0f * Sample::apply_function(distort, sample);
+	}
+}
+
+void DistortionComponent::render(Synth const & synth) {
+	ImGui::SliderFloat("Amount", &amount, 0.0f, 1.0f);
 }
 
 void DelayComponent::update(Synth const & synth) {
@@ -336,8 +367,9 @@ void Synth::render() {
 			if (ImGui::MenuItem("Oscilator")) add_component<OscilatorComponent>();
 			if (ImGui::MenuItem("Sampler"))   add_component<SamplerComponent>();
 			
-			if (ImGui::MenuItem("Filter")) add_component<FilterComponent>();   
-			if (ImGui::MenuItem("Delay"))  add_component<DelayComponent>();    
+			if (ImGui::MenuItem("Distortion")) add_component<DistortionComponent>();    
+			if (ImGui::MenuItem("Delay"))      add_component<DelayComponent>();    
+			if (ImGui::MenuItem("Filter"))     add_component<FilterComponent>();   
 			
 			if (ImGui::MenuItem("Speaker")) add_component<SpeakerComponent>();  
 
@@ -383,7 +415,7 @@ void Synth::render() {
 		}
 	}
 
-	auto draw_connection = [](ImVec2 a, ImVec2 b, ImColor colour) {
+	auto draw_connection = [](ImVec2 spline_start, ImVec2 spline_end, ImColor colour) {
 		auto draw_list = ImGui::GetForegroundDrawList();
 
 		const auto t1 = ImVec2(200.0f, 0.0f);
@@ -405,8 +437,8 @@ void Synth::render() {
 			auto h4 =         t * t * t -        t * t;
 
 			auto point = ImVec2(
-				h1 * a.x + h2 * b.x + h3 * t1.x + h4 * t2.x, 
-				h1 * a.y + h2 * b.y + h3 * t1.y + h4 * t2.y
+				h1 * spline_start.x + h2 * spline_end.x + h3 * t1.x + h4 * t2.x, 
+				h1 * spline_start.y + h2 * spline_end.y + h3 * t1.y + h4 * t2.y
 			);
 
 			draw_list->PathLineTo(point);
@@ -425,14 +457,14 @@ void Synth::render() {
 
 	// Draw Hermite Splite between Connectors
 	for (auto const & connection : connections) {
-		auto a = ImVec2(connection.first ->pos[0], connection.first ->pos[1]);
-		auto b = ImVec2(connection.second->pos[0], connection.second->pos[1]);
+		auto spline_start = ImVec2(connection.first ->pos[0], connection.first ->pos[1]);
+		auto spline_end   = ImVec2(connection.second->pos[0], connection.second->pos[1]);
 
 		auto selected = selected_connection.has_value() &&
 			selected_connection.value().first  == connection.first &&
 			selected_connection.value().second == connection.second;
 
-		auto intersects = draw_connection(a, b, selected ? ImColor(255, 100, 100) : ImColor(200, 200, 100));
+		auto intersects = draw_connection(spline_start, spline_end, selected ? ImColor(255, 100, 100) : ImColor(200, 200, 100));
 
 		if (intersects && ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
 			selected_connection = connection;
@@ -440,7 +472,7 @@ void Synth::render() {
 		
 		static constexpr auto width = 64.0f;
 
-		ImGui::SetNextWindowPos (ImVec2(a.x + 0.5f * (b.x - a.x), a.y + 0.5f * (b.y - a.y)));
+		ImGui::SetNextWindowPos (ImVec2(spline_start.x + 0.5f * (spline_end.x - spline_start.x), spline_start.y + 0.5f * (spline_end.y - spline_start.y)));
 		ImGui::SetNextWindowSize(ImVec2(width, 16));
 		
 		float * connection_weight = nullptr;
@@ -471,7 +503,12 @@ void Synth::render() {
 	}
 
 	if (dragging) {
-		draw_connection(ImVec2(dragging->pos[0], dragging->pos[1]), io.MousePos, ImColor(200, 200, 100));
+		auto spline_start = ImVec2(dragging->pos[0], dragging->pos[1]);
+		auto spline_end   = io.MousePos;
+
+		if (dragging->is_input) std::swap(spline_start, spline_end); // Always draw from out to in
+
+		draw_connection(spline_start, spline_end, ImColor(200, 200, 100));
 	}
 }
 
@@ -480,17 +517,23 @@ void Synth::render_connector_in(ConnectorIn & in) {
 
 	auto pos  = ImGui::GetCursorScreenPos();
 	auto size = ImGui::CalcTextSize(label);
+	
+	ImGui::SmallButton("");
 
-	if (ImGui::SmallButton("")) {
-		if (dragging) {
-			if (!dragging->is_input) {
-				connect(*reinterpret_cast<ConnectorOut *>(dragging), in);
+	auto min = ImGui::GetItemRectMin();
+	auto max = ImGui::GetItemRectMax();
+
+	if (ImGui::IsMouseHoveringRect(min, max)) {
+		if (ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
+			if (!dragging) dragging = &in;
+		} else if (ImGui::IsMouseReleased(ImGuiMouseButton_Left)) {
+			if (dragging && dragging != &in) {
+				if (!dragging->is_input) {
+					connect(*reinterpret_cast<ConnectorOut *>(dragging), in);
+				}
+
+				dragging = nullptr;
 			}
-
-			dragging = nullptr;
-		} else {
-			dragging = &in;
-			drag_handled = true;
 		}
 	}
 
@@ -512,24 +555,16 @@ void Synth::render_connector_out(ConnectorOut & out) {
 	auto pos  = ImGui::GetCursorScreenPos();
 	auto size = ImGui::CalcTextSize(label);
 	
-	/*if (ImGui::SmallButton("")) {
-		if (dragging) {
-			connect(out, *reinterpret_cast<ConnectorIn *>(dragging));
-
-			dragging = nullptr;
-		} else {
-			dragging = &out;
-			drag_handled = true;
-		}
-	}*/
-
 	ImGui::SmallButton("");
+	
+	auto min = ImGui::GetItemRectMin();
+	auto max = ImGui::GetItemRectMax();
 
-	if (ImGui::IsItemHovered()) {
-		if (ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
+	if (ImGui::IsMouseHoveringRect(min, max)) {
+		if (ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
 			if (!dragging) dragging = &out;
 		} else if (ImGui::IsMouseReleased(ImGuiMouseButton_Left)) {
-			if (dragging != &out) {
+			if (dragging && dragging != &out) {
 				if (dragging->is_input) {
 					connect(out, *reinterpret_cast<ConnectorIn *>(dragging));
 				}

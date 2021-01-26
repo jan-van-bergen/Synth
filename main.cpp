@@ -20,29 +20,13 @@
 
 #include "components.h"
 
-// extern "C" { _declspec(dllexport) unsigned NvOptimusEnablement = true; }
+extern "C" { _declspec(dllexport) unsigned NvOptimusEnablement = true; }
 
 
 static RingBuffer<Sample[BLOCK_SIZE], 3> buffers;
 
 static constexpr auto WINDOW_WIDTH  = 1280;
 static constexpr auto WINDOW_HEIGHT = 720;
-
-
-
-static Sample bitcrush(Sample signal, float crush = 16.0f) {
-	return crush * Sample::floor(signal / crush);
-}
-
-static float distort(float signal, float amount = 0.2f) {
-	float cut = 0.5f * (1.0f - amount) + 0.00001f;
-
-	if (signal < cut) {
-		return util::lerp(0.0f, 1.0f - cut, signal / cut);
-	} else {
-		return util::lerp(1.0f - cut, 1.0f, (signal - cut) / (1.0f - cut));
-	}
-}
 
 
 static void sdl_audio_callback(void * user_data, Uint8 * stream, int len) {
