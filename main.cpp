@@ -18,7 +18,7 @@
 #include "midi.h"
 #include "sample.h"
 
-#include "components.h"
+#include "synth.h"
 
 extern "C" { _declspec(dllexport) unsigned NvOptimusEnablement = true; }
 

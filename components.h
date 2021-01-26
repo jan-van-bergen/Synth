@@ -7,50 +7,10 @@
 #include <unordered_map>
 
 #include <SDL2/SDL.h>
+#include <ImGui/imgui.h>
 
 #include "sample.h"
-
-struct Note {
-	int   note;
-	float velocity;
-	int   time;
-};
-
-struct Component;
-
-struct Connector {
-	const bool is_input;
-
-	Component * component;
-
-	std::string name;
-
-	float pos[2];
-
-	std::vector<Connector *> connected;
-
-	Connector(bool is_input, Component * component, std::string const & name) : is_input(is_input), component(component), name(name) { }
-};
-
-struct ConnectorIn : Connector {
-	std::vector<std::pair<struct ConnectorOut *, float>> others; 
-	
-	ConnectorIn(Component * component, std::string const & name) : Connector(true, component, name) { }
-
-	Sample get_value(int i) const;
-};
-
-struct ConnectorOut : Connector {
-	std::vector<struct ConnectorIn *> others; 
-	
-	Sample values[BLOCK_SIZE];
-
-	ConnectorOut(Component * component, std::string const & name) : Connector(false, component, name) {
-		clear();
-	}
-
-	void clear() { memset(values, 0, sizeof(values)); }
-};
+#include "connector.h"
 
 struct Component {
 	std::string name;
@@ -149,10 +109,7 @@ struct DelayComponent : Component {
 		update_history_size();
 	}
 
-	void update_history_size() {
-		history.resize(115 * SAMPLE_RATE * steps / 1000);
-		offset %= history.size();
-	}
+	void update_history_size();
 	
 	void update(struct Synth const & synth) override;
 	void render(struct Synth const & synth) override;
@@ -161,68 +118,6 @@ struct DelayComponent : Component {
 struct SpeakerComponent : Component{
 	SpeakerComponent() : Component("Speaker", { { this, "Input" } }, { }) { }
 	
-	void update(struct Synth const & synth) override;
-	void render(struct Synth const & synth) override;
-};
-
-
-struct Synth {
-	std::vector<Component *> sources;
-	std::vector<Component *> sinks;
-
-	std::vector<std::unique_ptr<Component>> components;
-	
-	template<typename T>
-	T * add_component() {
-		auto component = std::make_unique<T>();
-
-		if (component->inputs .size() == 0) sources.push_back(component.get());
-		if (component->outputs.size() == 0) sinks  .push_back(component.get());
-
-		return static_cast<T *>(components.emplace_back(std::move(component)).get());
-	}
-
-	int time = 0;
-	
-	std::unordered_map<int, Note>  notes;
-	std::unordered_map<int, float> controls = { { 0x4A, 0.5f } };
-	
-	void update(Sample buf[BLOCK_SIZE]);
-	void render();
-	
-	void connect(ConnectorOut & out, ConnectorIn & in) {
-		out.others.push_back(&in);
-		in .others.push_back(std::make_pair(&out, 1.0f));
-	}
-
-	void disconnect(ConnectorOut & out, ConnectorIn & in) {
-		out.others.erase(std::find   (out.others.begin(), out.others.end(), &in));
-		in .others.erase(std::find_if(in .others.begin(), in .others.end(), [&out](auto pair) {
-			return pair.first == &out;	
-		}));
-	}
-
-	void note_press(int note, float velocity = 1.0f) {
-		Note n = { note, velocity, time };	
-		notes.insert(std::make_pair(note, n));
-	}
-	void note_release(int note) {
-		notes.erase(note);
-	}
-
-	void control_update(int control, float value) {
-		controls[control] = value;
-	}
-
-private:
-	using Connection = std::pair<ConnectorOut *, ConnectorIn *>;
-
-	std::vector<Connection> connections;
-	std::optional<Connection> selected_connection;
-
-	Connector * dragging = nullptr;
-	bool        drag_handled;
-
-	void render_connector_in (ConnectorIn  & in);
-	void render_connector_out(ConnectorOut & out);
+	void update(struct Synth const & synth) override { }
+	void render(struct Synth const & synth) override { }
 };

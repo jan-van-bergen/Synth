@@ -167,7 +167,10 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="components.cpp" />
+    <ClCompile Include="connector.cpp" />
+    <ClCompile Include="delay_component.cpp" />
+    <ClCompile Include="distortion_component.cpp" />
+    <ClCompile Include="filter_component.cpp" />
     <ClCompile Include="include\Imgui\imgui.cpp" />
     <ClCompile Include="include\Imgui\imgui_demo.cpp" />
     <ClCompile Include="include\ImGui\imgui_draw.cpp" />
@@ -177,12 +180,18 @@
     <ClCompile Include="include\Imgui\imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="midi.cpp" />
+    <ClCompile Include="oscilator_component.cpp" />
+    <ClCompile Include="sampler_component.cpp" />
+    <ClCompile Include="sequencer_component.cpp" />
+    <ClCompile Include="synth.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="components.h" />
+    <ClInclude Include="connector.h" />
     <ClInclude Include="midi.h" />
     <ClInclude Include="ring_buffer.h" />
     <ClInclude Include="sample.h" />
+    <ClInclude Include="synth.h" />
     <ClInclude Include="util.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

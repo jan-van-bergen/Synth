@@ -24,18 +24,57 @@
     <ClCompile Include="include\ImGui\imgui_tables.cpp">
       <Filter>ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="components.cpp" />
+    <ClCompile Include="sampler_component.cpp">
+      <Filter>components</Filter>
+    </ClCompile>
+    <ClCompile Include="sequencer_component.cpp">
+      <Filter>components</Filter>
+    </ClCompile>
+    <ClCompile Include="oscilator_component.cpp">
+      <Filter>components</Filter>
+    </ClCompile>
+    <ClCompile Include="filter_component.cpp">
+      <Filter>components</Filter>
+    </ClCompile>
+    <ClCompile Include="distortion_component.cpp">
+      <Filter>components</Filter>
+    </ClCompile>
+    <ClCompile Include="delay_component.cpp">
+      <Filter>components</Filter>
+    </ClCompile>
+    <ClCompile Include="synth.cpp">
+      <Filter>synth</Filter>
+    </ClCompile>
+    <ClCompile Include="connector.cpp">
+      <Filter>synth</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="midi.h" />
     <ClInclude Include="ring_buffer.h" />
-    <ClInclude Include="components.h" />
     <ClInclude Include="util.h" />
-    <ClInclude Include="sample.h" />
+    <ClInclude Include="components.h">
+      <Filter>components</Filter>
+    </ClInclude>
+    <ClInclude Include="synth.h">
+      <Filter>synth</Filter>
+    </ClInclude>
+    <ClInclude Include="connector.h">
+      <Filter>synth</Filter>
+    </ClInclude>
+    <ClInclude Include="sample.h">
+      <Filter>synth</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="ImGui">
       <UniqueIdentifier>{883751f0-93d7-40d1-aad9-346efd403d0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="components">
+      <UniqueIdentifier>{b350d5a1-4a01-4871-aad1-db243a6e1740}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="synth">
+      <UniqueIdentifier>{cf5cfb8f-f390-468b-8c28-d0b77a338af4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
