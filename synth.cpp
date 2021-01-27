@@ -83,7 +83,8 @@ void Synth::render() {
 			if (ImGui::MenuItem("Delay"))      add_component<DelayComponent>();    
 			if (ImGui::MenuItem("Filter"))     add_component<FilterComponent>();   
 			
-			if (ImGui::MenuItem("Speaker")) add_component<SpeakerComponent>();  
+			if (ImGui::MenuItem("Speaker"))  add_component<SpeakerComponent>();  
+			if (ImGui::MenuItem("Recorder")) add_component<RecorderComponent>();  
 
 			ImGui::EndMenu();
 		}

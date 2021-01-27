@@ -114,9 +114,20 @@ struct DelayComponent : Component {
 	void render(struct Synth const & synth) override;
 };
 
-struct SpeakerComponent : Component{
+struct SpeakerComponent : Component {
 	SpeakerComponent() : Component("Speaker", { { this, "Input" } }, { }) { }
 	
 	void update(struct Synth const & synth) override { }
 	void render(struct Synth const & synth) override { }
+};
+
+struct RecorderComponent : Component {
+	std::vector<Sample> samples;
+
+	bool recording = false;
+
+	RecorderComponent() : Component("Recorder", { { this, "Input" } }, { }) { }
+	
+	void update(struct Synth const & synth) override;
+	void render(struct Synth const & synth) override;
 };

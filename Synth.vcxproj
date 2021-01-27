@@ -133,6 +133,7 @@
       <AdditionalIncludeDirectories>include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <FloatingPointModel>Fast</FloatingPointModel>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -155,6 +156,7 @@
       <AdditionalIncludeDirectories>include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <FloatingPointModel>Fast</FloatingPointModel>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -183,6 +185,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="midi.cpp" />
     <ClCompile Include="oscilator_component.cpp" />
+    <ClCompile Include="recorder_component.cpp" />
     <ClCompile Include="sampler_component.cpp" />
     <ClCompile Include="sequencer_component.cpp" />
     <ClCompile Include="synth.cpp" />

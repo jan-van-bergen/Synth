@@ -341,3 +341,6 @@ healthchecksdb
 
 # ImGui Config
 imgui.ini
+
+# Exported Recordings
+samples/recording_[0-9]*.wav
