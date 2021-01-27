@@ -3,13 +3,13 @@
 #include "synth.h"
 
 void SequencerComponent::update(Synth const & synth) {
+	auto sixteenth_note = size_t(60) * SAMPLE_RATE / (4 * synth.tempo);
+	
 	for (int i = 0; i < BLOCK_SIZE; i++) {
-		static constexpr auto SIXTEENTH_NOTE = 115 * SAMPLE_RATE / 1000;
+		auto time = (synth.time + i) % (sixteenth_note * TRACK_SIZE);
 
-		auto time = (synth.time + i) % (SIXTEENTH_NOTE * TRACK_SIZE);
-
-		auto step = time / SIXTEENTH_NOTE;
-		auto hit  = time % SIXTEENTH_NOTE == 0;
+		auto step = time / sixteenth_note;
+		auto hit  = time % sixteenth_note == 0;
 
 		if (hit) outputs[0].values[i] = steps[step];
 	}
@@ -19,6 +19,7 @@ void SequencerComponent::render(Synth const & synth) {
 	char label[32];
 
 	for (int i = 0; i < TRACK_SIZE; i++) {
+		// Draw quarter notes with alternating colours for clarity
 		if ((i / 4) % 2 == 0) {
 			ImGui::PushStyleColor(ImGuiCol_SliderGrab, ImColor(250, 100, 100, 100).Value);
 		} else {

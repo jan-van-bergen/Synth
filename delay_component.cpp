@@ -1,11 +1,19 @@
 #include "components.h"
 
-void DelayComponent::update_history_size() {
-	history.resize(115 * SAMPLE_RATE * steps / 1000);
+#include "synth.h"
+
+void DelayComponent::history_resize(int size) {
+	history.resize(size);
 	offset %= history.size();
 }
 
 void DelayComponent::update(Synth const & synth) {
+	auto history_size = size_t(60) * SAMPLE_RATE * steps / (4 * synth.tempo);
+	
+	if (history.size() != history_size) {
+		history_resize(history_size);
+	}
+
 	for (int i = 0; i < BLOCK_SIZE; i++) {
 		auto sample = inputs[0].get_value(i);
 
@@ -19,8 +27,6 @@ void DelayComponent::update(Synth const & synth) {
 }
 
 void DelayComponent::render(Synth const & synth) {
-	if (ImGui::SliderInt("Steps", &steps, 1, 8)) {
-		 update_history_size();
-	}
+	ImGui::SliderInt("Steps", &steps, 1, 8);
 	ImGui::SliderFloat("Feedback", &feedback, 0.0f, 1.0f);
 }

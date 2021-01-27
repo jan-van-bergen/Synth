@@ -17,6 +17,8 @@ struct Synth {
 		return static_cast<T *>(components.emplace_back(std::move(component)).get());
 	}
 
+	int tempo = 130;
+
 	int time = 0;
 	
 	struct Note {

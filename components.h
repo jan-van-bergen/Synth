@@ -106,11 +106,9 @@ struct DelayComponent : Component {
 	std::vector<Sample> history;
 	int offset = 0;
 
-	DelayComponent() : Component("Delay", { { this, "In" } }, { { this, "Out" } }) {
-		update_history_size();
-	}
+	DelayComponent() : Component("Delay", { { this, "In" } }, { { this, "Out" } }) { }
 
-	void update_history_size();
+	void history_resize(int size);
 	
 	void update(struct Synth const & synth) override;
 	void render(struct Synth const & synth) override;

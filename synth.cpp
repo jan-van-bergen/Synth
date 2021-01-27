@@ -15,6 +15,7 @@ void Synth::update(Sample buf[BLOCK_SIZE]) {
 		}
 	}
 
+	// Traverse the Graph formed by the connections
 	std::queue<Component *> queue;
 	for (auto source : sources) queue.push(source);
 
@@ -44,6 +45,7 @@ void Synth::update(Sample buf[BLOCK_SIZE]) {
 	
 	time += BLOCK_SIZE;
 
+	// Collect the resulting audio samples
 	memset(buf, 0, BLOCK_SIZE * sizeof(Sample));
 
 	for (auto const & sink : sinks) {
@@ -61,6 +63,7 @@ void Synth::render() {
 	connections.clear();
 	drag_handled = false;
 
+	// Draw menu bar
 	if (ImGui::BeginMainMenuBar()) {
 		if (ImGui::BeginMenu("File")) {
 			ImGui::EndMenu();
@@ -90,6 +93,7 @@ void Synth::render() {
 
 	char label[32];
 
+	// Draw Components
 	for (int i = 0; i < components.size(); i++) {
 		auto & component = components[i];
 
@@ -199,6 +203,11 @@ void Synth::render() {
 		ImGui::SliderFloat("", connection_weight, 0.0f, 1.0f);
 		ImGui::End();
 	}
+
+	if (ImGui::Begin("Manager")) {
+		ImGui::SliderInt("Tempo", &tempo, 60, 200);
+	}
+	ImGui::End();
 
 	auto const & io = ImGui::GetIO();
 
