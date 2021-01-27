@@ -55,7 +55,7 @@ void OscilatorComponent::update(Synth const & synth) {
 
 			auto t = float(time) * SAMPLE_RATE_INV;
 
-			auto frequency = util::note_freq(note.note + transpose);
+			auto frequency = util::note_freq(note.note + transpose) * std::pow(2.0f, detune / 1200.0f);
 			auto amplitude = 20.0f * note.velocity * envelope(duration, env_attack, env_hold, env_decay, env_sustain);
 
 			switch (waveform_index) {
@@ -63,7 +63,7 @@ void OscilatorComponent::update(Synth const & synth) {
 				case 1: outputs[0].values[i] += generate_square  (t, frequency, amplitude); break;
 				case 2: outputs[0].values[i] += generate_triangle(t, frequency, amplitude); break;
 				case 3: outputs[0].values[i] += generate_saw     (t, frequency, amplitude); break;
-				case 4: outputs[0].values[i] += generate_noise(amplitude); break;
+				case 4: outputs[0].values[i] += generate_noise                 (amplitude); break;
 
 				default: abort();
 			}
@@ -83,6 +83,7 @@ void OscilatorComponent::render(Synth const & synth) {
 	}
 
 	ImGui::DragInt("Transpose", &transpose, 1.0f / 12.0f);
+	ImGui::SliderFloat("Detune", &detune, -100.0f, 100.0f);
 
 	ImGui::SliderFloat("Attack",  &env_attack,  0.0f, 4.0f);
 	ImGui::SliderFloat("Hold",    &env_hold,    0.0f, 4.0f);

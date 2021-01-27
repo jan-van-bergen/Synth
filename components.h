@@ -39,7 +39,8 @@ struct OscilatorComponent : Component {
 
 	int waveform_index = 3;
 	
-	int transpose = 0;
+	int   transpose = 0;
+	float detune    = 0.0f;
 
 	// Envelope
 	float env_attack  = 0.1f;
