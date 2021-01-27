@@ -27,6 +27,6 @@ void DelayComponent::update(Synth const & synth) {
 }
 
 void DelayComponent::render(Synth const & synth) {
-	ImGui::SliderInt("Steps", &steps, 1, 8);
-	ImGui::SliderFloat("Feedback", &feedback, 0.0f, 1.0f);
+	steps   .render();
+	feedback.render();
 }

@@ -10,6 +10,8 @@
 #include <ImGui/imgui.h>
 
 #include "sample.h"
+
+#include "parameter.h"
 #include "connector.h"
 
 struct Component {
@@ -39,16 +41,24 @@ struct OscilatorComponent : Component {
 
 	int waveform_index = 3;
 	
-	int   transpose = 0;
-	float detune    = 0.0f;
+	Parameter<int>   transpose;
+	Parameter<float> detune;
 
 	// Envelope
-	float env_attack  = 0.1f;
-	float env_hold    = 0.5f;
-	float env_decay   = 1.0f;
-	float env_sustain = 0.5f;
+	Parameter<float> env_attack;
+	Parameter<float> env_hold;
+	Parameter<float> env_decay;
+	Parameter<float> env_sustain;
 
-	OscilatorComponent() : Component("Oscilator", { }, { { this, "Out" } }) { }
+	OscilatorComponent() : Component("Oscilator", { }, { { this, "Out" } }),
+		transpose("Transpose", 0, std::make_pair(-24, 24), { -24, -12, 0, 12, 24 }),	
+		detune("Detune", 0.0f, std::make_pair(-100.0f, 100.0f), { 0.0f }),
+
+		env_attack ("Attack",  0.1f, std::make_pair(0.0f, 4.0f), { 1, 2, 3, 4 }),
+		env_hold   ("Hold",    0.5f, std::make_pair(0.0f, 4.0f), { 1, 2, 3, 4 }),
+		env_decay  ("Decay",   1.0f, std::make_pair(0.0f, 4.0f), { 1, 2, 3, 4 }),
+		env_sustain("Sustain", 0.5f, std::make_pair(0.0f, 1.0f))	
+	{ }
 
 	void update(struct Synth const & synth) override;
 	void render(struct Synth const & synth) override;
@@ -58,7 +68,7 @@ struct SamplerComponent : Component {
 	std::vector<Sample> samples;
 	int current_sample = 0;
 
-	float velocity = 1.0f;
+	float velocity = 0.0f;
 
 	char filename[128];
 
@@ -77,10 +87,13 @@ struct FilterComponent : Component {
 	static constexpr char const * filter_names[] = { "Low Pass", "High Pass", "Band Pass", "None" };
 	int filter_type = 0;
 
-	float cutoff = 1000.0f;
-	float resonance = 0.5f;
+	Parameter<float> cutoff;
+	Parameter<float> resonance;
 
-	FilterComponent() : Component("Filter", { { this, "In" } }, { { this, "Out" } }) { }
+	FilterComponent() : Component("Filter", { { this, "In" } }, { { this, "Out" } }),
+		cutoff   ("Cutoff",    1000.0f, std::make_pair(20.0f, 10000.0f)),
+		resonance("Resonance",    0.5f, std::make_pair(0.0f, 1.0f))
+	{ }
 	
 	void update(struct Synth const & synth) override;
 	void render(struct Synth const & synth) override;
@@ -91,22 +104,27 @@ private:
 };
 
 struct DistortionComponent : Component {
-	float amount = 0.5f;
+	Parameter<float> amount;
 
-	DistortionComponent() : Component("Distortion", { { this, "In" } }, { { this, "Out" } }) { }
+	DistortionComponent() : Component("Distortion", { { this, "In" } }, { { this, "Out" } }),
+		amount("Amount", 0.5f, std::make_pair(0.0f, 1.0f))
+	{ }
 
 	void update(struct Synth const & synth) override;
 	void render(struct Synth const & synth) override;
 };
 
 struct DelayComponent : Component {
-	int   steps    = 3;
-	float feedback = 0.7f;
+	Parameter<int>   steps;
+	Parameter<float> feedback;
 
 	std::vector<Sample> history;
 	int offset = 0;
 
-	DelayComponent() : Component("Delay", { { this, "In" } }, { { this, "Out" } }) { }
+	DelayComponent() : Component("Delay", { { this, "In" } }, { { this, "Out" } }),
+		steps("Steps", 3, std::make_pair(0, 8)),
+		feedback("Feedback", 0.7f, std::make_pair(0.0f, 1.0f))
+	{ }
 
 	void history_resize(int size);
 	

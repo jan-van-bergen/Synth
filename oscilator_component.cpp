@@ -80,11 +80,11 @@ void OscilatorComponent::render(Synth const & synth) {
 		ImGui::EndCombo();
 	}
 
-	ImGui::DragInt("Transpose", &transpose, 1.0f / 12.0f);
-	ImGui::SliderFloat("Detune", &detune, -100.0f, 100.0f);
+	transpose.render();
+	detune   .render();
 
-	ImGui::SliderFloat("Attack",  &env_attack,  0.0f, 4.0f);
-	ImGui::SliderFloat("Hold",    &env_hold,    0.0f, 4.0f);
-	ImGui::SliderFloat("Decay",   &env_decay,   0.0f, 4.0f);
-	ImGui::SliderFloat("Sustain", &env_sustain, 0.0f, 1.0f);
+	env_attack .render();
+	env_hold   .render();
+	env_decay  .render();
+	env_sustain.render();
 }

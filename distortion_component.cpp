@@ -17,5 +17,5 @@ void DistortionComponent::update(Synth const & synth) {
 }
 
 void DistortionComponent::render(Synth const & synth) {
-	ImGui::SliderFloat("Amount", &amount, 0.0f, 1.0f);
+	amount.render();
 }

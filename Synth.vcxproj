@@ -194,6 +194,7 @@
     <ClInclude Include="components.h" />
     <ClInclude Include="connector.h" />
     <ClInclude Include="midi.h" />
+    <ClInclude Include="parameter.h" />
     <ClInclude Include="ring_buffer.h" />
     <ClInclude Include="sample.h" />
     <ClInclude Include="synth.h" />

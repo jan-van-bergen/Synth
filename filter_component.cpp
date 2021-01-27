@@ -41,6 +41,6 @@ void FilterComponent::render(Synth const & synth) {
 		ImGui::EndCombo();
 	}
 
-	ImGui::SliderFloat("Cutoff",    &cutoff,   20.0f, 10000.0f);
-	ImGui::SliderFloat("Resonance", &resonance, 0.0f, 1.0f);
+	cutoff   .render();
+	resonance.render();
 }

@@ -68,6 +68,9 @@
     <ClInclude Include="sample.h">
       <Filter>synth</Filter>
     </ClInclude>
+    <ClInclude Include="parameter.h">
+      <Filter>synth</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="ImGui">

@@ -55,6 +55,7 @@ void RecorderComponent::render(Synth const & synth) {
 		char filename[32];
 		auto num = 0;
 
+		// Find unique file name
 		while (true) {
 			sprintf_s(filename, "samples/recording_%i.wav", num);
 
@@ -63,13 +64,13 @@ void RecorderComponent::render(Synth const & synth) {
 			num++;
 		}
 
-		auto data_size = samples.size() * sizeof(Sample);
-
 		WAVHeader header = { };
 		memcpy(&header.riff,       "RIFF", 4);
 		memcpy(&header.wave,       "WAVE", 4);
 		memcpy(&header.fmt,        "fmt ", 4);
 		memcpy(&header.chunk_data, "data", 4);
+
+		auto data_size = samples.size() * sizeof(Sample);
 
 		header.chunk_size = sizeof(WAVHeader) - 8 + data_size;
 		header.ext = 16;
