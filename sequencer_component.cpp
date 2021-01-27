@@ -29,7 +29,7 @@ void SequencerComponent::render(Synth const & synth) {
 		
 		sprintf_s(label, "##%i", i);
 
-		ImGui::VSliderFloat(label, ImVec2(16, 64), &steps[i], 0.0f, 1.0f);
+		ImGui::VSliderFloat(label, ImVec2(16, 64), &steps[i], 0.0f, 1.0f, "");
 		ImGui::SameLine();
 		
 		ImGui::PopStyleColor();

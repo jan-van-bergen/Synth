@@ -35,7 +35,7 @@ struct SequencerComponent : Component {
 };
 
 struct OscilatorComponent : Component {
-	static constexpr const char * waveform_names[] = { "Sine", "Square", "Triangle", "Sawtooth" };
+	static constexpr const char * waveform_names[] = { "Sine", "Square", "Triangle", "Sawtooth", "Noise" };
 
 	int waveform_index = 3;
 	

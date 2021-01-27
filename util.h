@@ -40,24 +40,6 @@ namespace util {
 		return freq * pow[note];
 	}
 	
-	inline Sample generate_sine(float t, float freq, float amplitude = 1.0f) {
-		return amplitude * std::sin(TWO_PI * t * freq);
-	}
-
-	inline Sample generate_saw(float t, float freq, float amplitude = 1.0f) {
-		return amplitude * 2.0f * (t * freq - std::floor(t * freq + 0.5f));
-	}
-
-	inline Sample generate_square(float t, float freq, float amplitude = 1.0f) {
-		return std::fmodf(t * freq, 1.0f) < 0.5f ? amplitude : -amplitude;
-	}
-
-	inline Sample generate_triangle(float t, float freq, float amplitude = 1.0f) {
-		float x = t * freq + 0.25f;
-		return amplitude * (4.0f * std::abs(x - std::floor(x + 0.5f)) - 1.0f);
-	}
-
-
 	template<typename T>
 	inline float lerp(T a, T b, float t) {
 		return a + (b - a) * t;
@@ -68,6 +50,11 @@ namespace util {
 		if (value > max) return max;
 
 		return value;
+	}
+	
+	template<typename T, int N>
+	constexpr int array_element_count(const T (& array)[N]) {
+		return N;
 	}
 
 	inline int scancode_to_note(SDL_Scancode scancode) {

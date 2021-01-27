@@ -25,8 +25,8 @@ extern "C" { _declspec(dllexport) unsigned NvOptimusEnablement = true; }
 
 static RingBuffer<Sample[BLOCK_SIZE], 3> buffers;
 
-static constexpr auto WINDOW_WIDTH  = 1280;
-static constexpr auto WINDOW_HEIGHT = 720;
+static constexpr auto WINDOW_WIDTH  = 1600;
+static constexpr auto WINDOW_HEIGHT = 900;
 
 
 static void sdl_audio_callback(void * user_data, Uint8 * stream, int len) {

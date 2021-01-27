@@ -34,7 +34,7 @@ void FilterComponent::update(Synth const & synth) {
 
 void FilterComponent::render(Synth const & synth) {
 	if (ImGui::BeginCombo("Type", filter_names[filter_type])) {
-		for (int j = 0; j < IM_ARRAYSIZE(filter_names); j++) {
+		for (int j = 0; j < util::array_element_count(filter_names); j++) {
 			if (ImGui::Selectable(filter_names[j], filter_type == j)) {
 				filter_type = j;
 			}
