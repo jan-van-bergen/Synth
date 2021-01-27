@@ -20,7 +20,7 @@ struct Synth {
 		return static_cast<T *>(components.emplace_back(std::move(component)).get());
 	}
 
-	int tempo = 130;
+	Parameter<int> tempo = { "Tempo", 130, std::make_pair(60, 200), { 80, 110, 128, 140, 150, 174 } };
 
 	int time = 0;
 	

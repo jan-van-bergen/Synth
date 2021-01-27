@@ -11,7 +11,11 @@ void SequencerComponent::update(Synth const & synth) {
 		auto step = time / sixteenth_note;
 		auto hit  = time % sixteenth_note == 0;
 
-		if (hit) outputs[0].values[i] = steps[step];
+		if (hit) {
+			outputs[0].values[i] = steps[step];
+
+			current_step = step;
+		}
 	}
 }
 
@@ -21,9 +25,9 @@ void SequencerComponent::render(Synth const & synth) {
 	for (int i = 0; i < TRACK_SIZE; i++) {
 		// Draw quarter notes with alternating colours for clarity
 		if ((i / 4) % 2 == 0) {
-			ImGui::PushStyleColor(ImGuiCol_SliderGrab, ImColor(250, 100, 100, 100).Value);
+			ImGui::PushStyleColor(ImGuiCol_SliderGrab, ImColor(250, 100, 100, current_step == i ? 150 : 100).Value);
 		} else {
-			ImGui::PushStyleColor(ImGuiCol_SliderGrab, ImColor(250, 250, 250, 100).Value);
+			ImGui::PushStyleColor(ImGuiCol_SliderGrab, ImColor(250, 250, 250, current_step == i ? 150 : 100).Value);
 		}
 		
 		sprintf_s(label, "##%i", i);

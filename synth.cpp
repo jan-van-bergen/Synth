@@ -206,7 +206,7 @@ void Synth::render() {
 	}
 
 	if (ImGui::Begin("Manager")) {
-		ImGui::SliderInt("Tempo", &tempo, 60, 200);
+		tempo.render();
 	}
 	ImGui::End();
 

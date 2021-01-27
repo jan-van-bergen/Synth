@@ -30,6 +30,8 @@ struct SequencerComponent : Component {
 	static constexpr auto TRACK_SIZE = 16;
 	float steps[TRACK_SIZE] = { };
 
+	int current_step = 0;
+
 	SequencerComponent() : Component("Sequencer", { }, { { this, "Out" } }) { }
 
 	void update(struct Synth const & synth) override;

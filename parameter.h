@@ -62,22 +62,34 @@ struct Parameter {
 		if (ImGui::BeginPopupContextItem()) {
 			char label[128] = { };
 
+			auto any_clicked = false;
+
 			for (auto const & option : options) {
 				sprintf_s(label, fmt, option);
 
-				if (ImGui::Button(label)) parameter = option;
+				if (ImGui::Button(label)) {
+					parameter = option;
+
+					any_clicked = true;
+				}
 			}
 
 			if (options.size() > 0) ImGui::Separator();
 
 			if (ImGui::Button("Copy")) {
 				memcpy(parameter_clipboard, &parameter, 4);
+
+				any_clicked = true;
 			}
+
 			if (ImGui::Button("Paste")) {
 				memcpy(&parameter, parameter_clipboard, 4);
-
 				parameter = util::clamp(parameter, lower, upper);
+
+				any_clicked = true;
 			}
+
+			if (any_clicked) ImGui::CloseCurrentPopup();
 
 			ImGui::EndPopup();
 		}
