@@ -35,8 +35,8 @@ static void sdl_audio_callback(void * user_data, Uint8 * stream, int len) {
 	auto buf = buffers.get_read();
 
 	for (int i = 0; i < BLOCK_SIZE; i++) {
-		stream[2*i    ] = (char)util::clamp(buf[i].left,  -128.0f, 127.0f);
-		stream[2*i + 1] = (char)util::clamp(buf[i].right, -128.0f, 127.0f);
+		stream[2*i    ] = (char)util::clamp(buf[i].left  * 127.0f, -128.0f, 127.0f);
+		stream[2*i + 1] = (char)util::clamp(buf[i].right * 127.0f, -128.0f, 127.0f);
 	}
 	
 	buffers.advance_read();

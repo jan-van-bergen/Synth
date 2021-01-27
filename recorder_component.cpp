@@ -35,7 +35,7 @@ void RecorderComponent::update(Synth const & synth) {
 	samples.resize(start + BLOCK_SIZE);
 
 	for (int i = 0; i < BLOCK_SIZE; i++) {
-		samples[start + i] = inputs[0].get_value(i) / 127.0f;
+		samples[start + i] = inputs[0].get_value(i);
 	}
 }
 

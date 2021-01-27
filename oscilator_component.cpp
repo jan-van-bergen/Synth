@@ -54,7 +54,7 @@ void OscilatorComponent::update(Synth const & synth) {
 			auto t = float(time) * SAMPLE_RATE_INV;
 
 			auto frequency = util::note_freq(note.note + transpose) * std::pow(2.0f, detune / 1200.0f);
-			auto amplitude = 20.0f * note.velocity * envelope(duration, env_attack, env_hold, env_decay, env_sustain);
+			auto amplitude = 0.2f * note.velocity * envelope(duration, env_attack, env_hold, env_decay, env_sustain);
 
 			switch (waveform_index) {
 				case 0: outputs[0].values[i] += generate_sine    (t, frequency, amplitude); break;

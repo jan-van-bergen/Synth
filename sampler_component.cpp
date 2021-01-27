@@ -72,7 +72,7 @@ void SamplerComponent::update(Synth const & synth) {
 
 		auto abs = Sample::apply_function(std::fabsf, inputs[0].get_value(i));
 		if (abs.left > EPSILON && abs.right > EPSILON) {
-			velocity = 127.0f * abs.left;
+			velocity = abs.left;
 			current_sample = 0; // Trigger sample on input
 		}
 
