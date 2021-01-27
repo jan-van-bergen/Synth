@@ -45,8 +45,6 @@ static float envelope(int time, float attack, float hold, float decay, float sus
 };
 
 void OscilatorComponent::update(Synth const & synth) {
-	outputs[0].clear();
-
 	for (auto const & [id, note] : synth.notes) {
 		for (int i = 0; i < BLOCK_SIZE; i++) {
 			auto time = synth.time + i;

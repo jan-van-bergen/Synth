@@ -3,8 +3,6 @@
 #include "synth.h"
 
 void SequencerComponent::update(Synth const & synth) {
-	outputs[0].clear();
-
 	for (int i = 0; i < BLOCK_SIZE; i++) {
 		static constexpr auto SIXTEENTH_NOTE = 115 * SAMPLE_RATE / 1000;
 

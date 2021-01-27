@@ -8,6 +8,13 @@
 static constexpr auto CONNECTOR_SIZE = 16.0f;
 
 void Synth::update(Sample buf[BLOCK_SIZE]) {
+	// Clear output of all components
+	for (auto const & component : components) {
+		for (auto & output : component->outputs) {
+			output.clear();
+		}
+	}
+
 	std::queue<Component *> queue;
 	for (auto source : sources) queue.push(source);
 
@@ -90,7 +97,7 @@ void Synth::render() {
 
 		auto hidden = true;
 
-		if (ImGui::Begin(label)) {
+		if (ImGui::Begin(label, nullptr, ImGuiWindowFlags_NoSavedSettings)) {
 			component->render(*this);
 
 			for (auto & input  : component->inputs)  render_connector_in (input);
@@ -98,7 +105,8 @@ void Synth::render() {
 
 			hidden = false;
 		}
-			auto pos = ImGui::GetCursorScreenPos();
+			
+		auto pos = ImGui::GetCursorScreenPos();
 		ImGui::End();
 
 		if (hidden) {

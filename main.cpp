@@ -92,14 +92,7 @@ int main(int argc, char * argv[]) {
 	auto mouse_y = 0.0f;
 
 	Synth synth;
-	auto oscilator = synth.add_component<OscilatorComponent>();
-	auto filter    = synth.add_component<FilterComponent>();
-	auto delay     = synth.add_component<DelayComponent>();
-	auto speaker   = synth.add_component<SpeakerComponent>();
-	
-	synth.connect(oscilator->outputs[0], filter ->inputs[0]);
-	synth.connect(filter   ->outputs[0], delay  ->inputs[0]);
-	synth.connect(delay    ->outputs[0], speaker->inputs[0]);
+	synth.add_component<SpeakerComponent>();
 	
 	auto window_is_open = true;
 
@@ -139,8 +132,8 @@ int main(int argc, char * argv[]) {
 		};
 		
 		auto midi_length = midi_ticks_to_samples(midi.events[midi.events.size() - 1].time, midi.tempo, midi.ticks);
-		auto a = time / midi_length;
-		auto t = time % midi_length;
+		auto a = synth.time / midi_length;
+		auto t = synth.time % midi_length;
 
 		while (true) {
 			auto const & midi_event = midi.events[midi_offset];
@@ -150,10 +143,9 @@ int main(int argc, char * argv[]) {
 			if (midi_time > t && a == midi_rounds) break;
 
 			if (midi_event.type == midi::Event::Type::PRESS) {
-				Note n = { midi_event.note.note, 1.0f, time };	
-				notes.insert(std::make_pair(midi_event.note.note, n));
+				synth.note_press(midi_event.note.note, 1.0f);
 			} else if (midi_event.type == midi::Event::Type::RELEASE) {
-				 notes.erase(midi_event.note.note);
+				synth.note_release(midi_event.note.note);
 			}
 
 			midi_offset++;

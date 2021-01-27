@@ -6,8 +6,6 @@ void DelayComponent::update_history_size() {
 }
 
 void DelayComponent::update(Synth const & synth) {
-	outputs[0].clear();
-
 	for (int i = 0; i < BLOCK_SIZE; i++) {
 		auto sample = inputs[0].get_value(i);
 

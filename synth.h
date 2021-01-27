@@ -44,8 +44,7 @@ struct Synth {
 	}
 
 	void note_press(int note, float velocity = 1.0f) {
-		Note n = { note, velocity, time };	
-		notes.insert(std::make_pair(note, n));
+		notes.insert(std::make_pair(note, Note { note, velocity, time }));
 	}
 	void note_release(int note) {
 		notes.erase(note);

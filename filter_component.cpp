@@ -8,8 +8,6 @@ void FilterComponent::update(Synth const & synth) {
     
 	auto denom_inv = 1.0f / (1.0f + (2.0f * R * g) + g * g);
 
-	outputs[0].clear();
-
 	for (int i = 0; i < BLOCK_SIZE; i++) {
 		auto sample = inputs[0].get_value(i);
 

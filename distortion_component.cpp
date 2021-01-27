@@ -3,8 +3,6 @@
 #include "util.h"
 
 void DistortionComponent::update(Synth const & synth) {
-	outputs[0].clear();
-
 	auto threshold = 1.00001f - amount;
 
 	for (int i = 0; i < BLOCK_SIZE; i++) {

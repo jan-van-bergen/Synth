@@ -67,8 +67,6 @@ void SamplerComponent::load() {
 }
 
 void SamplerComponent::update(Synth const & synth) {
-	outputs[0].clear();
-
 	for (int i = 0; i < BLOCK_SIZE; i++) {
 		static constexpr auto EPSILON = 0.001f;
 
