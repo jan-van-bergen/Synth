@@ -24,9 +24,7 @@ static Sample generate_noise(float amplitude = 1.0f) {
 	return amplitude * ((rand() / float(RAND_MAX)) * 2.0f - 1.0f);
 }
 
-static float envelope(int time, float attack, float hold, float decay, float sustain) {
-	auto t = float(time) * SAMPLE_RATE_INV;
-
+static float envelope(float t, float attack, float hold, float decay, float sustain) {
 	if (t < attack) {
 		return t / attack;
 	}
@@ -49,12 +47,10 @@ void OscilatorComponent::update(Synth const & synth) {
 		for (int i = 0; i < BLOCK_SIZE; i++) {
 			auto time = synth.time + i;
 
-			auto duration = time - note.time;
-
-			auto t = float(time) * SAMPLE_RATE_INV;
+			auto t = float(time - note.time) * SAMPLE_RATE_INV;
 
 			auto frequency = util::note_freq(note.note + transpose) * std::pow(2.0f, detune / 1200.0f);
-			auto amplitude = 0.2f * note.velocity * envelope(duration, env_attack, env_hold, env_decay, env_sustain);
+			auto amplitude = 0.2f * note.velocity * envelope(4.0f * t / 60.0f * float(synth.tempo), attack, hold, decay, sustain);
 
 			switch (waveform_index) {
 				case 0: outputs[0].values[i] += generate_sine    (t, frequency, amplitude); break;
@@ -83,8 +79,23 @@ void OscilatorComponent::render(Synth const & synth) {
 	transpose.render();
 	detune   .render();
 
-	env_attack .render();
-	env_hold   .render();
-	env_decay  .render();
-	env_sustain.render();
+	float a = attack;
+	float h = hold;
+	float d = decay;
+	float s = sustain;
+
+	static constexpr auto NUM_VALUES = 100;
+
+	float plot_values[NUM_VALUES] = { };
+
+	for (int i = 0; i < NUM_VALUES; i++) {
+		plot_values[i] = envelope(16.0f * float(i) / NUM_VALUES, attack, hold, decay, sustain);
+	}
+
+	ImGui::PlotLines("Envelope", plot_values, NUM_VALUES, 0, nullptr, 0.0f, 1.0f);
+	
+	attack .render();
+	hold   .render();
+	decay  .render();
+	sustain.render();
 }

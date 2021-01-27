@@ -45,19 +45,19 @@ struct OscilatorComponent : Component {
 	Parameter<float> detune;
 
 	// Envelope
-	Parameter<float> env_attack;
-	Parameter<float> env_hold;
-	Parameter<float> env_decay;
-	Parameter<float> env_sustain;
+	Parameter<float> attack;
+	Parameter<float> hold;
+	Parameter<float> decay;
+	Parameter<float> sustain;
 
 	OscilatorComponent() : Component("Oscilator", { }, { { this, "Out" } }),
 		transpose("Transpose", 0, std::make_pair(-24, 24), { -24, -12, 0, 12, 24 }),	
 		detune("Detune", 0.0f, std::make_pair(-100.0f, 100.0f), { 0.0f }),
 
-		env_attack ("Attack",  0.1f, std::make_pair(0.0f, 4.0f), { 1, 2, 3, 4 }),
-		env_hold   ("Hold",    0.5f, std::make_pair(0.0f, 4.0f), { 1, 2, 3, 4 }),
-		env_decay  ("Decay",   1.0f, std::make_pair(0.0f, 4.0f), { 1, 2, 3, 4 }),
-		env_sustain("Sustain", 0.5f, std::make_pair(0.0f, 1.0f))	
+		attack ("Attack",  0.1f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 }),
+		hold   ("Hold",    0.5f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 }),
+		decay  ("Decay",   1.0f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 }),
+		sustain("Sustain", 0.5f, std::make_pair(0.0f, 1.0f))	
 	{ }
 
 	void update(struct Synth const & synth) override;
