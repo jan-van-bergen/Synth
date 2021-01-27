@@ -27,7 +27,7 @@ struct Parameter {
 		bounds(bounds), 
 		options(options)
 	{ 
-		for (auto const & option : options) assert(bounds.first <= option <= bounds.second);
+		for (auto const & option : options) assert(bounds.first <= option && option <= bounds.second);
 	}
 
 	void render() {
