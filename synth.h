@@ -27,9 +27,8 @@ struct Synth {
 		int   time;
 	};
 
-	std::unordered_map<int, Note>  notes;
-	std::unordered_map<int, float> controls = { { 0x4A, 0.5f } };
-	
+	std::unordered_map<int, Note> notes;
+
 	void update(Sample buf[BLOCK_SIZE]);
 	void render();
 	
@@ -44,7 +43,20 @@ struct Synth {
 	}
 
 	void control_update(int control, float value) {
-		controls[control] = value;
+		auto & linked_params = Param::links[control];
+
+		// If there is a Parameter waiting to link, link it to the current Controller
+		if (Param::param_waiting_to_link) {
+			linked_params.push_back(Param::param_waiting_to_link);
+
+			Param::param_waiting_to_link->linked_controller = control;
+			Param::param_waiting_to_link = nullptr;
+		}
+
+		value = util::clamp(value, 0.0f, 1.0f);
+
+		// Update all Parameters that are linked to the current Controller
+		for (auto param : linked_params) param->set_value(value);
 	}
 
 private:
