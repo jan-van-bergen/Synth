@@ -11,12 +11,9 @@ struct Synth {
 	T * add_component() {
 		auto component = std::make_unique<T>();
 
-		if (component->inputs.size() == 0) sources.push_back(component.get());
+		if (component->type == Component::Type::SOURCE) sources.push_back(component.get());
+		if (component->type == Component::Type::SINK)   sinks  .push_back(component.get());
 		
-		if constexpr (std::is_same<T, SpeakerComponent>()) {
-			sinks.push_back(component.get());
-		}
-
 		return static_cast<T *>(components.emplace_back(std::move(component)).get());
 	}
 

@@ -15,12 +15,18 @@
 #include "connector.h"
 
 struct Component {
+	enum struct Type {
+		SOURCE, // Entry point in Node Graph
+		SINK,   // Exit point in Node Graph
+		INTER   // Neither
+	} type;
+
 	std::string name;
 
 	std::vector<ConnectorIn>  inputs;
 	std::vector<ConnectorOut> outputs;
 
-	Component(std::string const & name, std::vector<ConnectorIn> const & inputs, std::vector<ConnectorOut> const & outputs) : name(name), inputs(inputs), outputs(outputs) { }
+	Component(Type type, std::string const & name, std::vector<ConnectorIn> const & inputs, std::vector<ConnectorOut> const & outputs) : type(type), name(name), inputs(inputs), outputs(outputs) { }
 
 	virtual void update(struct Synth const & synth) = 0;
 	virtual void render(struct Synth const & synth) = 0;
@@ -32,7 +38,7 @@ struct SequencerComponent : Component {
 
 	int current_step = 0;
 
-	SequencerComponent() : Component("Sequencer", { }, { { this, "Out" } }) { }
+	SequencerComponent() : Component(Type::SOURCE, "Sequencer", { }, { { this, "Out" } }) { }
 
 	void update(struct Synth const & synth) override;
 	void render(struct Synth const & synth) override;
@@ -52,7 +58,7 @@ struct OscilatorComponent : Component {
 	Parameter<float> decay;
 	Parameter<float> sustain;
 
-	OscilatorComponent() : Component("Oscilator", { }, { { this, "Out" } }),
+	OscilatorComponent() : Component(Type::SOURCE, "Oscilator", { }, { { this, "Out" } }),
 		transpose("Transpose", 0, std::make_pair(-24, 24), { -24, -12, 0, 12, 24 }),	
 		detune("Detune", 0.0f, std::make_pair(-100.0f, 100.0f), { 0.0f }),
 
@@ -74,7 +80,7 @@ struct SamplerComponent : Component {
 
 	char filename[128];
 
-	SamplerComponent() : Component("Sampler", { { this, "Trigger" } }, { { this, "Out" } }) {
+	SamplerComponent() : Component(Type::INTER, "Sampler", { { this, "Trigger" } }, { { this, "Out" } }) {
 		strcpy_s(filename, "samples/kick.wav");
 		load();
 	}
@@ -92,7 +98,7 @@ struct FilterComponent : Component {
 	Parameter<float> cutoff;
 	Parameter<float> resonance;
 
-	FilterComponent() : Component("Filter", { { this, "In" } }, { { this, "Out" } }),
+	FilterComponent() : Component(Type::INTER, "Filter", { { this, "In" } }, { { this, "Out" } }),
 		cutoff   ("Cutoff",    1000.0f, std::make_pair(20.0f, 10000.0f)),
 		resonance("Resonance",    0.5f, std::make_pair(0.0f, 1.0f))
 	{ }
@@ -108,7 +114,7 @@ private:
 struct DistortionComponent : Component {
 	Parameter<float> amount;
 
-	DistortionComponent() : Component("Distortion", { { this, "In" } }, { { this, "Out" } }),
+	DistortionComponent() : Component(Type::INTER, "Distortion", { { this, "In" } }, { { this, "Out" } }),
 		amount("Amount", 0.5f, std::make_pair(0.0f, 1.0f))
 	{ }
 
@@ -123,7 +129,7 @@ struct DelayComponent : Component {
 	std::vector<Sample> history;
 	int offset = 0;
 
-	DelayComponent() : Component("Delay", { { this, "In" } }, { { this, "Out" } }),
+	DelayComponent() : Component(Type::INTER, "Delay", { { this, "In" } }, { { this, "Out" } }),
 		steps("Steps", 3, std::make_pair(0, 8)),
 		feedback("Feedback", 0.7f, std::make_pair(0.0f, 1.0f))
 	{ }
@@ -135,7 +141,7 @@ struct DelayComponent : Component {
 };
 
 struct SpeakerComponent : Component {
-	SpeakerComponent() : Component("Speaker", { { this, "Input" } }, { }) { }
+	SpeakerComponent() : Component(Type::SINK, "Speaker", { { this, "Input" } }, { }) { }
 	
 	void update(struct Synth const & synth) override { }
 	void render(struct Synth const & synth) override { }
@@ -146,7 +152,7 @@ struct RecorderComponent : Component {
 
 	bool recording = false;
 
-	RecorderComponent() : Component("Recorder", { { this, "Input" } }, { }) { }
+	RecorderComponent() : Component(Type::INTER, "Recorder", { { this, "Input" } }, { }) { }
 	
 	void update(struct Synth const & synth) override;
 	void render(struct Synth const & synth) override;

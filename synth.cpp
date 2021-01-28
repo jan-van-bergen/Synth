@@ -92,29 +92,34 @@ void Synth::render() {
 		ImGui::EndMainMenuBar();
 	}
 
-	char label[32];
+	char label[128];
+
+	Component * component_to_be_removed = nullptr;
 
 	// Draw Components
 	for (int i = 0; i < components.size(); i++) {
-		auto & component = components[i];
+		auto component = components[i].get();
 
-		sprintf_s(label, "%s##%i", component->name.c_str(), i);
+		sprintf_s(label, "%s##%p", component->name.c_str(), component);
 
-		auto hidden = true;
+		auto open      = true;
+		auto collapsed = true;
 
-		if (ImGui::Begin(label, nullptr, ImGuiWindowFlags_NoSavedSettings)) {
+		if (ImGui::Begin(label, &open, ImGuiWindowFlags_NoSavedSettings)) {
 			component->render(*this);
 
 			for (auto & input  : component->inputs)  render_connector_in (input);
 			for (auto & output : component->outputs) render_connector_out(output);
 
-			hidden = false;
+			collapsed = false;
 		}
-			
+
 		auto pos = ImGui::GetCursorScreenPos();
 		ImGui::End();
 
-		if (hidden) {
+		if (!open) {
+			component_to_be_removed = component;
+		} else if (collapsed) { // If the Component's Window is collapsed, still draw its connections
 			for (auto & input : component->inputs) {
 				input.pos[0] = pos.x;
 				input.pos[1] = pos.y + 0.5f * CONNECTOR_SIZE;
@@ -205,7 +210,7 @@ void Synth::render() {
 		ImGui::End();
 	}
 
-	if (ImGui::Begin("Manager")) {
+	if (ImGui::Begin("Settings")) {
 		tempo.render();
 	}
 	ImGui::End();
@@ -222,6 +227,7 @@ void Synth::render() {
 		}
 	}
 
+	// If the user is dragging a new connection, draw it
 	if (dragging) {
 		auto spline_start = ImVec2(dragging->pos[0], dragging->pos[1]);
 		auto spline_end   = io.MousePos;
@@ -229,6 +235,30 @@ void Synth::render() {
 		if (dragging->is_input) std::swap(spline_start, spline_end); // Always draw from out to in
 
 		draw_connection(spline_start, spline_end, ImColor(200, 200, 100));
+	}
+
+	// If a Component window was closed, do the bookkeeping required to remove it
+	if (component_to_be_removed) {
+		// Disconnect inputs
+		for (auto & input : component_to_be_removed->inputs) {
+			for (auto & [other, weight] : input.others) {
+				disconnect(*other, input);
+			}
+		}
+
+		// Disconnect outputs
+		for (auto & output : component_to_be_removed->outputs) {
+			for (auto & other : output.others) {
+				disconnect(output, *other);
+			}
+		}
+
+		// Remove from source or sink lists
+		if (component_to_be_removed->type == Component::Type::SOURCE) sources.erase(std::find(sources.begin(), sources.end(), component_to_be_removed));
+		if (component_to_be_removed->type == Component::Type::SINK)   sinks  .erase(std::find(sinks  .begin(), sinks  .end(), component_to_be_removed));
+
+		// Remove Component
+		components.erase(std::find_if(components.begin(), components.end(), [component_to_be_removed](auto const & component) { return component.get() == component_to_be_removed; }));
 	}
 }
 
