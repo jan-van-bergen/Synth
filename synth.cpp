@@ -199,9 +199,19 @@ void Synth::render() {
 			}
 		}
 
+		auto pos = ImVec2(
+			spline_start.x + 0.5f * (spline_end.x - spline_start.x), 
+			spline_start.y + 0.5f * (spline_end.y - spline_start.y)
+		);
+
+		auto going_left = spline_end.x > spline_start.x;
+		auto going_down = spline_end.y > spline_start.y;
+
+		if (!(going_left ^ going_down)) pos.y -= 32.0f; // Move out of the way of the spline
+
 		sprintf_s(label, "Connection##%i", idx++);
 		
-		ImGui::SetNextWindowPos (ImVec2(spline_start.x + 0.5f * (spline_end.x - spline_start.x), spline_start.y + 0.5f * (spline_end.y - spline_start.y)));
+		ImGui::SetNextWindowPos(pos);
 		ImGui::SetNextWindowSize(ImVec2(64, 16));
 		
 		ImGui::Begin(label, nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoScrollbar);
@@ -216,7 +226,11 @@ void Synth::render() {
 
 	auto const & io = ImGui::GetIO();
 
-	if (ImGui::IsMouseReleased(ImGuiMouseButton_Right)) dragging = nullptr;
+	if (ImGui::IsMouseReleased(ImGuiMouseButton_Right)) {
+		dragging = nullptr;
+
+		selected_connection = { };
+	}
 
 	if (ImGui::IsKeyPressed(SDL_SCANCODE_DELETE)) {
 		if (selected_connection.has_value()) {
