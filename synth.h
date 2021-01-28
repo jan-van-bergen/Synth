@@ -33,17 +33,8 @@ struct Synth {
 	void update(Sample buf[BLOCK_SIZE]);
 	void render();
 	
-	void connect(ConnectorOut & out, ConnectorIn & in) {
-		out.others.push_back(&in);
-		in .others.push_back(std::make_pair(&out, 1.0f));
-	}
-
-	void disconnect(ConnectorOut & out, ConnectorIn & in) {
-		out.others.erase(std::find   (out.others.begin(), out.others.end(), &in));
-		in .others.erase(std::find_if(in .others.begin(), in .others.end(), [&out](auto pair) {
-			return pair.first == &out;	
-		}));
-	}
+	void    connect(ConnectorOut & out, ConnectorIn & in);
+	void disconnect(ConnectorOut & out, ConnectorIn & in);
 
 	void note_press(int note, float velocity = 1.0f) {
 		notes.insert(std::make_pair(note, Note { note, velocity, time }));

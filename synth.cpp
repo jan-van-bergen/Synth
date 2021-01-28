@@ -33,9 +33,9 @@ void Synth::update(Sample buf[BLOCK_SIZE]) {
 		for (auto & output : component->outputs) {
 			for (auto other : output.others) {
 				if (!seen.contains(other->component)) {
-					auto inputs = ++num_inputs_satisfied[other->component];
+					auto satisfied = ++num_inputs_satisfied[other->component];
 
-					if (inputs == other->others.size()) {
+					if (satisfied == other->others.size()) { // If all inputs are now satisfied, push onto queue to explore the Node
 						queue.push(other->component);
 					}
 				}
@@ -190,11 +190,6 @@ void Synth::render() {
 			selected_connection = connection;
 		}
 		
-		static constexpr auto width = 64.0f;
-
-		ImGui::SetNextWindowPos (ImVec2(spline_start.x + 0.5f * (spline_end.x - spline_start.x), spline_start.y + 0.5f * (spline_end.y - spline_start.y)));
-		ImGui::SetNextWindowSize(ImVec2(width, 16));
-		
 		float * connection_weight = nullptr;
 
 		for (auto & [other, weight] : connection.second->others) {
@@ -204,9 +199,13 @@ void Synth::render() {
 			}
 		}
 
-		char test[32]; sprintf_s(test, "Connection##%i", idx++);
-		ImGui::Begin(test, nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoScrollbar);
-		ImGui::SliderFloat("", connection_weight, 0.0f, 1.0f);
+		sprintf_s(label, "Connection##%i", idx++);
+		
+		ImGui::SetNextWindowPos (ImVec2(spline_start.x + 0.5f * (spline_end.x - spline_start.x), spline_start.y + 0.5f * (spline_end.y - spline_start.y)));
+		ImGui::SetNextWindowSize(ImVec2(64, 16));
+		
+		ImGui::Begin(label, nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoScrollbar);
+		ImGui::SliderFloat("", connection_weight, 0.0f, 1.0f, "%.1f");
 		ImGui::End();
 	}
 
@@ -260,6 +259,20 @@ void Synth::render() {
 		// Remove Component
 		components.erase(std::find_if(components.begin(), components.end(), [component_to_be_removed](auto const & component) { return component.get() == component_to_be_removed; }));
 	}
+}
+
+void Synth::connect(ConnectorOut & out, ConnectorIn & in) {
+	if (out.component == in.component) return;
+
+	out.others.push_back(&in);
+	in .others.push_back(std::make_pair(&out, 1.0f));
+}
+
+void Synth::disconnect(ConnectorOut & out, ConnectorIn & in) {
+	out.others.erase(std::find   (out.others.begin(), out.others.end(), &in));
+	in .others.erase(std::find_if(in .others.begin(), in .others.end(), [&out](auto pair) {
+		return pair.first == &out;	
+	}));
 }
 
 void Synth::render_connector_in(ConnectorIn & in) {
