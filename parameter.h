@@ -21,7 +21,10 @@ struct Param {
 
 template<typename T>
 struct Parameter : Param {
-	static_assert(std::is_floating_point<T>() || std::is_integral<T>());
+	inline static constexpr auto is_float = std::is_same<T, float>();
+	inline static constexpr auto is_int   = std::is_same<T, int>();
+
+	static_assert(is_float || is_int);
 
 	std::string name;
 
@@ -43,21 +46,15 @@ struct Parameter : Param {
 	void set_value(float value) override {
 		auto [lower, upper] = bounds;
 
-		constexpr bool is_float = std::is_same<T, float>();
-		constexpr bool is_int   = std::is_same<T, int>();
-
-		if (is_float) {
+		if constexpr (is_float) {
 			parameter = util::lerp(lower, upper, value);
-		} else if (is_int) {
+		} else if constexpr (is_int) {
 			parameter = util::lerp(float(lower), float(upper), value);
 		}
 	}
 
 	void render() {
 		auto [lower, upper] = bounds;
-
-		constexpr bool is_float = std::is_same<T, float>();
-		constexpr bool is_int   = std::is_same<T, int>();
 
 		char const * fmt = nullptr;
 		

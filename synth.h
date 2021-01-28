@@ -27,7 +27,7 @@ struct Synth {
 		int   time;
 	};
 
-	std::unordered_map<int, Note> notes;
+	std::vector<Note> notes; // Currently held down notes
 
 	void update(Sample buf[BLOCK_SIZE]);
 	void render();
@@ -36,10 +36,11 @@ struct Synth {
 	void disconnect(ConnectorOut & out, ConnectorIn & in);
 
 	void note_press(int note, float velocity = 1.0f) {
-		notes.insert(std::make_pair(note, Note { note, velocity, time }));
+		notes.emplace_back(note, velocity, time);
 	}
+
 	void note_release(int note) {
-		notes.erase(note);
+		notes.erase(std::find_if(notes.begin(), notes.end(), [note](auto const & n) { return n.note == note; }));
 	}
 
 	void control_update(int control, float value) {
