@@ -31,8 +31,8 @@ struct ConnectorIn : Connector {
 };
 
 struct ConnectorOut : Connector {
-	std::vector<struct ConnectorIn *> others; 
-	
+	std::vector<ConnectorIn *> others;
+		
 	Sample values[BLOCK_SIZE];
 
 	ConnectorOut(Component * component, std::string const & name) : Connector(false, component, name) {

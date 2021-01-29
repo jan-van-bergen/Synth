@@ -79,12 +79,14 @@ void Synth::render() {
 			if (ImGui::MenuItem("Oscilator")) add_component<OscilatorComponent>();
 			if (ImGui::MenuItem("Sampler"))   add_component<SamplerComponent>();
 			
-			if (ImGui::MenuItem("Distortion")) add_component<DistortionComponent>();    
-			if (ImGui::MenuItem("Delay"))      add_component<DelayComponent>();    
-			if (ImGui::MenuItem("Filter"))     add_component<FilterComponent>();   
+			if (ImGui::MenuItem("Split")) add_component<SplitComponent>();
+
+			if (ImGui::MenuItem("Distortion")) add_component<DistortionComponent>();
+			if (ImGui::MenuItem("Delay"))      add_component<DelayComponent>();
+			if (ImGui::MenuItem("Filter"))     add_component<FilterComponent>();
 			
-			if (ImGui::MenuItem("Speaker"))  add_component<SpeakerComponent>();  
-			if (ImGui::MenuItem("Recorder")) add_component<RecorderComponent>();  
+			if (ImGui::MenuItem("Speaker"))  add_component<SpeakerComponent>();
+			if (ImGui::MenuItem("Recorder")) add_component<RecorderComponent>();
 
 			ImGui::EndMenu();
 		}
@@ -220,6 +222,8 @@ void Synth::render() {
 	}
 
 	if (ImGui::Begin("Settings")) {
+		ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
+
 		tempo.render();
 	}
 	ImGui::End();

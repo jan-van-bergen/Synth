@@ -14,6 +14,8 @@ struct Param {
 	inline static Param * param_waiting_to_link = nullptr;
 	inline static std::unordered_map<int, std::vector<Param *>> links;
 	
+	enum struct Curve { LINEAR, LOGARITHMIC } curve = Curve::LINEAR;
+
 	std::optional<int> linked_controller; // ID of the linked MIDI controller of this param (if any)
 
 	virtual void set_value(float value) = 0;
@@ -34,22 +36,24 @@ struct Parameter : Param {
 
 	std::vector<T> options; // Options available in context menu
 
-	Parameter(std::string const & name, T initial, std::pair<T, T> const & bounds, std::vector<T> options = { }) : 
+	Parameter(std::string const & name, T initial, std::pair<T, T> const & bounds, std::vector<T> options = { }, Curve curve = Curve::LINEAR) : 
 		name(name), 
 		parameter(initial), 
 		bounds(bounds), 
 		options(options)
 	{ 
+		this->curve = curve;
+
 		for (auto const & option : options) assert(bounds.first <= option && option <= bounds.second);
 	}
 
 	void set_value(float value) override {
 		auto [lower, upper] = bounds;
 
-		if constexpr (is_float) {
-			parameter = util::lerp(lower, upper, value);
-		} else if constexpr (is_int) {
+		if (curve == Param::Curve::LINEAR) {
 			parameter = util::lerp(float(lower), float(upper), value);
+		} else {
+			parameter = util::log_interpolate(float(lower), float(upper), value);
 		}
 	}
 
@@ -62,15 +66,15 @@ struct Parameter : Param {
 
 		// Render slider
 		if constexpr (is_float) {
-			ImGui::SliderFloat(name.c_str(), &parameter, lower, upper);
-
 			fmt = "%.3f";
+
+			ImGui::SliderFloat(name.c_str(), &parameter, lower, upper, fmt, curve == Param::Curve::LINEAR ? 0 : ImGuiSliderFlags_Logarithmic);
 
 			scroll_speed = 0.01f;
 		} else if constexpr (is_int) {
-			ImGui::SliderInt(name.c_str(), &parameter, lower, upper);
-
 			fmt = "%i";
+
+			ImGui::SliderInt(name.c_str(), &parameter, lower, upper, fmt, curve == Param::Curve::LINEAR ? 0 : ImGuiSliderFlags_Logarithmic);
 
 			scroll_speed = 1.0f;
 		} else {
@@ -85,7 +89,7 @@ struct Parameter : Param {
 		if (ImGui::BeginPopupContextItem()) {
 			char label[128] = { };
 
-			auto any_clicked = false;
+			auto should_close_popup = false;
 
 			for (auto const & option : options) {
 				sprintf_s(label, fmt, option);
@@ -93,7 +97,7 @@ struct Parameter : Param {
 				if (ImGui::Button(label)) {
 					parameter = option;
 
-					any_clicked = true;
+					should_close_popup = true;
 				}
 			}
 
@@ -126,17 +130,17 @@ struct Parameter : Param {
 			if (ImGui::Button("Copy")) {
 				memcpy(Param::clipboard, &parameter, 4);
 
-				any_clicked = true;
+				should_close_popup = true;
 			}
 
 			if (ImGui::Button("Paste")) {
 				memcpy(&parameter, Param::clipboard, 4);
 				parameter = util::clamp(parameter, lower, upper);
 
-				any_clicked = true;
+				should_close_popup = true;
 			}
 
-			if (any_clicked) ImGui::CloseCurrentPopup();
+			if (should_close_popup) ImGui::CloseCurrentPopup();
 
 			ImGui::EndPopup();
 		} else if (Param::param_waiting_to_link == this) {

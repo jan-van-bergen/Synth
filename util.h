@@ -45,6 +45,11 @@ namespace util {
 		return a + (b - a) * t;
 	}
 
+	template<typename T>
+	inline float log_interpolate(T a, T b, float t) {
+		return std::pow(a, 1.0f - t) * std::pow(b, t);
+	}
+
 	inline float clamp(float value, float min = 0.0f, float max = 1.0f) {
 		if (value < min) return min;
 		if (value > max) return max;

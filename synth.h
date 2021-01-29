@@ -36,11 +36,14 @@ struct Synth {
 	void disconnect(ConnectorOut & out, ConnectorIn & in);
 
 	void note_press(int note, float velocity = 1.0f) {
-		notes.emplace_back(note, velocity, time);
+		if (std::find_if(notes.begin(), notes.end(), [note](auto const & n) { return n.note == note; }) == notes.end()) {
+			notes.emplace_back(note, velocity, time);
+		}
 	}
 
 	void note_release(int note) {
-		notes.erase(std::find_if(notes.begin(), notes.end(), [note](auto const & n) { return n.note == note; }));
+		auto n = std::find_if(notes.begin(), notes.end(), [note](auto const & n) { return n.note == note; });
+		if (n != notes.end()) notes.erase(n);
 	}
 
 	void control_update(int control, float value) {

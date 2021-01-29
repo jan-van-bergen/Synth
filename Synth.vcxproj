@@ -188,6 +188,7 @@
     <ClCompile Include="recorder_component.cpp" />
     <ClCompile Include="sampler_component.cpp" />
     <ClCompile Include="sequencer_component.cpp" />
+    <ClCompile Include="split_component.cpp" />
     <ClCompile Include="synth.cpp" />
   </ItemGroup>
   <ItemGroup>
