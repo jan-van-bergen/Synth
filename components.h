@@ -112,6 +112,15 @@ struct SplitComponent : Component {
 	void render(struct Synth const & synth) override;
 };
 
+struct PanComponent : Component {
+	Parameter<float> pan = { "Pan", 0.0f, std::make_pair(-1.0f, 1.0f) };
+
+	PanComponent() : Component(Type::INTER, "Pan", { { this, "In" } }, { { this, "Out" } }) { }
+	
+	void update(struct Synth const & synth) override;
+	void render(struct Synth const & synth) override;
+};
+
 struct FilterComponent : Component {
 	static constexpr char const * filter_names[] = { "Low Pass", "High Pass", "Band Pass", "None" };
 	int filter_type = 0;

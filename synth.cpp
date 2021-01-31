@@ -52,12 +52,13 @@ void Synth::render() {
 
 			ImGui::Separator();
 
-			if (ImGui::MenuItem("Oscilator")) add_component<OscillatorComponent>();
-			if (ImGui::MenuItem("Sampler"))   add_component<SamplerComponent>();
+			if (ImGui::MenuItem("Oscillator")) add_component<OscillatorComponent>();
+			if (ImGui::MenuItem("Sampler"))    add_component<SamplerComponent>();
 			
 			ImGui::Separator();
 
 			if (ImGui::MenuItem("Split")) add_component<SplitComponent>();
+			if (ImGui::MenuItem("Pan"))   add_component<PanComponent>();
 			
 			ImGui::Separator();
 

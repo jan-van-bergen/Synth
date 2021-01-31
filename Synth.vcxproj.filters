@@ -61,6 +61,9 @@
     <ClCompile Include="oscillator_component.cpp">
       <Filter>components</Filter>
     </ClCompile>
+    <ClCompile Include="pan_component.cpp">
+      <Filter>components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="midi.h" />
