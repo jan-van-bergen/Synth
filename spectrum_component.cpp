@@ -1,18 +1,21 @@
 #include "components.h"
 
 #include <complex>
+#include <array>
+
+#include "scope_timer.h"
 
 static float hamming_window(int i) {
-	static constexpr auto h = TWO_PI * BLOCK_SIZE_INV;
-
-	return 0.53836f - 0.46164f * std::cos(h * float(i));
+	return 0.53836f - 0.46164f * std::cos(TWO_PI * BLOCK_SIZE_INV * float(i));
 }
+
+static auto hamming_lut = util::generate_lookup_table<float, BLOCK_SIZE>(hamming_window);
 
 void SpectrumComponent::update(Synth const& synth) {
 	Sample fourier[BLOCK_SIZE];
-
+	
 	for (int i = 0; i < BLOCK_SIZE; i++) {
-		fourier[i] = hamming_window(i) * inputs[0].get_value(i);
+		fourier[i] = hamming_lut[i] * inputs[0].get_value(i);
 	}
 
 	static constexpr auto      N = BLOCK_SIZE;
@@ -75,7 +78,7 @@ void SpectrumComponent::update(Synth const& synth) {
 		auto f = util::log_interpolate(1.0f, float(BLOCK_SIZE), t);
 
 		// Linear interpolation
-		auto index_a = util::float_to_int(f);
+		auto index_a = util::round(f - 0.5f);
 		auto index_b = std::min(index_a + 1, BLOCK_SIZE - 1);
 
 		auto magnitude = util::lerp(magnitudes[index_a], magnitudes[index_b], f - std::floor(f));

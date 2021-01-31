@@ -3,25 +3,25 @@
 #include "synth.h"
 #include "util.h"
 
-static Sample generate_sine(float t, float freq, float amplitude = 1.0f) {
-	return amplitude * std::sin(TWO_PI * t * freq);
+static Sample generate_sine(float t, float freq) {
+	return std::sin(TWO_PI * t * freq);
 }
 
-static Sample generate_square(float t, float freq, float amplitude = 1.0f) {
-	return std::fmodf(t * freq, 1.0f) < 0.5f ? amplitude : -amplitude;
+static Sample generate_square(float t, float freq) {
+	return std::fmodf(t * freq, 1.0f) < 0.5f ? 1.0f : -1.0f;
 }
 
-static Sample generate_triangle(float t, float freq, float amplitude = 1.0f) {
+static Sample generate_triangle(float t, float freq) {
 	float x = t * freq + 0.25f;
-	return amplitude * (4.0f * std::abs(x - std::floor(x + 0.5f)) - 1.0f);
+	return 4.0f * std::abs(x - std::floor(x + 0.5f)) - 1.0f;
 }
 	
-static Sample generate_saw(float t, float freq, float amplitude = 1.0f) {
-	return amplitude * 2.0f * (t * freq - std::floor(t * freq + 0.5f));
+static Sample generate_saw(float t, float freq) {
+	return 2.0f * (t * freq - std::floor(t * freq + 0.5f));
 }
 
-static Sample generate_noise(float amplitude = 1.0f) {
-	return amplitude * ((rand() / float(RAND_MAX)) * 2.0f - 1.0f);
+static Sample generate_noise() {
+	return (rand() / float(RAND_MAX)) * 2.0f - 1.0f;
 }
 
 static float envelope(float t, float attack, float hold, float decay, float sustain) {
@@ -55,11 +55,11 @@ void OscilatorComponent::update(Synth const & synth) {
 			auto amplitude = 0.2f * note.velocity * envelope(4.0f * t / 60.0f * float(synth.tempo), attack, hold, decay, sustain);
 
 			switch (waveform_index) {
-				case 0: outputs[0].values[i] += generate_sine    (t, frequency, amplitude); break;
-				case 1: outputs[0].values[i] += generate_square  (t, frequency, amplitude); break;
-				case 2: outputs[0].values[i] += generate_triangle(t, frequency, amplitude); break;
-				case 3: outputs[0].values[i] += generate_saw     (t, frequency, amplitude); break;
-				case 4: outputs[0].values[i] += generate_noise                 (amplitude); break;
+				case 0: outputs[0].values[i] += amplitude * generate_sine    (t, frequency); break;
+				case 1: outputs[0].values[i] += amplitude * generate_square  (t, frequency); break;
+				case 2: outputs[0].values[i] += amplitude * generate_triangle(t, frequency); break;
+				case 3: outputs[0].values[i] += amplitude * generate_saw     (t, frequency); break;
+				case 4: outputs[0].values[i] += amplitude * generate_noise(); break;
 
 				default: abort();
 			}

@@ -201,6 +201,7 @@
     <ClInclude Include="parameter.h" />
     <ClInclude Include="ring_buffer.h" />
     <ClInclude Include="sample.h" />
+    <ClInclude Include="scope_timer.h" />
     <ClInclude Include="synth.h" />
     <ClInclude Include="util.h" />
   </ItemGroup>

@@ -31,16 +31,12 @@ static constexpr auto WINDOW_HEIGHT = 900;
 
 
 static void sdl_audio_callback(void * user_data, Uint8 * stream, int len) {
-	assert(len == 2 * BLOCK_SIZE);
+	assert(len == BLOCK_SIZE * sizeof(Sample));
 
 	if (terminated) return;
 
 	auto buf = buffers.get_read();
-
-	for (int i = 0; i < BLOCK_SIZE; i++) {
-		stream[2*i    ] = (char)util::clamp(buf[i].left  * 127.0f, -128.0f, 127.0f);
-		stream[2*i + 1] = (char)util::clamp(buf[i].right * 127.0f, -128.0f, 127.0f);
-	}
+	memcpy(stream, buf, len);
 	
 	buffers.advance_read();
 }
@@ -73,7 +69,7 @@ int main(int argc, char * argv[]) {
 	
 	SDL_AudioSpec audio_spec = { };
 	audio_spec.freq     = SAMPLE_RATE;
-	audio_spec.format   = AUDIO_S8;
+	audio_spec.format   = AUDIO_F32;
 	audio_spec.channels = 2;
 	audio_spec.samples  = BLOCK_SIZE;
 	audio_spec.callback = sdl_audio_callback;

@@ -4,8 +4,8 @@
 
 #include <immintrin.h>
 
-int util::float_to_int(float f) {
-	f -= copysignf(0.5f, f); // Round up/down based on sign of f
+int util::round(float f) {
+//	f -= copysignf(0.5f, f); // Round up/down based on sign of f
 	return _mm_cvtss_si32(_mm_load_ss(&f));
 }
 
@@ -67,21 +67,17 @@ float util::note_freq(int note) {
 		note -= 12;
 	}
 
-	// Find note within octave
-	static constexpr float pow[12] = { // LUT with 2^(i/12) at index i
-			1.0f,
-			1.059463094f,
-			1.122462048f,
-			1.189207115f,
-			1.259921050f,
-			1.334839854f,
-			1.414213562f,
-			1.498307077f,
-			1.587401052f,
-			1.681792831f,
-			1.781797436f,
-			1.887748625f
-	};
+	static constexpr auto pow_lut = util::generate_lookup_table<float, 12>([](int i) {
+		auto result = 1.0;
 
-	return freq * pow[note];
+		while (i > 0) {
+			result *= 1.059463094;
+			i--;
+		}
+
+		return float(result);
+
+	});
+
+	return freq * pow_lut[note];
 }

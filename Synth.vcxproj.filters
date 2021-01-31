@@ -81,6 +81,7 @@
     <ClInclude Include="parameter.h">
       <Filter>synth</Filter>
     </ClInclude>
+    <ClInclude Include="scope_timer.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="ImGui">

@@ -1,5 +1,6 @@
 #pragma once
 #include <cmath>
+#include <array>
 
 #include <SDL2/SDL_scancode.h>
 
@@ -40,7 +41,16 @@ namespace util {
 		return N;
 	}
 
-	int float_to_int(float f);
+	template<typename T, int N, typename Function>
+	constexpr std::array<T, N> generate_lookup_table(Function function) {
+		std::array<T, N> lut;
+
+		for (int i = 0; i < N; i++) lut[i] = function(i);
+
+		return lut;
+	}
+
+	int round(float f);
 
 	int scancode_to_note(SDL_Scancode scancode);
 	
