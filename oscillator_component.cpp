@@ -42,7 +42,7 @@ static float envelope(float t, float attack, float hold, float decay, float sust
 	return sustain;
 };
 
-void OscilatorComponent::update(Synth const & synth) {
+void OscillatorComponent::update(Synth const & synth) {
 	for (auto const & note : synth.notes) {
 		for (int i = 0; i < BLOCK_SIZE; i++) {
 			auto time = synth.time + i;
@@ -67,7 +67,7 @@ void OscilatorComponent::update(Synth const & synth) {
 	}
 }
 
-void OscilatorComponent::render(Synth const & synth) {
+void OscillatorComponent::render(Synth const & synth) {
 	if (ImGui::BeginCombo("Waveform", waveform_names[waveform_index])) {
 		for (int j = 0; j < util::array_element_count(waveform_names); j++) {
 			if (ImGui::Selectable(waveform_names[j], waveform_index == j)) {

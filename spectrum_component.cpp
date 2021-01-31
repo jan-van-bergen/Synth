@@ -12,14 +12,11 @@ static float hamming_window(int i) {
 static auto hamming_lut = util::generate_lookup_table<float, BLOCK_SIZE>(hamming_window);
 
 void SpectrumComponent::update(Synth const& synth) {
-	Sample fourier[BLOCK_SIZE];
+	Sample fourier[N] = { };
 	
 	for (int i = 0; i < BLOCK_SIZE; i++) {
 		fourier[i] = hamming_lut[i] * inputs[0].get_value(i);
 	}
-
-	static constexpr auto      N = BLOCK_SIZE;
-	static constexpr auto log2_N = [](int n) { auto log = 0; while (n > 1) { n /= 2; log ++; } return log; }(N);
 
 	// Reverse bits
 	auto i2 = N / 2;
@@ -67,30 +64,30 @@ void SpectrumComponent::update(Synth const& synth) {
 		c.left  =  std::sqrt(0.5f + 0.5f * c.left);
 	}
 
-	float magnitudes[BLOCK_SIZE] = { };
+	float magnitudes[N] = { };
 
-	for (int i = 0; i < BLOCK_SIZE; i++) {
+	for (int i = 0; i < N; i++) {
 		magnitudes[i] = std::sqrt((fourier[i].left * fourier[i].left + fourier[i].right * fourier[i].right) * BLOCK_SIZE_INV);
 	}
 
 	float t = 0.0f;
-	for (int i = 0; i < BLOCK_SIZE; i++) {
-		auto f = util::log_interpolate(1.0f, float(BLOCK_SIZE), t);
+	for (int i = 0; i < N; i++) {
+		auto f = util::log_interpolate(1.0f, 0.5f * float(N), t);
 
 		// Linear interpolation
 		auto index_a = util::round(f - 0.5f);
-		auto index_b = std::min(index_a + 1, BLOCK_SIZE - 1);
+		auto index_b = std::min(index_a + 1, N - 1);
 
 		auto magnitude = util::lerp(magnitudes[index_a], magnitudes[index_b], f - std::floor(f));
 
 		// Use Exponential Moving Average to temporally smooth out the Spectrum
 		spectrum[i] = util::lerp(spectrum[i], magnitude, 0.2f);
 
-		t += BLOCK_SIZE_INV;
+		t += 1.0f / N;
 	}
 }
 
 void SpectrumComponent::render(Synth const & synth) {
 	auto avail = ImGui::GetContentRegionAvail();
-	ImGui::PlotLines("", spectrum, BLOCK_SIZE, 0, nullptr, 0.0f, 1.0f, ImVec2(avail.x, avail.y - ImGui::GetTextLineHeightWithSpacing()));
+	ImGui::PlotLines("", spectrum, N, 0, nullptr, 0.0f, 1.0f, ImVec2(avail.x, avail.y - ImGui::GetTextLineHeightWithSpacing()));
 }

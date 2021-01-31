@@ -184,7 +184,7 @@
     <ClCompile Include="include\Imgui\imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="midi.cpp" />
-    <ClCompile Include="oscilator_component.cpp" />
+    <ClCompile Include="oscillator_component.cpp" />
     <ClCompile Include="piano_roll_component.cpp" />
     <ClCompile Include="speaker_component.cpp" />
     <ClCompile Include="sampler_component.cpp" />

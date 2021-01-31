@@ -52,7 +52,7 @@ void Synth::render() {
 
 			ImGui::Separator();
 
-			if (ImGui::MenuItem("Oscilator")) add_component<OscilatorComponent>();
+			if (ImGui::MenuItem("Oscilator")) add_component<OscillatorComponent>();
 			if (ImGui::MenuItem("Sampler"))   add_component<SamplerComponent>();
 			
 			ImGui::Separator();

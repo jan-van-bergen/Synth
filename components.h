@@ -64,7 +64,7 @@ struct PianoRollComponent : Component {
 	void render(struct Synth const & synth) override;
 };
 
-struct OscilatorComponent : Component {
+struct OscillatorComponent : Component {
 	static constexpr const char * waveform_names[] = { "Sine", "Square", "Triangle", "Sawtooth", "Noise" };
 
 	int waveform_index = 3;
@@ -78,7 +78,7 @@ struct OscilatorComponent : Component {
 	Parameter<float> decay 	 = { "Decay",   1.0f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } };
 	Parameter<float> sustain = { "Sustain", 0.5f, std::make_pair(0.0f, 1.0f) };
 
-	OscilatorComponent() : Component(Type::SOURCE, "Oscilator", { }, { { this, "Out" } }) { }
+	OscillatorComponent() : Component(Type::SOURCE, "Oscillator", { }, { { this, "Out" } }) { }
 
 	void update(struct Synth const & synth) override;
 	void render(struct Synth const & synth) override;
@@ -164,7 +164,10 @@ struct SpeakerComponent : Component {
 };
 
 struct SpectrumComponent : Component {
-	float spectrum[BLOCK_SIZE] = { };
+	static constexpr auto      N = 4 * 1024;
+	static constexpr auto log2_N = util::log2(N);
+
+	float spectrum[N] = { };
 
 	SpectrumComponent() : Component(Type::INTER, "Spectrum", { { this, "Input" } }, { }) { }
 	

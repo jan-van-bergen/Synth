@@ -50,6 +50,17 @@ namespace util {
 		return lut;
 	}
 
+	inline constexpr int log2(int x) {
+		auto log = 0;
+		
+		while (x > 1) {
+			x /= 2;
+			log ++;
+		}
+		
+		return log;
+	}
+
 	int round(float f);
 
 	int scancode_to_note(SDL_Scancode scancode);

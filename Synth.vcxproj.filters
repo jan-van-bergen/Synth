@@ -30,9 +30,6 @@
     <ClCompile Include="sequencer_component.cpp">
       <Filter>components</Filter>
     </ClCompile>
-    <ClCompile Include="oscilator_component.cpp">
-      <Filter>components</Filter>
-    </ClCompile>
     <ClCompile Include="filter_component.cpp">
       <Filter>components</Filter>
     </ClCompile>
@@ -61,6 +58,9 @@
       <Filter>components</Filter>
     </ClCompile>
     <ClCompile Include="util.cpp" />
+    <ClCompile Include="oscillator_component.cpp">
+      <Filter>components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="midi.h" />
