@@ -7,15 +7,7 @@ struct Synth {
 
 	std::vector<std::unique_ptr<Component>> components;
 	
-	template<typename T>
-	T * add_component() {
-		auto component = std::make_unique<T>();
-
-		if (component->type == Component::Type::SOURCE) sources.push_back(component.get());
-		if (component->type == Component::Type::SINK)   sinks  .push_back(component.get());
-		
-		return static_cast<T *>(components.emplace_back(std::move(component)).get());
-	}
+	std::vector<Component *> update_graph; // Order in which Components are updated, should be reconstructed if topology of the graph changes
 
 	Parameter<int> tempo = { "Tempo", 130, std::make_pair(60, 200), { 80, 110, 128, 140, 150, 174 } };
 
@@ -27,7 +19,21 @@ struct Synth {
 		int   time;
 	};
 
-	std::vector<Note> notes; // Currently held down notes
+	mutable std::vector<Note> notes; // Currently held down notes
+	
+	template<typename T>
+	T * add_component() {
+		auto component = std::make_unique<T>();
+
+		if (component->type == Component::Type::SOURCE) sources.push_back(component.get());
+		if (component->type == Component::Type::SINK)   sinks  .push_back(component.get());
+		
+		auto result = static_cast<T *>(components.emplace_back(std::move(component)).get());
+
+		reconstruct_update_graph();
+
+		return result;
+	}
 
 	void update(Sample buf[BLOCK_SIZE]);
 	void render();
@@ -35,13 +41,13 @@ struct Synth {
 	void    connect(ConnectorOut & out, ConnectorIn & in);
 	void disconnect(ConnectorOut & out, ConnectorIn & in);
 
-	void note_press(int note, float velocity = 1.0f) {
+	void note_press(int note, float velocity = 1.0f, int time_offset = 0) const {
 		if (std::find_if(notes.begin(), notes.end(), [note](auto const & n) { return n.note == note; }) == notes.end()) {
-			notes.emplace_back(note, velocity, time);
+			notes.emplace_back(note, velocity, time + time_offset);
 		}
 	}
 
-	void note_release(int note) {
+	void note_release(int note) const {
 		auto n = std::find_if(notes.begin(), notes.end(), [note](auto const & n) { return n.note == note; });
 		if (n != notes.end()) notes.erase(n);
 	}
@@ -71,6 +77,8 @@ private:
 
 	Connector * dragging = nullptr;
 	bool        drag_handled;
+
+	void reconstruct_update_graph();
 
 	void render_connector_in (ConnectorIn  & in);
 	void render_connector_out(ConnectorOut & out);

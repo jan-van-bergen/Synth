@@ -24,6 +24,7 @@ extern "C" { _declspec(dllexport) unsigned NvOptimusEnablement = true; }
 
 
 static RingBuffer<Sample[BLOCK_SIZE], 3> buffers;
+static bool terminated = false;
 
 static constexpr auto WINDOW_WIDTH  = 1600;
 static constexpr auto WINDOW_HEIGHT = 900;
@@ -31,6 +32,8 @@ static constexpr auto WINDOW_HEIGHT = 900;
 
 static void sdl_audio_callback(void * user_data, Uint8 * stream, int len) {
 	assert(len == 2 * BLOCK_SIZE);
+
+	if (terminated) return;
 
 	auto buf = buffers.get_read();
 
@@ -84,13 +87,6 @@ int main(int argc, char * argv[]) {
 
 	midi::open();
 
-	auto midi = midi::Track::load("loop.mid");
-	auto midi_offset = 0;
-	auto midi_rounds = 0;
-	
-	auto mouse_x = 0.0f;
-	auto mouse_y = 0.0f;
-
 	Synth synth;
 	synth.add_component<SpeakerComponent>();
 	
@@ -126,36 +122,6 @@ int main(int argc, char * argv[]) {
 			}
 		}
 
-		/*
-		auto midi_ticks_to_samples = [](size_t time, size_t tempo, size_t ticks) -> size_t {
-			return SAMPLE_RATE * time * tempo / 1000000 / ticks;
-		};
-		
-		auto midi_length = midi_ticks_to_samples(midi.events[midi.events.size() - 1].time, midi.tempo, midi.ticks);
-		auto a = synth.time / midi_length;
-		auto t = synth.time % midi_length;
-
-		while (true) {
-			auto const & midi_event = midi.events[midi_offset];
-
-			auto midi_time = midi_ticks_to_samples(midi_event.time, midi.tempo, midi.ticks);
-
-			if (midi_time > t && a == midi_rounds) break;
-
-			if (midi_event.type == midi::Event::Type::PRESS) {
-				synth.note_press(midi_event.note.note, 1.0f);
-			} else if (midi_event.type == midi::Event::Type::RELEASE) {
-				synth.note_release(midi_event.note.note);
-			}
-
-			midi_offset++;
-			if (midi_offset == midi.events.size()) {
-				midi_offset = 0;
-				midi_rounds++;
-			}
-		}
-		*/
-
 		while (true) {
 			auto midi_event = midi::get_event();
 			if (!midi_event.has_value()) break;
@@ -173,10 +139,6 @@ int main(int argc, char * argv[]) {
 				default: break;
 			}
 		}
-
-		int x, y; SDL_GetMouseState(&x, &y);
-		mouse_x = float(x) / float(WINDOW_WIDTH);
-		mouse_y = float(y) / float(WINDOW_HEIGHT);
 
 		auto buf = buffers.get_write();
 		synth.update(buf);
@@ -196,6 +158,8 @@ int main(int argc, char * argv[]) {
 
 		SDL_GL_SwapWindow(window);
 	}
+
+	terminated = true;
 
 	midi::close();
 	

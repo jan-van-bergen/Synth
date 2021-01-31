@@ -10,6 +10,7 @@
 #include <ImGui/imgui.h>
 
 #include "sample.h"
+#include "midi.h"
 
 #include "parameter.h"
 #include "connector.h"
@@ -39,6 +40,25 @@ struct SequencerComponent : Component {
 	int current_step = 0;
 
 	SequencerComponent() : Component(Type::SOURCE, "Sequencer", { }, { { this, "Out" } }) { }
+
+	void update(struct Synth const & synth) override;
+	void render(struct Synth const & synth) override;
+};
+
+struct PianoRollComponent : Component {
+	midi::Track midi = midi::Track::load("melody_2.mid");
+	int         midi_offset = 0;
+	int         midi_rounds = 0;
+	
+	int midi_length;
+
+	PianoRollComponent() : Component(Type::SOURCE, "Piano Roll", { }, { { this, "Out" } }) {
+		if (midi.events.size() == 0) {
+			midi_length = 0;
+		} else {		
+			midi_length = util::round_up(midi.events[midi.events.size() - 1].time, 4 * midi.ticks);
+		}
+	}
 
 	void update(struct Synth const & synth) override;
 	void render(struct Synth const & synth) override;
@@ -134,18 +154,19 @@ struct DelayComponent : Component {
 };
 
 struct SpeakerComponent : Component {
+	std::vector<Sample> recorded_samples;
+	bool                recording = false;
+
 	SpeakerComponent() : Component(Type::SINK, "Speaker", { { this, "Input" } }, { }) { }
 	
-	void update(struct Synth const & synth) override { }
-	void render(struct Synth const & synth) override { }
+	void update(struct Synth const & synth) override;
+	void render(struct Synth const & synth) override;
 };
 
-struct RecorderComponent : Component {
-	std::vector<Sample> samples;
+struct SpectrumComponent : Component {
+	float spectrum[BLOCK_SIZE] = { };
 
-	bool recording = false;
-
-	RecorderComponent() : Component(Type::INTER, "Recorder", { { this, "Input" } }, { }) { }
+	SpectrumComponent() : Component(Type::INTER, "Spectrum", { { this, "Input" } }, { }) { }
 	
 	void update(struct Synth const & synth) override;
 	void render(struct Synth const & synth) override;

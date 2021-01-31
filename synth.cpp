@@ -8,41 +8,14 @@
 static constexpr auto CONNECTOR_SIZE = 16.0f;
 
 void Synth::update(Sample buf[BLOCK_SIZE]) {
-	// Clear output of all components
-	for (auto const & component : components) {
+	for (auto component : update_graph) {
 		for (auto & output : component->outputs) {
 			output.clear();
 		}
-	}
-
-	// Traverse the Graph formed by the connections
-	std::queue<Component *> queue;
-	for (auto source : sources) queue.push(source);
-
-	std::unordered_set<Component *>      seen;
-	std::unordered_map<Component *, int> num_inputs_satisfied;
-
-	while (!queue.empty()) {
-		auto component = queue.front();
-		queue.pop();
-
-		seen.insert(component);
 
 		component->update(*this);
-
-		for (auto & output : component->outputs) {
-			for (auto other : output.others) {
-				if (!seen.contains(other->component)) {
-					auto satisfied = ++num_inputs_satisfied[other->component];
-
-					if (satisfied == other->others.size()) { // If all inputs are now satisfied, push onto queue to explore the Node
-						queue.push(other->component);
-					}
-				}
-			}
-		}
 	}
-	
+
 	time += BLOCK_SIZE;
 
 	// Collect the resulting audio samples
@@ -74,20 +47,29 @@ void Synth::render() {
 		}
 
 		if (ImGui::BeginMenu("Components")) {
-			if (ImGui::MenuItem("Sequencer")) add_component<SequencerComponent>();
+			if (ImGui::MenuItem("Sequencer"))  add_component<SequencerComponent>();
+			if (ImGui::MenuItem("Piano Roll")) add_component<PianoRollComponent>();
+
+			ImGui::Separator();
 
 			if (ImGui::MenuItem("Oscilator")) add_component<OscilatorComponent>();
 			if (ImGui::MenuItem("Sampler"))   add_component<SamplerComponent>();
 			
+			ImGui::Separator();
+
 			if (ImGui::MenuItem("Split")) add_component<SplitComponent>();
+			
+			ImGui::Separator();
 
 			if (ImGui::MenuItem("Distortion")) add_component<DistortionComponent>();
 			if (ImGui::MenuItem("Delay"))      add_component<DelayComponent>();
 			if (ImGui::MenuItem("Filter"))     add_component<FilterComponent>();
 			
-			if (ImGui::MenuItem("Speaker"))  add_component<SpeakerComponent>();
-			if (ImGui::MenuItem("Recorder")) add_component<RecorderComponent>();
+			ImGui::Separator();
 
+			if (ImGui::MenuItem("Speaker"))  add_component<SpeakerComponent>();
+			if (ImGui::MenuItem("Spectrum")) add_component<SpectrumComponent>();
+			
 			ImGui::EndMenu();
 		}
 
@@ -106,6 +88,8 @@ void Synth::render() {
 
 		auto open      = true;
 		auto collapsed = true;
+
+		ImGui::SetNextWindowSizeConstraints(ImVec2(100, 100), ImVec2(INFINITY, INFINITY));
 
 		if (ImGui::Begin(label, &open, ImGuiWindowFlags_NoSavedSettings)) {
 			component->render(*this);
@@ -276,6 +260,8 @@ void Synth::render() {
 
 		// Remove Component
 		components.erase(std::find_if(components.begin(), components.end(), [component_to_be_removed](auto const & component) { return component.get() == component_to_be_removed; }));
+
+		reconstruct_update_graph();
 	}
 }
 
@@ -284,6 +270,8 @@ void Synth::connect(ConnectorOut & out, ConnectorIn & in) {
 
 	out.others.push_back(&in);
 	in .others.push_back(std::make_pair(&out, 1.0f));
+
+	reconstruct_update_graph();
 }
 
 void Synth::disconnect(ConnectorOut & out, ConnectorIn & in) {
@@ -291,6 +279,37 @@ void Synth::disconnect(ConnectorOut & out, ConnectorIn & in) {
 	in .others.erase(std::find_if(in .others.begin(), in .others.end(), [&out](auto pair) {
 		return pair.first == &out;	
 	}));
+
+	reconstruct_update_graph();
+}
+
+void Synth::reconstruct_update_graph() {
+	update_graph.clear();
+
+	// Traverse the Graph formed by the connections
+	std::queue<Component *> queue;
+	for (auto source : sources) queue.push(source);
+
+	std::unordered_map<Component *, int> num_inputs_satisfied;
+
+	while (!queue.empty()) {
+		auto component = queue.front();
+		queue.pop();
+
+		update_graph.push_back(component);
+
+		for (auto & output : component->outputs) {
+			for (auto other : output.others) {
+				auto satisfied = ++num_inputs_satisfied[other->component];
+
+				if (satisfied == other->others.size()) { // If all inputs are now satisfied, push onto queue to explore the Node
+					queue.push(other->component);
+				}
+
+				assert(satisfied <= other->others.size());
+			}
+		}
+	}
 }
 
 void Synth::render_connector_in(ConnectorIn & in) {

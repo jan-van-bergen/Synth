@@ -49,7 +49,7 @@ midi::Track midi::Track::load(std::string const & filename) {
 	FILE * file; fopen_s(&file, filename.c_str(), "rb");
 	if (file == nullptr) abort();
 
-	char file_header[14]; fread_s(file_header, sizeof(file_header), 1, sizeof(file_header), file);
+	unsigned char file_header[14]; fread_s(file_header, sizeof(file_header), 1, sizeof(file_header), file);
 	assert(memcmp(file_header, "MThd", 4) == 0);
 	
 	auto format     = file_header[8]  << 8 | file_header[9];
@@ -62,10 +62,10 @@ midi::Track midi::Track::load(std::string const & filename) {
 	auto time = 0;
 
 	for (int i = 0; i < num_tracks; i++) {
-		char chunk_header[8]; fread_s(chunk_header, sizeof(chunk_header), 1, sizeof(chunk_header), file);
+		unsigned char chunk_header[8]; fread_s(chunk_header, sizeof(chunk_header), 1, sizeof(chunk_header), file);
 		assert(memcmp(chunk_header, "MTrk", 4) == 0);
 	
-		auto chunk_length = chunk_header[4] << 24 | chunk_header[5] << 16 | chunk_header[6] << 8 | chunk_header[7];
+		unsigned chunk_length = chunk_header[4] << 24 | chunk_header[5] << 16 | chunk_header[6] << 8 | chunk_header[7];
 		
 		auto bytes_parsed = 0;
 

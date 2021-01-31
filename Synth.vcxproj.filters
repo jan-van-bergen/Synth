@@ -48,12 +48,19 @@
     <ClCompile Include="connector.cpp">
       <Filter>synth</Filter>
     </ClCompile>
-    <ClCompile Include="recorder_component.cpp">
-      <Filter>components</Filter>
-    </ClCompile>
     <ClCompile Include="split_component.cpp">
       <Filter>components</Filter>
     </ClCompile>
+    <ClCompile Include="piano_roll_component.cpp">
+      <Filter>components</Filter>
+    </ClCompile>
+    <ClCompile Include="speaker_component.cpp">
+      <Filter>components</Filter>
+    </ClCompile>
+    <ClCompile Include="spectrum_component.cpp">
+      <Filter>components</Filter>
+    </ClCompile>
+    <ClCompile Include="util.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="midi.h" />

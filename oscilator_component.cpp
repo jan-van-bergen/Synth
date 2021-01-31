@@ -49,6 +49,8 @@ void OscilatorComponent::update(Synth const & synth) {
 
 			auto t = float(time - note.time) * SAMPLE_RATE_INV;
 
+			if (t < 0.0f) continue;
+
 			auto frequency = util::note_freq(note.note + transpose) * std::pow(2.0f, detune / 1200.0f);
 			auto amplitude = 0.2f * note.velocity * envelope(4.0f * t / 60.0f * float(synth.tempo), attack, hold, decay, sustain);
 

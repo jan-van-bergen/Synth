@@ -28,18 +28,18 @@ struct WAVHeader {
 	unsigned chunk_data_size;
 };
 
-void RecorderComponent::update(Synth const & synth) {
+void SpeakerComponent::update(Synth const & synth) {
 	if (!recording) return;
 
-	auto start = samples.size();
-	samples.resize(start + BLOCK_SIZE);
+	auto start = recorded_samples.size();
+	recorded_samples.resize(start + BLOCK_SIZE);
 
 	for (int i = 0; i < BLOCK_SIZE; i++) {
-		samples[start + i] = inputs[0].get_value(i);
+		recorded_samples[start + i] = inputs[0].get_value(i);
 	}
 }
 
-void RecorderComponent::render(Synth const & synth) {
+void SpeakerComponent::render(Synth const & synth) {
 	if (ImGui::Button(recording ? "Pause" : "Record")) {
 		recording = !recording;
 	}
@@ -70,7 +70,7 @@ void RecorderComponent::render(Synth const & synth) {
 		memcpy(&header.fmt,        "fmt ", 4);
 		memcpy(&header.chunk_data, "data", 4);
 
-		auto data_size = samples.size() * sizeof(Sample);
+		auto data_size = recorded_samples.size() * sizeof(Sample);
 
 		header.chunk_size = sizeof(WAVHeader) - 8 + data_size;
 		header.ext = 16;
@@ -92,10 +92,10 @@ void RecorderComponent::render(Synth const & synth) {
 		}
 
 		fwrite(&header, sizeof(header), 1, file);
-		fwrite(samples.data(), sizeof(Sample), samples.size(), file);
+		fwrite(recorded_samples.data(), sizeof(Sample), recorded_samples.size(), file);
 
 		fclose(file);
 
-		samples.clear();
+		recorded_samples.clear();
 	}
 }
