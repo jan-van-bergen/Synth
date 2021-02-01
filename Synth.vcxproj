@@ -194,6 +194,7 @@
     <ClCompile Include="split_component.cpp" />
     <ClCompile Include="synth.cpp" />
     <ClCompile Include="util.cpp" />
+    <ClCompile Include="wave_table_component.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="components.h" />

@@ -1,8 +1,11 @@
 #pragma once
 #include <cmath>
 #include <array>
+#include <vector>
 
 #include <SDL2/SDL_scancode.h>
+
+#include "sample.h"
 
 inline constexpr auto     PI = 3.14159265359f;
 inline constexpr auto TWO_PI = 6.28318530718f;
@@ -60,6 +63,12 @@ namespace util {
 		
 		return log;
 	}
+
+	inline constexpr bool is_power_of_two(int x) {
+		return x > 0 && (x & (x - 1)) == 0;
+	}
+
+	std::vector<Sample> load_wav(char const * filename);
 
 	int round(float f);
 

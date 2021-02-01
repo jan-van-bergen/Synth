@@ -84,6 +84,16 @@ struct OscillatorComponent : Component {
 	void render(struct Synth const & synth) override;
 };
 
+struct WaveTableComponent : Component {
+	std::vector<Sample> samples = util::load_wav("samples/piano.wav");
+	float current_sample = 0.0f;
+
+	WaveTableComponent() : Component(Type::SOURCE, "Wave Table", { }, { { this, "Out" } }) { }
+	
+	void update(struct Synth const & synth) override;
+	void render(struct Synth const & synth) override;
+};
+
 struct SamplerComponent : Component {
 	std::vector<Sample> samples;
 	int current_sample = 0;
@@ -94,11 +104,9 @@ struct SamplerComponent : Component {
 
 	SamplerComponent() : Component(Type::INTER, "Sampler", { { this, "Trigger" } }, { { this, "Out" } }) {
 		strcpy_s(filename, "samples/kick.wav");
-		load();
+		samples = util::load_wav(filename);
 	}
 	
-	void load();
-
 	void update(struct Synth const & synth) override;
 	void render(struct Synth const & synth) override;
 };
@@ -175,6 +183,8 @@ struct SpeakerComponent : Component {
 struct SpectrumComponent : Component {
 	static constexpr auto      N = 4 * 1024;
 	static constexpr auto log2_N = util::log2(N);
+
+	static_assert(util::is_power_of_two(N)); // Required for FFT
 
 	float spectrum[N] = { };
 
