@@ -69,19 +69,37 @@ struct OscillatorComponent : Component {
 
 	int waveform_index = 3;
 	
+	struct Voice {
+		int   note;
+		float velocity;
+
+		float sample = 0.0f;
+		float phase  = 0.0f;
+
+		float release_time = INFINITY;
+	};
+
+	std::vector<Voice> voices;
+
 	Parameter<int>   transpose = { "Transpose", 0, std::make_pair(-24, 24), { -24, -12, 0, 12, 24 } };
 	Parameter<float> detune    = { "Detune", 0.0f, std::make_pair(-100.0f, 100.0f), { 0.0f } };
+
+	Parameter<float> portamento = { "Portamento",  0.0f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } };
 
 	// Envelope
 	Parameter<float> attack  = { "Attack",  0.1f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } };
 	Parameter<float> hold	 = { "Hold",    0.5f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } };
 	Parameter<float> decay 	 = { "Decay",   1.0f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } };
 	Parameter<float> sustain = { "Sustain", 0.5f, std::make_pair(0.0f, 1.0f) };
+	Parameter<float> release = { "Release", 0.0f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } };
 
 	OscillatorComponent() : Component(Type::SOURCE, "Oscillator", { }, { { this, "Out" } }) { }
 
 	void update(struct Synth const & synth) override;
 	void render(struct Synth const & synth) override;
+
+private:
+	float portamento_frequency = 0.0f;
 };
 
 struct WaveTableComponent : Component {

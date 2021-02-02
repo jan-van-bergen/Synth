@@ -97,7 +97,7 @@ int main(int argc, char * argv[]) {
 				case SDL_KEYDOWN: {
 					auto note = util::scancode_to_note(event.key.keysym.scancode);
 					if (note != -1) {
-						synth.note_press(note);
+						synth.note_press(note, 0.2f);
 					}
 
 					break;

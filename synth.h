@@ -41,7 +41,7 @@ struct Synth {
 	void    connect(ConnectorOut & out, ConnectorIn & in);
 	void disconnect(ConnectorOut & out, ConnectorIn & in);
 
-	void note_press(int note, float velocity = 1.0f, int time_offset = 0) const {
+	void note_press(int note, float velocity, int time_offset = 0) const {
 		if (std::find_if(notes.begin(), notes.end(), [note](auto const & n) { return n.note == note; }) == notes.end()) {
 			notes.emplace_back(note, velocity, time + time_offset);
 		}
