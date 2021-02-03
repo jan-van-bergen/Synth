@@ -211,3 +211,12 @@ struct SpectrumComponent : Component {
 	void update(struct Synth const & synth) override;
 	void render(struct Synth const & synth) override;
 };
+
+struct DecibelComponent : Component {
+	float decibels = -INFINITY;
+
+	DecibelComponent() : Component(Type::INTER, "Decibel Meter", { { this, "Input" } }, { }) { }
+	
+	void update(struct Synth const & synth) override;
+	void render(struct Synth const & synth) override;
+};

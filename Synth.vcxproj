@@ -172,6 +172,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="connector.cpp" />
+    <ClCompile Include="decibel_component.cpp" />
     <ClCompile Include="delay_component.cpp" />
     <ClCompile Include="distortion_component.cpp" />
     <ClCompile Include="filter_component.cpp" />

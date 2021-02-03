@@ -71,8 +71,9 @@ void Synth::render() {
 			
 			ImGui::Separator();
 
-			if (ImGui::MenuItem("Speaker"))  add_component<SpeakerComponent>();
-			if (ImGui::MenuItem("Spectrum")) add_component<SpectrumComponent>();
+			if (ImGui::MenuItem("Speaker"))       add_component<SpeakerComponent>();
+			if (ImGui::MenuItem("Spectrum"))      add_component<SpectrumComponent>();
+			if (ImGui::MenuItem("Decibel Meter")) add_component<DecibelComponent>();
 			
 			ImGui::EndMenu();
 		}
