@@ -11,6 +11,8 @@ struct Synth {
 
 	Parameter<int> tempo = { "Tempo", 130, std::make_pair(60, 200), { 80, 110, 128, 140, 150, 174 } };
 
+	Parameter<float> master_volume = { "Master Volume", 1.0f, std::make_pair(0.0f, 2.0f), { 0.0f, 0.25f, 0.5f, 0.75f, 1.0f, 1.5f, 2.0f } };
+
 	int time = 0;
 	
 	struct Note {

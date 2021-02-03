@@ -30,6 +30,8 @@ void Synth::update(Sample buf[BLOCK_SIZE]) {
 			}
 		}
 	}
+
+	for (int i = 0; i < BLOCK_SIZE; i++) buf[i] *= master_volume;
 }
 
 void Synth::render() {
@@ -211,6 +213,7 @@ void Synth::render() {
 		ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
 
 		tempo.render();
+		master_volume.render();
 	}
 	ImGui::End();
 
@@ -300,15 +303,20 @@ void Synth::reconstruct_update_graph() {
 
 		update_graph.push_back(component);
 
-		for (auto & output : component->outputs) {
+		for (auto const & output : component->outputs) {
 			for (auto other : output.others) {
-				auto satisfied = ++num_inputs_satisfied[other->component];
+				auto num_satisfied = ++num_inputs_satisfied[other->component];
 
-				if (satisfied == other->others.size()) { // If all inputs are now satisfied, push onto queue to explore the Node
+				auto num_required = 0;
+				for (auto const & input : other->component->inputs) {
+					num_required += input.others.size();
+				}
+
+				if (num_satisfied == num_required) { // If all inputs are now satisfied, push onto queue to explore the Node
 					queue.push(other->component);
 				}
 
-				assert(satisfied <= other->others.size());
+				assert(num_satisfied <= num_required);
 			}
 		}
 	}
