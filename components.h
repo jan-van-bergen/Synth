@@ -189,9 +189,9 @@ struct DistortionComponent : Component {
 };
 
 struct BitCrusherComponent : Component {
-	Parameter<float> gain = { "Gain", 1.0f, std::make_pair(1.0f, 8.0f) };
-	Parameter<int>   bits = { "Bits", 32,   std::make_pair(1, 32) };
-	Parameter<int>   rate = { "Rate",  1,   std::make_pair(1, 128) };
+	Parameter<float> gain = { "Gain",             1.0f, std::make_pair(1.0f, 8.0f) };
+	Parameter<int>   bits = { "Bits",             32,   std::make_pair(1, 32) };
+	Parameter<int>   rate = { "Sample Reduction",  1,   std::make_pair(1, 128) };
 
 	BitCrusherComponent() : Component(Type::INTER, "Bit Crusher", { { this, "In" } }, { { this, "Out" } }) { }
 
