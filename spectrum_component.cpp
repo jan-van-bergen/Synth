@@ -70,7 +70,7 @@ void SpectrumComponent::update(Synth const& synth) {
 	float magnitudes[N] = { };
 
 	for (int i = 0; i < N; i++) {
-		magnitudes[i] = std::sqrt((fourier[i].left * fourier[i].left + fourier[i].right * fourier[i].right) * BLOCK_SIZE_INV);
+		magnitudes[i] = std::sqrt((fourier[i].left * fourier[i].left + fourier[i].right * fourier[i].right) / N);
 	}
 
 	// Plot Spectrum

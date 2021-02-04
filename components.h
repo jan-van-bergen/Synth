@@ -164,15 +164,6 @@ private:
 	Sample state_2;
 };
 
-struct DistortionComponent : Component {
-	Parameter<float> amount = { "Amount", 0.5f, std::make_pair(0.0f, 1.0f) };
-
-	DistortionComponent() : Component(Type::INTER, "Distortion", { { this, "In" } }, { { this, "Out" } }) { }
-
-	void update(struct Synth const & synth) override;
-	void render(struct Synth const & synth) override;
-};
-
 struct DelayComponent : Component {
 	Parameter<int>   steps    = { "Steps", 3, std::make_pair(1, 8) };
 	Parameter<float> feedback = { "Feedback", 0.7f, std::make_pair(0.0f, 1.0f) };
@@ -184,6 +175,26 @@ struct DelayComponent : Component {
 
 	void history_resize(int size);
 	
+	void update(struct Synth const & synth) override;
+	void render(struct Synth const & synth) override;
+};
+
+struct DistortionComponent : Component {
+	Parameter<float> amount = { "Amount", 0.5f, std::make_pair(0.0f, 1.0f) };
+
+	DistortionComponent() : Component(Type::INTER, "Distortion", { { this, "In" } }, { { this, "Out" } }) { }
+
+	void update(struct Synth const & synth) override;
+	void render(struct Synth const & synth) override;
+};
+
+struct BitCrusherComponent : Component {
+	Parameter<float> gain = { "Gain", 1.0f, std::make_pair(1.0f, 8.0f) };
+	Parameter<int>   bits = { "Bits", 32,   std::make_pair(1, 32) };
+	Parameter<int>   rate = { "Rate",  1,   std::make_pair(1, 128) };
+
+	BitCrusherComponent() : Component(Type::INTER, "Bit Crusher", { { this, "In" } }, { { this, "Out" } }) { }
+
 	void update(struct Synth const & synth) override;
 	void render(struct Synth const & synth) override;
 };

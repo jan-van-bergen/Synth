@@ -65,9 +65,10 @@ void Synth::render() {
 			
 			ImGui::Separator();
 
-			if (ImGui::MenuItem("Distortion")) add_component<DistortionComponent>();
-			if (ImGui::MenuItem("Delay"))      add_component<DelayComponent>();
-			if (ImGui::MenuItem("Filter"))     add_component<FilterComponent>();
+			if (ImGui::MenuItem("Filter"))      add_component<FilterComponent>();
+			if (ImGui::MenuItem("Delay"))       add_component<DelayComponent>();
+			if (ImGui::MenuItem("Distortion"))  add_component<DistortionComponent>();
+			if (ImGui::MenuItem("Bit Crusher")) add_component<BitCrusherComponent>();
 			
 			ImGui::Separator();
 
@@ -325,9 +326,8 @@ void Synth::reconstruct_update_graph() {
 
 void Synth::render_connector_in(ConnectorIn & in) {
 	auto label = in.name.c_str();
-
-	auto pos  = ImGui::GetCursorScreenPos();
-	auto size = ImGui::CalcTextSize(label);
+	
+	auto pos = ImGui::GetCursorScreenPos();
 	
 	ImGui::SmallButton("");
 
@@ -338,8 +338,8 @@ void Synth::render_connector_in(ConnectorIn & in) {
 		if (ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
 			if (!dragging) dragging = &in;
 		} else if (ImGui::IsMouseReleased(ImGuiMouseButton_Left)) {
-			if (dragging && dragging != &in) {
-				if (!dragging->is_input) {
+			if (dragging) {
+				if (dragging != &in && !dragging->is_input) {
 					connect(*reinterpret_cast<ConnectorOut *>(dragging), in);
 				}
 
@@ -348,7 +348,9 @@ void Synth::render_connector_in(ConnectorIn & in) {
 		}
 	}
 
-	ImGui::SameLine(ImGui::GetWindowWidth() - size.x - 20);
+	auto avail = ImGui::GetContentRegionAvail();
+
+	ImGui::SameLine();
 	ImGui::Text(label);
 
 //	for (auto other : in.others) assert(std::find(other->others.begin(), other->others.end(), &in) != other->others.end());
@@ -359,12 +361,16 @@ void Synth::render_connector_in(ConnectorIn & in) {
 
 void Synth::render_connector_out(ConnectorOut & out) {
 	auto label = out.name.c_str();
-
-	ImGui::Text(label);
-	ImGui::SameLine(ImGui::GetWindowWidth() - 20);
-	
-	auto pos  = ImGui::GetCursorScreenPos();
 	auto size = ImGui::CalcTextSize(label);
+
+	auto avail = ImGui::GetContentRegionAvail();
+
+	ImGui::NewLine();
+	ImGui::SameLine(avail.x - size.x - 8);
+	ImGui::Text(label);
+	ImGui::SameLine();
+	
+	auto pos = ImGui::GetCursorScreenPos();
 	
 	ImGui::SmallButton("");
 	
@@ -391,6 +397,6 @@ void Synth::render_connector_out(ConnectorOut & out) {
 		connections.push_back({ &out, other });
 	}
 
-	out.pos[0] = pos.x;
+	out.pos[0] = pos.x + 8.0f;
 	out.pos[1] = pos.y + 0.5f * CONNECTOR_SIZE;
 }

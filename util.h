@@ -58,7 +58,7 @@ namespace util {
 		
 		while (x > 1) {
 			x /= 2;
-			log ++;
+			log++;
 		}
 		
 		return log;
