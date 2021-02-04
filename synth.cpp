@@ -69,6 +69,7 @@ void Synth::render() {
 			if (ImGui::MenuItem("Delay"))       add_component<DelayComponent>();
 			if (ImGui::MenuItem("Distortion"))  add_component<DistortionComponent>();
 			if (ImGui::MenuItem("Bit Crusher")) add_component<BitCrusherComponent>();
+			if (ImGui::MenuItem("Compressor"))  add_component<CompressorComponent>();
 			
 			ImGui::Separator();
 

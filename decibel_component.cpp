@@ -10,9 +10,9 @@ void DecibelComponent::update(Synth const & synth) {
 		max_amplitude = std::max(max_amplitude, amplitude);
 	}
 
-	decibels = 20.0f * std::log10(max_amplitude);
+	decibels = util::linear_to_db(max_amplitude);
 }
 
 void DecibelComponent::render(Synth const & synth) {
-	ImGui::Text("dB: %f", decibels);
+	ImGui::Text("%f dB", decibels);
 }

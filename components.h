@@ -199,6 +199,22 @@ struct BitCrusherComponent : Component {
 	void render(struct Synth const & synth) override;
 };
 
+struct CompressorComponent : Component {
+	Parameter<float> threshold = { "Threshold", 0.0f, std::make_pair(-60.0f,   0.0f) };
+	Parameter<float> ratio     = { "Ratio",     1.0f, std::make_pair(  1.0f,  30.0f) };
+	Parameter<float> gain      = { "Gain",      0.0f, std::make_pair(-30.0f,  30.0f) };
+	Parameter<float> attack    = { "Attack",   15.0f, std::make_pair(  0.0f, 400.0f) };
+	Parameter<float> release   = { "Release", 200.0f, std::make_pair(  0.0f, 400.0f) };
+
+	CompressorComponent() : Component(Type::INTER, "Compressor", { { this, "In" } }, { { this, "Out" } }) { }
+
+	void update(struct Synth const & synth) override;
+	void render(struct Synth const & synth) override;
+
+private:
+	float env = 0.0f;
+};
+
 struct SpeakerComponent : Component {
 	std::vector<Sample> recorded_samples;
 	bool                recording = false;

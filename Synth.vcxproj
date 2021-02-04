@@ -172,6 +172,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="bitcrusher_component.cpp" />
+    <ClCompile Include="compressor_component.cpp" />
     <ClCompile Include="connector.cpp" />
     <ClCompile Include="decibel_component.cpp" />
     <ClCompile Include="delay_component.cpp" />

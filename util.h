@@ -68,6 +68,9 @@ namespace util {
 		return x > 0 && (x & (x - 1)) == 0;
 	}
 
+	inline float linear_to_db(float x) { return 20.0f * std::log10(x); }
+	inline float db_to_linear(float x) { return std::pow(10.0f, x / 20.0f); }
+
 	std::vector<Sample> load_wav(char const * filename);
 
 	int round(float f);

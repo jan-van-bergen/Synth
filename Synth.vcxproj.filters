@@ -73,6 +73,9 @@
     <ClCompile Include="bitcrusher_component.cpp">
       <Filter>components</Filter>
     </ClCompile>
+    <ClCompile Include="compressor_component.cpp">
+      <Filter>components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="midi.h" />
