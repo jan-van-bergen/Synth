@@ -60,7 +60,7 @@ struct SequencerComponent : Component {
 };
 
 struct PianoRollComponent : Component {
-	midi::Track midi = midi::Track::load("melody_2.mid");
+	midi::Track midi = midi::Track::load("midi/melody_2.mid");
 	int         midi_offset = 0;
 	int         midi_rounds = 0;
 	

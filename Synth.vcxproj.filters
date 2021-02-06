@@ -1,8 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="midi.cpp" />
     <ClCompile Include="include\Imgui\imgui.cpp">
       <Filter>ImGui</Filter>
     </ClCompile>
@@ -24,89 +22,91 @@
     <ClCompile Include="include\ImGui\imgui_tables.cpp">
       <Filter>ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="sampler_component.cpp">
-      <Filter>components</Filter>
-    </ClCompile>
-    <ClCompile Include="sequencer_component.cpp">
-      <Filter>components</Filter>
-    </ClCompile>
-    <ClCompile Include="filter_component.cpp">
-      <Filter>components</Filter>
-    </ClCompile>
-    <ClCompile Include="distortion_component.cpp">
-      <Filter>components</Filter>
-    </ClCompile>
-    <ClCompile Include="delay_component.cpp">
-      <Filter>components</Filter>
-    </ClCompile>
-    <ClCompile Include="synth.cpp">
-      <Filter>synth</Filter>
-    </ClCompile>
-    <ClCompile Include="connector.cpp">
-      <Filter>synth</Filter>
-    </ClCompile>
-    <ClCompile Include="split_component.cpp">
-      <Filter>components</Filter>
-    </ClCompile>
-    <ClCompile Include="piano_roll_component.cpp">
-      <Filter>components</Filter>
-    </ClCompile>
-    <ClCompile Include="speaker_component.cpp">
-      <Filter>components</Filter>
-    </ClCompile>
-    <ClCompile Include="spectrum_component.cpp">
-      <Filter>components</Filter>
-    </ClCompile>
-    <ClCompile Include="util.cpp" />
-    <ClCompile Include="oscillator_component.cpp">
-      <Filter>components</Filter>
-    </ClCompile>
-    <ClCompile Include="pan_component.cpp">
-      <Filter>components</Filter>
-    </ClCompile>
-    <ClCompile Include="wave_table_component.cpp">
-      <Filter>components</Filter>
-    </ClCompile>
-    <ClCompile Include="decibel_component.cpp">
-      <Filter>components</Filter>
-    </ClCompile>
-    <ClCompile Include="bitcrusher_component.cpp">
-      <Filter>components</Filter>
-    </ClCompile>
-    <ClCompile Include="compressor_component.cpp">
-      <Filter>components</Filter>
-    </ClCompile>
-    <ClCompile Include="file_dialog.cpp" />
-    <ClCompile Include="json_writer.cpp">
+    <ClCompile Include="src\json_parser.cpp">
       <Filter>json</Filter>
     </ClCompile>
-    <ClCompile Include="json_parser.cpp">
+    <ClCompile Include="src\json_writer.cpp">
       <Filter>json</Filter>
+    </ClCompile>
+    <ClCompile Include="src\connector.cpp">
+      <Filter>synth</Filter>
+    </ClCompile>
+    <ClCompile Include="src\synth.cpp">
+      <Filter>synth</Filter>
+    </ClCompile>
+    <ClCompile Include="src\file_dialog.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\midi.cpp" />
+    <ClCompile Include="src\util.cpp" />
+    <ClCompile Include="src\components\bitcrusher.cpp">
+      <Filter>components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\compressor.cpp">
+      <Filter>components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\decibel.cpp">
+      <Filter>components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\delay.cpp">
+      <Filter>components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\distortion.cpp">
+      <Filter>components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\filter.cpp">
+      <Filter>components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\oscillator.cpp">
+      <Filter>components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\pan.cpp">
+      <Filter>components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\piano_roll.cpp">
+      <Filter>components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\sampler.cpp">
+      <Filter>components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\sequencer.cpp">
+      <Filter>components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\speaker.cpp">
+      <Filter>components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\spectrum.cpp">
+      <Filter>components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\split.cpp">
+      <Filter>components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\wave_table.cpp">
+      <Filter>components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="midi.h" />
-    <ClInclude Include="ring_buffer.h" />
-    <ClInclude Include="util.h" />
-    <ClInclude Include="components.h">
-      <Filter>components</Filter>
-    </ClInclude>
-    <ClInclude Include="synth.h">
-      <Filter>synth</Filter>
-    </ClInclude>
-    <ClInclude Include="connector.h">
-      <Filter>synth</Filter>
-    </ClInclude>
-    <ClInclude Include="sample.h">
-      <Filter>synth</Filter>
-    </ClInclude>
-    <ClInclude Include="parameter.h">
-      <Filter>synth</Filter>
-    </ClInclude>
-    <ClInclude Include="scope_timer.h" />
-    <ClInclude Include="file_dialog.h" />
-    <ClInclude Include="json.h">
+    <ClInclude Include="src\json.h">
       <Filter>json</Filter>
+    </ClInclude>
+    <ClInclude Include="src\connector.h">
+      <Filter>synth</Filter>
+    </ClInclude>
+    <ClInclude Include="src\parameter.h">
+      <Filter>synth</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sample.h">
+      <Filter>synth</Filter>
+    </ClInclude>
+    <ClInclude Include="src\synth.h">
+      <Filter>synth</Filter>
+    </ClInclude>
+    <ClInclude Include="src\file_dialog.h" />
+    <ClInclude Include="src\midi.h" />
+    <ClInclude Include="src\ring_buffer.h" />
+    <ClInclude Include="src\scope_timer.h" />
+    <ClInclude Include="src\util.h" />
+    <ClInclude Include="src\components.h">
+      <Filter>components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

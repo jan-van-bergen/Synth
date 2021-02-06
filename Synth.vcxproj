@@ -130,7 +130,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <FloatingPointModel>Fast</FloatingPointModel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -153,7 +153,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <FloatingPointModel>Fast</FloatingPointModel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -171,14 +171,6 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="bitcrusher_component.cpp" />
-    <ClCompile Include="compressor_component.cpp" />
-    <ClCompile Include="connector.cpp" />
-    <ClCompile Include="decibel_component.cpp" />
-    <ClCompile Include="delay_component.cpp" />
-    <ClCompile Include="distortion_component.cpp" />
-    <ClCompile Include="file_dialog.cpp" />
-    <ClCompile Include="filter_component.cpp" />
     <ClCompile Include="include\Imgui\imgui.cpp" />
     <ClCompile Include="include\Imgui\imgui_demo.cpp" />
     <ClCompile Include="include\ImGui\imgui_draw.cpp" />
@@ -186,34 +178,42 @@
     <ClCompile Include="include\Imgui\imgui_impl_sdl.cpp" />
     <ClCompile Include="include\ImGui\imgui_tables.cpp" />
     <ClCompile Include="include\Imgui\imgui_widgets.cpp" />
-    <ClCompile Include="json_parser.cpp" />
-    <ClCompile Include="json_writer.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="midi.cpp" />
-    <ClCompile Include="oscillator_component.cpp" />
-    <ClCompile Include="pan_component.cpp" />
-    <ClCompile Include="piano_roll_component.cpp" />
-    <ClCompile Include="speaker_component.cpp" />
-    <ClCompile Include="sampler_component.cpp" />
-    <ClCompile Include="sequencer_component.cpp" />
-    <ClCompile Include="spectrum_component.cpp" />
-    <ClCompile Include="split_component.cpp" />
-    <ClCompile Include="synth.cpp" />
-    <ClCompile Include="util.cpp" />
-    <ClCompile Include="wave_table_component.cpp" />
+    <ClCompile Include="src\components\bitcrusher.cpp" />
+    <ClCompile Include="src\components\compressor.cpp" />
+    <ClCompile Include="src\components\decibel.cpp" />
+    <ClCompile Include="src\components\delay.cpp" />
+    <ClCompile Include="src\components\distortion.cpp" />
+    <ClCompile Include="src\components\filter.cpp" />
+    <ClCompile Include="src\components\oscillator.cpp" />
+    <ClCompile Include="src\components\pan.cpp" />
+    <ClCompile Include="src\components\piano_roll.cpp" />
+    <ClCompile Include="src\components\sampler.cpp" />
+    <ClCompile Include="src\components\sequencer.cpp" />
+    <ClCompile Include="src\components\speaker.cpp" />
+    <ClCompile Include="src\components\spectrum.cpp" />
+    <ClCompile Include="src\components\split.cpp" />
+    <ClCompile Include="src\components\wave_table.cpp" />
+    <ClCompile Include="src\connector.cpp" />
+    <ClCompile Include="src\file_dialog.cpp" />
+    <ClCompile Include="src\json_parser.cpp" />
+    <ClCompile Include="src\json_writer.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\midi.cpp" />
+    <ClCompile Include="src\synth.cpp" />
+    <ClCompile Include="src\util.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="components.h" />
-    <ClInclude Include="connector.h" />
-    <ClInclude Include="file_dialog.h" />
-    <ClInclude Include="json.h" />
-    <ClInclude Include="midi.h" />
-    <ClInclude Include="parameter.h" />
-    <ClInclude Include="ring_buffer.h" />
-    <ClInclude Include="sample.h" />
-    <ClInclude Include="scope_timer.h" />
-    <ClInclude Include="synth.h" />
-    <ClInclude Include="util.h" />
+    <ClInclude Include="src\components.h" />
+    <ClInclude Include="src\connector.h" />
+    <ClInclude Include="src\file_dialog.h" />
+    <ClInclude Include="src\json.h" />
+    <ClInclude Include="src\midi.h" />
+    <ClInclude Include="src\parameter.h" />
+    <ClInclude Include="src\ring_buffer.h" />
+    <ClInclude Include="src\sample.h" />
+    <ClInclude Include="src\scope_timer.h" />
+    <ClInclude Include="src\synth.h" />
+    <ClInclude Include="src\util.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
