@@ -9,9 +9,9 @@ void PianoRollComponent::update(Synth const & synth) {
 
 	if (midi_length == 0) return;
 
-	auto sixteenth_note = size_t(60) * SAMPLE_RATE / (4 * synth.tempo);
+	auto sixteenth_note = size_t(60) * SAMPLE_RATE / (4 * synth.settings.tempo);
 
-	auto length = midi_ticks_to_samples(midi_length, midi.tempo, midi.ticks, synth.tempo);
+	auto length = midi_ticks_to_samples(midi_length, midi.tempo, midi.ticks, synth.settings.tempo);
 
 	auto a = (synth.time + BLOCK_SIZE - 1) / length;
 	auto t = (synth.time + BLOCK_SIZE - 1) % length;
@@ -21,7 +21,7 @@ void PianoRollComponent::update(Synth const & synth) {
 	while (true) {
 		auto const & midi_event = midi.events[midi_offset];
 
-		auto midi_time = midi_ticks_to_samples(midi_event.time, midi.tempo, midi.ticks, synth.tempo);
+		auto midi_time = midi_ticks_to_samples(midi_event.time, midi.tempo, midi.ticks, synth.settings.tempo);
 
 		if (midi_time > t || midi_rounds >= a) break;
 
@@ -42,5 +42,17 @@ void PianoRollComponent::update(Synth const & synth) {
 }
 
 void PianoRollComponent::render(Synth const & synth) {
+
+}
+
+void PianoRollComponent::serialize(json::Writer & writer) const {
+	writer.object_begin("PianoRollComponent");
+	writer.write("id", id);
+	writer.write("pos_x", pos[0]);
+	writer.write("pos_y", pos[1]);
+	writer.object_end();
+}
+
+void PianoRollComponent::deserialize(json::Object const & object) {
 
 }

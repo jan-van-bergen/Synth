@@ -95,3 +95,15 @@ void SpectrumComponent::render(Synth const & synth) {
 	auto avail = ImGui::GetContentRegionAvail();
 	ImGui::PlotLines("", spectrum, N, 0, nullptr, 0.0f, 1.0f, ImVec2(avail.x, avail.y - ImGui::GetTextLineHeightWithSpacing()));
 }
+
+void SpectrumComponent::serialize(json::Writer & writer) const {
+	writer.object_begin("SpectrumComponent");
+	writer.write("id", id);
+	writer.write("pos_x", pos[0]);
+	writer.write("pos_y", pos[1]);
+	writer.object_end();
+}
+
+void SpectrumComponent::deserialize(json::Object const & object) {
+
+}

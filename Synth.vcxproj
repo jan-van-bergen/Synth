@@ -177,6 +177,7 @@
     <ClCompile Include="decibel_component.cpp" />
     <ClCompile Include="delay_component.cpp" />
     <ClCompile Include="distortion_component.cpp" />
+    <ClCompile Include="file_dialog.cpp" />
     <ClCompile Include="filter_component.cpp" />
     <ClCompile Include="include\Imgui\imgui.cpp" />
     <ClCompile Include="include\Imgui\imgui_demo.cpp" />
@@ -185,6 +186,8 @@
     <ClCompile Include="include\Imgui\imgui_impl_sdl.cpp" />
     <ClCompile Include="include\ImGui\imgui_tables.cpp" />
     <ClCompile Include="include\Imgui\imgui_widgets.cpp" />
+    <ClCompile Include="json_parser.cpp" />
+    <ClCompile Include="json_writer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="midi.cpp" />
     <ClCompile Include="oscillator_component.cpp" />
@@ -202,6 +205,8 @@
   <ItemGroup>
     <ClInclude Include="components.h" />
     <ClInclude Include="connector.h" />
+    <ClInclude Include="file_dialog.h" />
+    <ClInclude Include="json.h" />
     <ClInclude Include="midi.h" />
     <ClInclude Include="parameter.h" />
     <ClInclude Include="ring_buffer.h" />

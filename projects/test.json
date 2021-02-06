@@ -1,0 +1,54 @@
+{
+	"SpeakerComponent": {
+		"id": 0,
+		"pos_x": 950.000000,
+		"pos_y": 207.000000
+	},
+	"OscillatorComponent": {
+		"id": 1,
+		"pos_x": 74.000000,
+		"pos_y": 229.000000,
+		"waveform": 3,
+		"transpose": 0,
+		"detune": 0.000000,
+		"portamento": 0.000000,
+		"attack": 0.100000,
+		"hold": 0.500000,
+		"decay": 1.000000,
+		"sustain": 0.500000,
+		"release": 0.000000
+	},
+	"SamplerComponent": {
+		"id": 2,
+		"pos_x": 512.000000,
+		"pos_y": 70.000000,
+		"filename": "samples/909_clap.wav"
+	},
+	"SequencerComponent": {
+		"id": 3,
+		"pos_x": 43.000000,
+		"pos_y": 88.000000,
+		"pattern": [ 1.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000, 1.000000, 0.000000, 1.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000, 1.000000, 0.000000 ]
+	},
+	"Connection": {
+		"component_out": 1,
+		"component_in": 0,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 2,
+		"component_in": 0,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 3,
+		"component_in": 2,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	}
+}

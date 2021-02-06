@@ -44,3 +44,22 @@ void FilterComponent::render(Synth const & synth) {
 	cutoff   .render();
 	resonance.render();
 }
+
+void FilterComponent::serialize(json::Writer & writer) const {
+	writer.object_begin("FilterComponent");
+	writer.write("id", id);
+	writer.write("pos_x", pos[0]);
+	writer.write("pos_y", pos[1]);
+
+	writer.write("filter_type", filter_type);
+	writer.write("cutoff",      cutoff);
+	writer.write("resonance",   resonance);
+
+	writer.object_end();
+}
+
+void FilterComponent::deserialize(json::Object const & object) {
+	filter_type = object.find<json::ValueInt   const>("filter_type")->value;
+	cutoff      = object.find<json::ValueFloat const>("cutoff")     ->value;
+	resonance   = object.find<json::ValueFloat const>("resonance")  ->value;
+}

@@ -43,7 +43,7 @@ static float envelope(float t, float attack, float hold, float decay, float sust
 };
 
 void OscillatorComponent::update(Synth const & synth) {
-	auto steps_per_second = 4.0f / 60.0f * float(synth.tempo);
+	auto steps_per_second = 4.0f / 60.0f * float(synth.settings.tempo);
 
 	// Check for pressed notes
 	for (auto const & note : synth.notes) {
@@ -175,4 +175,37 @@ void OscillatorComponent::render(Synth const & synth) {
 	decay  .render();
 	sustain.render();
 	release.render();
+}
+
+void OscillatorComponent::serialize(json::Writer & writer) const {
+	writer.object_begin("OscillatorComponent");
+	writer.write("id", id);
+	writer.write("pos_x", pos[0]);
+	writer.write("pos_y", pos[1]);
+
+	writer.write("waveform", waveform_index);
+
+	writer.write("transpose",  transpose);
+	writer.write("detune",     detune);
+	writer.write("portamento", portamento);
+
+	writer.write("attack",  attack);
+	writer.write("hold",    hold);
+	writer.write("decay",   decay);
+	writer.write("sustain", sustain);
+	writer.write("release", release);
+
+	writer.object_end();
+}
+
+void OscillatorComponent::deserialize(json::Object const & object) {
+	waveform_index = object.find<json::ValueInt   const>("waveform")  ->value;
+	transpose      = object.find<json::ValueFloat const>("transpose") ->value;
+	detune         = object.find<json::ValueFloat const>("detune")    ->value;
+	portamento     = object.find<json::ValueFloat const>("portamento")->value;
+	attack         = object.find<json::ValueFloat const>("attack")    ->value;
+	hold           = object.find<json::ValueFloat const>("hold")      ->value;
+	decay          = object.find<json::ValueFloat const>("decay")     ->value;
+	sustain        = object.find<json::ValueFloat const>("sustain")   ->value;
+	release        = object.find<json::ValueFloat const>("release")   ->value;
 }

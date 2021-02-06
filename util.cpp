@@ -81,6 +81,27 @@ std::vector<Sample> util::load_wav(char const * filename) {
 	return samples;
 }
 
+std::vector<char> util::read_file(char const * filename) {
+	FILE * file; fopen_s(&file, filename, "rb");
+
+	if (file == nullptr) {
+		printf("ERROR: Unable to open file '%s'!", filename);
+		return { };
+	}
+
+	// Get file length
+	fseek(file, 0, SEEK_END);
+	auto file_size = ftell(file);
+	rewind(file);
+
+	std::vector<char> buffer(file_size);
+	fread(buffer.data(), file_size, 1, file);
+
+	fclose(file);
+
+	return buffer;
+}
+
 int util::round(float f) {
 //	f -= copysignf(0.5f, f); // Round up/down based on sign of f
 	return _mm_cvtss_si32(_mm_load_ss(&f));

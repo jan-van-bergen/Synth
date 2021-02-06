@@ -24,3 +24,19 @@ void SamplerComponent::render(Synth const & synth) {
 	
 	if (ImGui::Button("Load")) samples = util::load_wav(filename);
 }
+
+void SamplerComponent::serialize(json::Writer & writer) const {
+	writer.object_begin("SamplerComponent");
+	writer.write("id", id);
+	writer.write("pos_x", pos[0]);
+	writer.write("pos_y", pos[1]);
+
+	writer.write("filename", filename);
+	
+	writer.object_end();
+}
+
+void SamplerComponent::deserialize(json::Object const & object) {
+	strcpy_s(filename, object.find<json::ValueString const>("filename")->value.c_str());
+	samples = util::load_wav(filename);
+}

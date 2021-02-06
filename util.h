@@ -73,6 +73,8 @@ namespace util {
 
 	std::vector<Sample> load_wav(char const * filename);
 
+	std::vector<char> read_file(char const * filename);
+
 	int round(float f);
 
 	int scancode_to_note(SDL_Scancode scancode);

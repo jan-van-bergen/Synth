@@ -3,7 +3,7 @@
 #include "synth.h"
 
 void SequencerComponent::update(Synth const & synth) {
-	auto sixteenth_note = size_t(60) * SAMPLE_RATE / (4 * synth.tempo);
+	auto sixteenth_note = size_t(60) * SAMPLE_RATE / (4 * synth.settings.tempo);
 	
 	for (int i = 0; i < BLOCK_SIZE; i++) {
 		auto time = (synth.time + i) % (sixteenth_note * TRACK_SIZE);
@@ -12,7 +12,7 @@ void SequencerComponent::update(Synth const & synth) {
 		auto hit  = time % sixteenth_note == 0;
 
 		if (hit) {
-			outputs[0].values[i] = steps[step];
+			outputs[0].values[i] = pattern[step];
 
 			current_step = step;
 		}
@@ -32,10 +32,40 @@ void SequencerComponent::render(Synth const & synth) {
 		
 		sprintf_s(label, "##%i", i);
 
-		ImGui::VSliderFloat(label, ImVec2(16, 64), &steps[i], 0.0f, 1.0f, "");
+		ImGui::VSliderFloat(label, ImVec2(16, 64), &pattern[i], 0.0f, 1.0f, "");
 		
 		if (i != TRACK_SIZE - 1) ImGui::SameLine();
 		
 		ImGui::PopStyleColor();
+	}
+}
+
+void SequencerComponent::serialize(json::Writer & writer) const {
+	writer.object_begin("SequencerComponent");
+	writer.write("id", id);
+	writer.write("pos_x", pos[0]);
+	writer.write("pos_y", pos[1]);
+
+	writer.write("pattern", 16, pattern);
+	
+	writer.object_end();
+}
+
+void SequencerComponent::deserialize(json::Object const & object) {
+	auto const & arr = object.find<json::Array const>("pattern")->values;
+	
+	if (arr.size() != TRACK_SIZE) {
+		printf("WARNGING: Non-matching track sizes! stored %zu, expected %i\n", arr.size(), TRACK_SIZE);
+	}
+
+	memset(pattern, 0, sizeof(pattern));
+	
+	auto size = std::min((int)arr.size(), TRACK_SIZE);
+
+	for (int i = 0; i < size; i++) {
+		assert(arr[i]->type == json::JSON::Type::VALUE_FLOAT);
+		auto value = static_cast<json::ValueFloat const *>(arr[i].get());
+
+		pattern[i] = value->value;
 	}
 }

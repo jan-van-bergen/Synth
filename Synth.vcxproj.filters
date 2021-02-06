@@ -76,6 +76,13 @@
     <ClCompile Include="compressor_component.cpp">
       <Filter>components</Filter>
     </ClCompile>
+    <ClCompile Include="file_dialog.cpp" />
+    <ClCompile Include="json_writer.cpp">
+      <Filter>json</Filter>
+    </ClCompile>
+    <ClCompile Include="json_parser.cpp">
+      <Filter>json</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="midi.h" />
@@ -97,6 +104,10 @@
       <Filter>synth</Filter>
     </ClInclude>
     <ClInclude Include="scope_timer.h" />
+    <ClInclude Include="file_dialog.h" />
+    <ClInclude Include="json.h">
+      <Filter>json</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="ImGui">
@@ -107,6 +118,9 @@
     </Filter>
     <Filter Include="synth">
       <UniqueIdentifier>{cf5cfb8f-f390-468b-8c28-d0b77a338af4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="json">
+      <UniqueIdentifier>{724ab5ce-603f-4037-94c3-b3c6484fc54c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

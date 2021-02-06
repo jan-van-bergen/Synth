@@ -41,7 +41,6 @@ static void sdl_audio_callback(void * user_data, Uint8 * stream, int len) {
 	buffers.advance_read();
 }
 
-
 int main(int argc, char * argv[]) {
 	SDL_Init(SDL_INIT_EVERYTHING);
 

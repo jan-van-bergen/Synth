@@ -1,17 +1,23 @@
 #pragma once
 #include "components.h"
 
+#include "file_dialog.h"
+
 struct Synth {
 	std::vector<Component *> sources;
 	std::vector<Component *> sinks;
 
 	std::vector<std::unique_ptr<Component>> components;
 	
+	int unique_component_id = 0;
+
 	std::vector<Component *> update_graph; // Order in which Components are updated, should be reconstructed if topology of the graph changes
 
-	Parameter<int> tempo = { "Tempo", 130, std::make_pair(60, 200), { 80, 110, 128, 140, 150, 174 } };
+	struct {
+		Parameter<int> tempo = { "Tempo", 130, std::make_pair(60, 200), { 80, 110, 128, 140, 150, 174 } };
 
-	Parameter<float> master_volume = { "Master Volume", 1.0f, std::make_pair(0.0f, 2.0f), { 0.0f, 0.25f, 0.5f, 0.75f, 1.0f, 1.5f, 2.0f } };
+		Parameter<float> master_volume = { "Master Volume", 1.0f, std::make_pair(0.0f, 2.0f), { 0.0f, 0.25f, 0.5f, 0.75f, 1.0f, 1.5f, 2.0f } };
+	} settings;
 
 	int time = 0;
 	
@@ -23,9 +29,14 @@ struct Synth {
 
 	mutable std::vector<Note> notes; // Currently held down notes
 	
-	template<typename T>
-	T * add_component() {
-		auto component = std::make_unique<T>();
+	FileDialog file_dialog;
+	bool just_loaded = false;
+
+	template<typename T> requires std::derived_from<T, Component>
+	T * add_component(int id = -1) {
+		if (id == -1) id = unique_component_id++;
+
+		auto component = std::make_unique<T>(id);
 
 		if (component->type == Component::Type::SOURCE) sources.push_back(component.get());
 		if (component->type == Component::Type::SINK)   sinks  .push_back(component.get());
@@ -40,7 +51,7 @@ struct Synth {
 	void update(Sample buf[BLOCK_SIZE]);
 	void render();
 	
-	void    connect(ConnectorOut & out, ConnectorIn & in);
+	void    connect(ConnectorOut & out, ConnectorIn & in, float weight = 1.0f);
 	void disconnect(ConnectorOut & out, ConnectorIn & in);
 
 	void note_press(int note, float velocity, int time_offset = 0) const {

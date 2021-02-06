@@ -31,16 +31,22 @@ void Synth::update(Sample buf[BLOCK_SIZE]) {
 		}
 	}
 
-	for (int i = 0; i < BLOCK_SIZE; i++) buf[i] *= master_volume;
+	for (int i = 0; i < BLOCK_SIZE; i++) buf[i] *= settings.master_volume;
 }
 
 void Synth::render() {
 	connections.clear();
 	drag_handled = false;
 
+	auto show_save_popup = false;
+	auto show_open_popup = false;
+	
 	// Draw menu bar
 	if (ImGui::BeginMainMenuBar()) {
 		if (ImGui::BeginMenu("File")) {
+			if (ImGui::MenuItem("Open")) show_open_popup = true;
+			if (ImGui::MenuItem("Save")) show_save_popup = true;
+
 			ImGui::EndMenu();
 		}
 			
@@ -96,6 +102,8 @@ void Synth::render() {
 		auto open      = true;
 		auto collapsed = true;
 
+		if (just_loaded) ImGui::SetNextWindowPos(ImVec2(component->pos[0], component->pos[1])); // Move Window to correct position if we just loaded a file
+
 		ImGui::SetNextWindowSizeConstraints(ImVec2(100, 100), ImVec2(INFINITY, INFINITY));
 
 		if (ImGui::Begin(label, &open, ImGuiWindowFlags_NoSavedSettings)) {
@@ -105,6 +113,10 @@ void Synth::render() {
 			for (auto & output : component->outputs) render_connector_out(output);
 
 			collapsed = false;
+
+			auto window_pos = ImGui::GetWindowPos();
+			component->pos[0] = window_pos.x;
+			component->pos[1] = window_pos.y;
 		}
 
 		auto pos = ImGui::GetCursorScreenPos();
@@ -129,7 +141,7 @@ void Synth::render() {
 	}
 
 	auto draw_connection = [](ImVec2 spline_start, ImVec2 spline_end, ImColor colour) {
-		auto draw_list = ImGui::GetForegroundDrawList();
+		auto draw_list = ImGui::GetBackgroundDrawList();
 
 		const auto t1 = ImVec2(200.0f, 0.0f);
 		const auto t2 = ImVec2(200.0f, 0.0f);
@@ -215,8 +227,8 @@ void Synth::render() {
 	if (ImGui::Begin("Settings")) {
 		ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
 
-		tempo.render();
-		master_volume.render();
+		settings.tempo        .render();
+		settings.master_volume.render();
 	}
 	ImGui::End();
 
@@ -271,13 +283,147 @@ void Synth::render() {
 
 		reconstruct_update_graph();
 	}
+	
+	if (show_save_popup) file_dialog.show(true);
+	if (show_open_popup) file_dialog.show(false);
+
+	just_loaded = false;
+
+	if (file_dialog.render()) {
+		auto filename = file_dialog.selected_path.string();
+
+		if (file_dialog.saving) {
+			auto writer = json::Writer(filename.c_str());
+
+			writer.object_begin("Settings");
+			writer.write("tempo",         settings.tempo);
+			writer.write("master_volume", settings.master_volume);
+			writer.object_end();
+
+			for (auto const & component : components) {
+				component->serialize(writer);
+			}
+
+			for (auto const & connection : connections) {
+				float * connection_weight = nullptr;
+
+				for (auto & [other, weight] : connection.second->others) {
+					if (other == connection.first) {
+						connection_weight = &weight;
+						break;
+					}
+				}
+
+				assert(connection_weight);
+
+				// Unique IDs that identify the Components
+				auto component_out = connection.first ->component->id;
+				auto component_in  = connection.second->component->id;
+
+				// Unique offsets that identify the Connectors
+				auto offset_out = int(connection.first  - connection.first ->component->outputs.data());
+				auto offset_in  = int(connection.second - connection.second->component->inputs .data());
+
+				writer.object_begin("Connection");
+				writer.write("component_out", component_out);
+				writer.write("component_in",  component_in);
+				writer.write("offset_out", offset_out);
+				writer.write("offset_in",  offset_in);
+				writer.write("weight", *connection_weight);
+				writer.object_end();
+			}
+		} else {
+			auto parser = json::Parser(filename.c_str());
+
+			sources.clear();
+			sinks  .clear();
+			
+			components.clear();
+
+			time = 0;
+			
+			settings.tempo         = 130;
+			settings.master_volume = 1.0f;
+
+			assert(parser.root->type == json::JSON::Type::OBJECT);
+			auto json = static_cast<json::Object const *>(parser.root.get()); 
+
+			for (auto const & object : json->attributes) {
+				assert(object->type == json::JSON::Type::OBJECT);
+				auto obj = static_cast<json::Object const *>(object.get());
+
+				if (obj->name == "Settings") {
+					settings.tempo         = obj->find<json::ValueInt   const>("tempo")        ->value;
+					settings.master_volume = obj->find<json::ValueFloat const>("master_volume")->value;
+				} else if (obj->name == "Connection") {
+					auto id_out     = obj->find<json::ValueInt   const>("component_out")->value;
+					auto id_in      = obj->find<json::ValueInt   const>("component_in") ->value;
+					auto offset_out = obj->find<json::ValueInt   const>("offset_out")   ->value;
+					auto offset_in  = obj->find<json::ValueInt   const>("offset_in")    ->value;
+					auto weight     = obj->find<json::ValueFloat const>("weight")       ->value;
+
+					// Find Components by ID
+					auto component_out = std::find_if(components.begin(), components.end(), [id_out](auto const & component) { return component->id == id_out; });
+					auto component_in  = std::find_if(components.begin(), components.end(), [id_in] (auto const & component) { return component->id == id_in;  });
+
+					if (component_out == components.end() || component_in == components.end()) {
+						printf("WARNING: Failed to load connection %i <-> %i!\n", id_out, id_in);
+						continue;
+					}
+
+					auto & connector_out = (*component_out)->outputs[offset_out];
+					auto & connector_in  = (*component_in) ->inputs [offset_in];
+
+					connect(connector_out, connector_in, weight);
+				} else {
+					auto id    = obj->find<json::ValueInt   const>("id")   ->value;
+					auto pos_x = obj->find<json::ValueFloat const>("pos_x")->value;
+					auto pos_y = obj->find<json::ValueFloat const>("pos_y")->value;
+
+					Component * component = nullptr;
+
+					     if (obj->name == "BitCrusherComponent") component = add_component<BitCrusherComponent>(id);
+					else if (obj->name == "CompressorComponent") component = add_component<CompressorComponent>(id);
+					else if (obj->name == "DecibelComponent")    component = add_component<DecibelComponent>(id);
+					else if (obj->name == "DelayComponent")      component = add_component<DelayComponent>(id);
+					else if (obj->name == "DistortionComponent") component = add_component<DistortionComponent>(id);
+					else if (obj->name == "FilterComponent")     component = add_component<FilterComponent>(id);
+					else if (obj->name == "OscillatorComponent") component = add_component<OscillatorComponent>(id);
+					else if (obj->name == "PanComponent")        component = add_component<PanComponent>(id);
+					else if (obj->name == "PianoRollComponent")  component = add_component<PianoRollComponent>(id);
+					else if (obj->name == "SamplerComponent")    component = add_component<SamplerComponent>(id);
+					else if (obj->name == "SequencerComponent")  component = add_component<SequencerComponent>(id);
+					else if (obj->name == "SpeakerComponent")    component = add_component<SpeakerComponent>(id);
+					else if (obj->name == "SpectrumComponent")   component = add_component<SpectrumComponent>(id);
+					else if (obj->name == "SplitComponent")      component = add_component<SplitComponent>(id);
+					else if (obj->name == "WaveTableComponent")  component = add_component<WaveTableComponent>(id);
+
+					if (!component) {
+						printf("WARNING: Unsupported Component '%s'!\n", obj->name.c_str());
+						continue;
+					}
+
+					component->deserialize(*obj);
+
+					component->pos[0] = pos_x;
+					component->pos[1] = pos_y;
+				}
+			}
+			
+			reconstruct_update_graph();
+
+			unique_component_id = components.size();
+
+			just_loaded = true;
+		}
+	}
 }
 
-void Synth::connect(ConnectorOut & out, ConnectorIn & in) {
+void Synth::connect(ConnectorOut & out, ConnectorIn & in, float weight) {
 	if (out.component == in.component) return;
 
 	out.others.push_back(&in);
-	in .others.push_back(std::make_pair(&out, 1.0f));
+	in .others.push_back(std::make_pair(&out, weight));
 
 	reconstruct_update_graph();
 }
@@ -339,8 +485,8 @@ void Synth::render_connector_in(ConnectorIn & in) {
 		if (ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
 			if (!dragging) dragging = &in;
 		} else if (ImGui::IsMouseReleased(ImGuiMouseButton_Left)) {
-			if (dragging) {
-				if (dragging != &in && !dragging->is_input) {
+			if (dragging && dragging != &in) {
+				if (!dragging->is_input) {
 					connect(*reinterpret_cast<ConnectorOut *>(dragging), in);
 				}
 

@@ -25,3 +25,22 @@ void BitCrusherComponent::render(Synth const & synth) {
 	bits.render();
 	rate.render();
 }
+
+void BitCrusherComponent::serialize(json::Writer & writer) const {
+	writer.object_begin("BitCrusherComponent");
+	writer.write("id", id);
+	writer.write("pos_x", pos[0]);
+	writer.write("pos_y", pos[1]);
+
+	writer.write("gain", gain);
+	writer.write("bits", bits);
+	writer.write("rate", rate);
+
+	writer.object_end();
+}
+
+void BitCrusherComponent::deserialize(json::Object const & object) {
+	gain = object.find<json::ValueFloat const>("gain")->value;
+	bits = object.find<json::ValueFloat const>("bits")->value;
+	rate = object.find<json::ValueFloat const>("rate")->value;
+}

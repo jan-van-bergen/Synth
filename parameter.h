@@ -149,4 +149,8 @@ struct Parameter : Param {
 	}
 
 	operator T() const { return parameter; }
+
+	void operator=(T const & value) {
+		parameter = value;
+	}
 };

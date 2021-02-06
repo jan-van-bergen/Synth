@@ -26,3 +26,15 @@ void WaveTableComponent::update(Synth const & synth) {
 void WaveTableComponent::render(Synth const & synth) {
 
 }
+
+void WaveTableComponent::serialize(json::Writer & writer) const {
+	writer.object_begin("WaveTableComponent");
+	writer.write("id", id);
+	writer.write("pos_x", pos[0]);
+	writer.write("pos_y", pos[1]);
+	writer.object_end();
+}
+
+void WaveTableComponent::deserialize(json::Object const & object) {
+
+}
