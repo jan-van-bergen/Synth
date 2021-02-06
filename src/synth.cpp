@@ -37,23 +37,19 @@ void Synth::update(Sample buf[BLOCK_SIZE]) {
 void Synth::render() {
 	connections.clear();
 	drag_handled = false;
-
-	auto show_save_popup = false;
-	auto show_open_popup = false;
+	
+	auto show_popup_open = ImGui::IsKeyDown(SDL_SCANCODE_LCTRL) && ImGui::IsKeyPressed(SDL_SCANCODE_O);
+	auto show_popup_save = ImGui::IsKeyDown(SDL_SCANCODE_LCTRL) && ImGui::IsKeyPressed(SDL_SCANCODE_S);
 	
 	// Draw menu bar
 	if (ImGui::BeginMainMenuBar()) {
 		if (ImGui::BeginMenu("File")) {
-			if (ImGui::MenuItem("Open")) show_open_popup = true;
-			if (ImGui::MenuItem("Save")) show_save_popup = true;
+			if (ImGui::MenuItem("Open", "Ctrl+O")) show_popup_open = true;
+			if (ImGui::MenuItem("Save", "Ctrl+S")) show_popup_save = true;
 
 			ImGui::EndMenu();
 		}
-			
-		if (ImGui::BeginMenu("Edit")) {
-			ImGui::EndMenu();
-		}
-
+		
 		if (ImGui::BeginMenu("Components")) {
 			if (ImGui::MenuItem("Sequencer"))  add_component<SequencerComponent>();
 			if (ImGui::MenuItem("Piano Roll")) add_component<PianoRollComponent>();
@@ -286,8 +282,8 @@ void Synth::render() {
 		reconstruct_update_graph();
 	}
 	
-	if (show_save_popup) file_dialog.show(true);
-	if (show_open_popup) file_dialog.show(false);
+	if (show_popup_open) file_dialog.show(false);
+	if (show_popup_save) file_dialog.show(true);
 
 	just_loaded = false;
 
@@ -345,71 +341,71 @@ void Synth::render() {
 			settings.tempo         = 130;
 			settings.master_volume = 1.0f;
 
-			assert(parser.root->type == json::JSON::Type::OBJECT);
-			auto json = static_cast<json::Object const *>(parser.root.get()); 
+			if (parser.root->type == json::JSON::Type::OBJECT) {
+				auto json = static_cast<json::Object const *>(parser.root.get()); 
 
-			for (auto const & object : json->attributes) {
-				assert(object->type == json::JSON::Type::OBJECT);
-				auto obj = static_cast<json::Object const *>(object.get());
+				for (auto const & object : json->attributes) {
+					assert(object->type == json::JSON::Type::OBJECT);
+					auto obj = static_cast<json::Object const *>(object.get());
 
-				if (obj->name == "Settings") {
-					settings.tempo         = obj->find<json::ValueInt   const>("tempo")        ->value;
-					settings.master_volume = obj->find<json::ValueFloat const>("master_volume")->value;
-				} else if (obj->name == "Connection") {
-					auto id_out     = obj->find<json::ValueInt   const>("component_out")->value;
-					auto id_in      = obj->find<json::ValueInt   const>("component_in") ->value;
-					auto offset_out = obj->find<json::ValueInt   const>("offset_out")   ->value;
-					auto offset_in  = obj->find<json::ValueInt   const>("offset_in")    ->value;
-					auto weight     = obj->find<json::ValueFloat const>("weight")       ->value;
+					if (obj->name == "Settings") {
+						settings.tempo         = obj->find<json::ValueInt   const>("tempo")        ->value;
+						settings.master_volume = obj->find<json::ValueFloat const>("master_volume")->value;
+					} else if (obj->name == "Connection") {
+						auto id_out     = obj->find<json::ValueInt   const>("component_out")->value;
+						auto id_in      = obj->find<json::ValueInt   const>("component_in") ->value;
+						auto offset_out = obj->find<json::ValueInt   const>("offset_out")   ->value;
+						auto offset_in  = obj->find<json::ValueInt   const>("offset_in")    ->value;
+						auto weight     = obj->find<json::ValueFloat const>("weight")       ->value;
 
-					// Find Components by ID
-					auto component_out = std::find_if(components.begin(), components.end(), [id_out](auto const & component) { return component->id == id_out; });
-					auto component_in  = std::find_if(components.begin(), components.end(), [id_in] (auto const & component) { return component->id == id_in;  });
+						// Find Components by ID
+						auto component_out = std::find_if(components.begin(), components.end(), [id_out](auto const & component) { return component->id == id_out; });
+						auto component_in  = std::find_if(components.begin(), components.end(), [id_in] (auto const & component) { return component->id == id_in;  });
 
-					if (component_out == components.end() || component_in == components.end()) {
-						printf("WARNING: Failed to load connection %i <-> %i!\n", id_out, id_in);
-						continue;
+						if (component_out == components.end() || component_in == components.end()) {
+							printf("WARNING: Failed to load connection %i <-> %i!\n", id_out, id_in);
+							continue;
+						}
+
+						auto & connector_out = (*component_out)->outputs[offset_out];
+						auto & connector_in  = (*component_in) ->inputs [offset_in];
+
+						connect(connector_out, connector_in, weight);
+					} else {
+						auto id    = obj->find<json::ValueInt   const>("id")   ->value;
+						auto pos_x = obj->find<json::ValueFloat const>("pos_x")->value;
+						auto pos_y = obj->find<json::ValueFloat const>("pos_y")->value;
+
+						Component * component = nullptr;
+
+							 if (obj->name == "BitCrusherComponent") component = add_component<BitCrusherComponent>(id);
+						else if (obj->name == "CompressorComponent") component = add_component<CompressorComponent>(id);
+						else if (obj->name == "DecibelComponent")    component = add_component<DecibelComponent>(id);
+						else if (obj->name == "DelayComponent")      component = add_component<DelayComponent>(id);
+						else if (obj->name == "DistortionComponent") component = add_component<DistortionComponent>(id);
+						else if (obj->name == "FilterComponent")     component = add_component<FilterComponent>(id);
+						else if (obj->name == "OscillatorComponent") component = add_component<OscillatorComponent>(id);
+						else if (obj->name == "PanComponent")        component = add_component<PanComponent>(id);
+						else if (obj->name == "PianoRollComponent")  component = add_component<PianoRollComponent>(id);
+						else if (obj->name == "SamplerComponent")    component = add_component<SamplerComponent>(id);
+						else if (obj->name == "SequencerComponent")  component = add_component<SequencerComponent>(id);
+						else if (obj->name == "SpeakerComponent")    component = add_component<SpeakerComponent>(id);
+						else if (obj->name == "SpectrumComponent")   component = add_component<SpectrumComponent>(id);
+						else if (obj->name == "SplitComponent")      component = add_component<SplitComponent>(id);
+						else if (obj->name == "WaveTableComponent")  component = add_component<WaveTableComponent>(id);
+
+						if (!component) {
+							printf("WARNING: Unsupported Component '%s'!\n", obj->name.c_str());
+							continue;
+						}
+
+						component->deserialize(*obj);
+
+						component->pos[0] = pos_x;
+						component->pos[1] = pos_y;
 					}
-
-					auto & connector_out = (*component_out)->outputs[offset_out];
-					auto & connector_in  = (*component_in) ->inputs [offset_in];
-
-					connect(connector_out, connector_in, weight);
-				} else {
-					auto id    = obj->find<json::ValueInt   const>("id")   ->value;
-					auto pos_x = obj->find<json::ValueFloat const>("pos_x")->value;
-					auto pos_y = obj->find<json::ValueFloat const>("pos_y")->value;
-
-					Component * component = nullptr;
-
-					     if (obj->name == "BitCrusherComponent") component = add_component<BitCrusherComponent>(id);
-					else if (obj->name == "CompressorComponent") component = add_component<CompressorComponent>(id);
-					else if (obj->name == "DecibelComponent")    component = add_component<DecibelComponent>(id);
-					else if (obj->name == "DelayComponent")      component = add_component<DelayComponent>(id);
-					else if (obj->name == "DistortionComponent") component = add_component<DistortionComponent>(id);
-					else if (obj->name == "FilterComponent")     component = add_component<FilterComponent>(id);
-					else if (obj->name == "OscillatorComponent") component = add_component<OscillatorComponent>(id);
-					else if (obj->name == "PanComponent")        component = add_component<PanComponent>(id);
-					else if (obj->name == "PianoRollComponent")  component = add_component<PianoRollComponent>(id);
-					else if (obj->name == "SamplerComponent")    component = add_component<SamplerComponent>(id);
-					else if (obj->name == "SequencerComponent")  component = add_component<SequencerComponent>(id);
-					else if (obj->name == "SpeakerComponent")    component = add_component<SpeakerComponent>(id);
-					else if (obj->name == "SpectrumComponent")   component = add_component<SpectrumComponent>(id);
-					else if (obj->name == "SplitComponent")      component = add_component<SplitComponent>(id);
-					else if (obj->name == "WaveTableComponent")  component = add_component<WaveTableComponent>(id);
-
-					if (!component) {
-						printf("WARNING: Unsupported Component '%s'!\n", obj->name.c_str());
-						continue;
-					}
-
-					component->deserialize(*obj);
-
-					component->pos[0] = pos_x;
-					component->pos[1] = pos_y;
 				}
 			}
-			
 			reconstruct_update_graph();
 
 			unique_component_id = components.size();

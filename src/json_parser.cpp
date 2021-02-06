@@ -8,21 +8,23 @@
 #include "util.h"
 
 template<int N>
-static bool match(char const *& cur, char const (& target)[N]) {
-	if (strncmp(cur, target, N - 1) != 0) return false;
+static bool match(char const *& cur, char const * end, char const (& target)[N]) {
+	static constexpr auto LEN = N - 1;
 
-	cur += N - 1;
+	if (cur + LEN > end || strncmp(cur, target, LEN) != 0) return false;
+
+	cur += LEN;
 
 	return true;
 }
 
-void skip_space(char const *& cur) {
-	while (isspace(*cur)) cur++;
+void skip_space(char const *& cur, char const * end) {
+	while (cur < end && isspace(*cur)) cur++;
 }
 
 template<int N>
-static void advance(char const *& cur, char const (& target)[N]) {
-	if (!match(cur, target)) abort();
+static void advance(char const *& cur, char const * end, char const (& target)[N]) {
+	if (!match(cur, end, target)) abort();
 }
 
 static int parse_int(char const *& cur, char const * end) {
@@ -43,68 +45,72 @@ static float parse_float(char const *& cur, char const * end) {
 	return result;
 }
 
-static std::unique_ptr<json::JSON> parse_json(char const *& cur) {
-	skip_space(cur);
+static std::unique_ptr<json::JSON> parse_json(char const *& cur, char const * end) {
+	skip_space(cur, end);
 
 	std::string name = { };
 
-	if (match(cur, "\"")) {
+	if (match(cur, end, "\"")) {
 		auto start = cur;
-		while (!match(cur, "\"")) cur++;
+		while (!match(cur, end, "\"")) cur++;
 
 		name = std::string(start, cur - 1);
 
-		advance(cur, ":");
-		skip_space(cur);
+		advance(cur, end, ":");
+		skip_space(cur, end);
 	}
 
-	if (match(cur, "{")) {
+	if (match(cur, end, "{")) {
 		// Parse Object
 		std::vector<std::unique_ptr<json::JSON>> attributes;
 
-		while (!match(cur, "}")) {
-			attributes.push_back(parse_json(cur));
+		while (!match(cur, end, "}")) {
+			attributes.push_back(parse_json(cur, end));
 
-			match(cur, ",");
-			skip_space(cur);
+			match(cur, end, ",");
+			skip_space(cur, end);
 		}
 
 		return std::make_unique<json::Object>(name, std::move(attributes));
-	} else if (match(cur, "[")) {
+	} else if (match(cur, end, "[")) {
 		// Parse Array
 		std::vector<std::unique_ptr<json::JSON>> values;
 
-		while (!match(cur, "]")) {
-			values.push_back(parse_json(cur));
+		while (!match(cur, end, "]")) {
+			values.push_back(parse_json(cur, end));
 
-			match(cur, ",");
-			skip_space(cur);
+			match(cur, end, ",");
+			skip_space(cur, end);
 		}
 
 		return std::make_unique<json::Array>(name, std::move(values));
-	}else if (match(cur, "\"")) {
+	}else if (match(cur, end, "\"")) {
 		// Parse String
 		auto start = cur;
-		while (!match(cur, "\"")) cur++;
+		while (!match(cur, end, "\"")) cur++;
 
 		return std::make_unique<json::ValueString>(name, std::string(start, cur - 1));
-	} else {
+	} else if (cur < end) {
 		// Parse Float or Int
 		auto start = cur;
 
-		match(cur, "-");
-		while (isdigit(*cur)) cur++;
+		match(cur, end, "-");
+		while (cur < end && isdigit(*cur)) cur++;
 
-		if (match(cur, ".")) {
+		if (match(cur, end, ".")) {
 			// Parse Float
-			while (isdigit(*cur)) cur++;
+			while (cur < end && isdigit(*cur)) cur++;
 
-			return std::make_unique<json::ValueFloat>(name, parse_float(start, cur));
-		} else {
+			if (cur < end) {
+				return std::make_unique<json::ValueFloat>(name, parse_float(start, cur));
+			}
+		} else if (cur < end) {
 			// Parse Int
 			return std::make_unique<json::ValueInt>(name, parse_int(start, cur));
 		}
 	}
+
+	throw std::exception("Invalid JSON File!");
 }
 
 json::Parser::Parser(char const * filename) {
@@ -113,5 +119,11 @@ json::Parser::Parser(char const * filename) {
 	auto cur = input.data();
 	auto end = input.data() + input.size();
 	
-	root = parse_json(cur);
+	try {
+		root = parse_json(cur, end);
+	} catch (std::exception const & ex) {
+		printf("ERROR: %s\n", ex.what());
+
+		root = std::make_unique<json::Object>("Default", std::vector<std::unique_ptr<json::JSON>> { });
+	}
 }
