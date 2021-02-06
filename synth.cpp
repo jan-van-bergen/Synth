@@ -8,12 +8,12 @@
 static constexpr auto CONNECTOR_SIZE = 16.0f;
 
 void Synth::update(Sample buf[BLOCK_SIZE]) {
-	for (auto component : update_graph) {
-		for (auto & output : component->outputs) {
+	for (auto component = update_list_begin; component < update_list_end; component++) {
+		for (auto & output : (*component)->outputs) {
 			output.clear();
 		}
 
-		component->update(*this);
+		(*component)->update(*this);
 	}
 
 	time += BLOCK_SIZE;
@@ -21,8 +21,8 @@ void Synth::update(Sample buf[BLOCK_SIZE]) {
 	// Collect the resulting audio samples
 	memset(buf, 0, BLOCK_SIZE * sizeof(Sample));
 
-	for (auto const & sink : sinks) {
-		for (auto const & input : sink->inputs) {
+	for (auto const & speaker : speakers) {
+		for (auto const & input : speaker->inputs) {
 			for (auto const & [other, weight] : input.others) {
 				for (int i = 0; i < BLOCK_SIZE; i++) {
 					buf[i] += weight * other->values[i];
@@ -274,9 +274,11 @@ void Synth::render() {
 			}
 		}
 
-		// Remove from source or sink lists
-		if (component_to_be_removed->type == Component::Type::SOURCE) sources.erase(std::find(sources.begin(), sources.end(), component_to_be_removed));
-		if (component_to_be_removed->type == Component::Type::SINK)   sinks  .erase(std::find(sinks  .begin(), sinks  .end(), component_to_be_removed));
+		// Remove from Speaker list, if it was in there
+		auto speaker = std::find(speakers.begin(), speakers.end(), component_to_be_removed);
+		if (speaker != speakers.end()) {
+			speakers.erase(speaker);
+		}
 
 		// Remove Component
 		components.erase(std::find_if(components.begin(), components.end(), [component_to_be_removed](auto const & component) { return component.get() == component_to_be_removed; }));
@@ -335,10 +337,8 @@ void Synth::render() {
 		} else {
 			auto parser = json::Parser(filename.c_str());
 
-			sources.clear();
-			sinks  .clear();
-			
 			components.clear();
+			speakers.clear();
 
 			time = 0;
 			
@@ -438,30 +438,45 @@ void Synth::disconnect(ConnectorOut & out, ConnectorIn & in) {
 }
 
 void Synth::reconstruct_update_graph() {
-	update_graph.clear();
+	// Update list is constructed in reverse order
+	update_list.resize(components.size());
+	update_list_end   = update_list.data() + update_list.size();
+	update_list_begin = update_list_end;
 
-	// Traverse the Graph formed by the connections
 	std::queue<Component *> queue;
-	for (auto source : sources) queue.push(source);
 
-	std::unordered_map<Component *, int> num_inputs_satisfied;
+	// Find the Components with no outgoing connetions and push them to the Queue
+	for (auto const & component : components) {
+		auto no_outputs = true;
+
+		for (auto const & output : component->outputs) {
+			if (output.others.size() > 0) {
+				no_outputs = false;
+				break;
+			}
+		}
+
+		if (no_outputs) queue.push(component.get());
+	}
+
+	std::unordered_map<Component *, int> num_outputs_satisfied;
 
 	while (!queue.empty()) {
 		auto component = queue.front();
 		queue.pop();
 
-		update_graph.push_back(component);
+		*(--update_list_begin) = component;
 
-		for (auto const & output : component->outputs) {
-			for (auto other : output.others) {
-				auto num_satisfied = ++num_inputs_satisfied[other->component];
+		for (auto const & input : component->inputs) {
+			for (auto const & [other, weight] : input.others) {
+				auto num_satisfied = ++num_outputs_satisfied[other->component];
 
 				auto num_required = 0;
-				for (auto const & input : other->component->inputs) {
-					num_required += input.others.size();
+				for (auto const & output : other->component->outputs) {
+					num_required += output.others.size();
 				}
 
-				if (num_satisfied == num_required) { // If all inputs are now satisfied, push onto queue to explore the Node
+				if (num_satisfied == num_required) { // If all outputs are now satisfied, push onto queue to explore the Node
 					queue.push(other->component);
 				}
 

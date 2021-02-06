@@ -200,7 +200,7 @@ void OscillatorComponent::serialize(json::Writer & writer) const {
 
 void OscillatorComponent::deserialize(json::Object const & object) {
 	waveform_index = object.find<json::ValueInt   const>("waveform")  ->value;
-	transpose      = object.find<json::ValueFloat const>("transpose") ->value;
+	transpose      = object.find<json::ValueInt   const>("transpose") ->value;
 	detune         = object.find<json::ValueFloat const>("detune")    ->value;
 	portamento     = object.find<json::ValueFloat const>("portamento")->value;
 	attack         = object.find<json::ValueFloat const>("attack")    ->value;

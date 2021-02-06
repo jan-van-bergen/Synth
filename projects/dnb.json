@@ -60,8 +60,8 @@
 	},
 	"OscillatorComponent": {
 		"id": 8,
-		"pos_x": 546.000000,
-		"pos_y": 485.000000,
+		"pos_x": 450.000000,
+		"pos_y": 514.000000,
 		"waveform": 3,
 		"transpose": -12,
 		"detune": 25.580999,
@@ -77,7 +77,7 @@
 		"pos_x": 778.000000,
 		"pos_y": 583.000000,
 		"filter_type": 2,
-		"cutoff": 83.749001,
+		"cutoff": 296.320007,
 		"resonance": 0.780000
 	},
 	"DistortionComponent": {

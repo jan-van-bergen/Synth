@@ -4,14 +4,14 @@
 #include "file_dialog.h"
 
 struct Synth {
-	std::vector<Component *> sources;
-	std::vector<Component *> sinks;
-
 	std::vector<std::unique_ptr<Component>> components;
-	
+	std::vector<SpeakerComponent *> speakers;
+
 	int unique_component_id = 0;
 
-	std::vector<Component *> update_graph; // Order in which Components are updated, should be reconstructed if topology of the graph changes
+	std::vector<Component *> update_list; // Underlying data, update list grows back to front because it is constructed in reverse order
+	Component             ** update_list_begin = nullptr;
+	Component             ** update_list_end   = nullptr;
 
 	struct {
 		Parameter<int> tempo = { "Tempo", 130, std::make_pair(60, 200), { 80, 110, 128, 140, 150, 174 } };
@@ -38,9 +38,10 @@ struct Synth {
 
 		auto component = std::make_unique<T>(id);
 
-		if (component->type == Component::Type::SOURCE) sources.push_back(component.get());
-		if (component->type == Component::Type::SINK)   sinks  .push_back(component.get());
-		
+		if constexpr (std::is_same<T, SpeakerComponent>()) {
+			speakers.push_back(component.get());
+		}
+
 		auto result = static_cast<T *>(components.emplace_back(std::move(component)).get());
 
 		reconstruct_update_graph();
