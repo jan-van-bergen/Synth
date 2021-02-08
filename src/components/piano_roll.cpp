@@ -46,11 +46,7 @@ void PianoRollComponent::render(Synth const & synth) {
 }
 
 void PianoRollComponent::serialize(json::Writer & writer) const {
-	writer.object_begin("PianoRollComponent");
-	writer.write("id", id);
-	writer.write("pos_x", pos[0]);
-	writer.write("pos_y", pos[1]);
-	writer.object_end();
+
 }
 
 void PianoRollComponent::deserialize(json::Object const & object) {

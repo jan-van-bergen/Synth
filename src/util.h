@@ -1,7 +1,11 @@
 #pragma once
 #include <cmath>
+#include <cstring>
+
 #include <array>
 #include <vector>
+
+#include <typeinfo>
 
 #include <SDL2/SDL_scancode.h>
 
@@ -70,6 +74,16 @@ namespace util {
 
 	inline float linear_to_db(float x) { return 20.0f * std::log10(x); }
 	inline float db_to_linear(float x) { return std::pow(10.0f, x / 20.0f); }
+
+	template<typename T>
+	inline constexpr char const * get_type_name(T const & object) {
+		auto name = typeid(object).name();
+
+		if (memcmp(name, "struct ", 7) == 0) return name + 7;
+		if (memcmp(name, "class ",  6) == 0) return name + 6;
+
+		return name;
+	}
 
 	std::vector<Sample> load_wav(char const * filename);
 

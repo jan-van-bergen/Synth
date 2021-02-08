@@ -26,14 +26,7 @@ void SamplerComponent::render(Synth const & synth) {
 }
 
 void SamplerComponent::serialize(json::Writer & writer) const {
-	writer.object_begin("SamplerComponent");
-	writer.write("id", id);
-	writer.write("pos_x", pos[0]);
-	writer.write("pos_y", pos[1]);
-
 	writer.write("filename", filename);
-	
-	writer.object_end();
 }
 
 void SamplerComponent::deserialize(json::Object const & object) {

@@ -18,26 +18,18 @@ static bool match(char const *& cur, char const * end, char const (& target)[N])
 	return true;
 }
 
+template<int N>
+static void advance(char const *& cur, char const * end, char const (& target)[N]) {
+	if (!match(cur, end, target)) throw new std::exception("Unable to advance!");
+}
+
 void skip_space(char const *& cur, char const * end) {
 	while (cur < end && isspace(*cur)) cur++;
 }
 
-template<int N>
-static void advance(char const *& cur, char const * end, char const (& target)[N]) {
-	if (!match(cur, end, target)) abort();
-}
-
-static int parse_int(char const *& cur, char const * end) {
-	int result;
-	auto [p, e] = std::from_chars(cur, end, result);
-
-	cur = p;
-
-	return result;
-}
-
-static float parse_float(char const *& cur, char const * end) {
-	float result;
+template<typename T>
+static T parse_num(char const *& cur, char const * end) {
+	T result;
 	auto [p, e] = std::from_chars(cur, end, result);
 
 	cur = p;
@@ -102,11 +94,11 @@ static std::unique_ptr<json::JSON> parse_json(char const *& cur, char const * en
 			while (cur < end && isdigit(*cur)) cur++;
 
 			if (cur < end) {
-				return std::make_unique<json::ValueFloat>(name, parse_float(start, cur));
+				return std::make_unique<json::ValueFloat>(name, parse_num<float>(start, cur));
 			}
 		} else if (cur < end) {
 			// Parse Int
-			return std::make_unique<json::ValueInt>(name, parse_int(start, cur));
+			return std::make_unique<json::ValueInt>(name, parse_num<int>(start, cur));
 		}
 	}
 
@@ -122,7 +114,7 @@ json::Parser::Parser(char const * filename) {
 	try {
 		root = parse_json(cur, end);
 	} catch (std::exception const & ex) {
-		printf("ERROR: %s\n", ex.what());
+		printf("ERROR: Unable to load '%s':  %s\n", filename, ex.what());
 
 		root = std::make_unique<json::Object>("Default", std::vector<std::unique_ptr<json::JSON>> { });
 	}

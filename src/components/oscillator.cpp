@@ -178,11 +178,6 @@ void OscillatorComponent::render(Synth const & synth) {
 }
 
 void OscillatorComponent::serialize(json::Writer & writer) const {
-	writer.object_begin("OscillatorComponent");
-	writer.write("id", id);
-	writer.write("pos_x", pos[0]);
-	writer.write("pos_y", pos[1]);
-
 	writer.write("waveform", waveform_index);
 
 	writer.write("transpose",  transpose);
@@ -194,8 +189,6 @@ void OscillatorComponent::serialize(json::Writer & writer) const {
 	writer.write("decay",   decay);
 	writer.write("sustain", sustain);
 	writer.write("release", release);
-
-	writer.object_end();
 }
 
 void OscillatorComponent::deserialize(json::Object const & object) {

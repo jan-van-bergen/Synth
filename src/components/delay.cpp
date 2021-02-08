@@ -32,15 +32,8 @@ void DelayComponent::render(Synth const & synth) {
 }
 
 void DelayComponent::serialize(json::Writer & writer) const {
-	writer.object_begin("DelayComponent");
-	writer.write("id", id);
-	writer.write("pos_x", pos[0]);
-	writer.write("pos_y", pos[1]);
-
 	writer.write("steps",    steps);
 	writer.write("feedback", feedback);
-
-	writer.object_end();
 }
 
 void DelayComponent::deserialize(json::Object const & object) {

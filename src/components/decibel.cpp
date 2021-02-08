@@ -18,11 +18,7 @@ void DecibelComponent::render(Synth const & synth) {
 }
 
 void DecibelComponent::serialize(json::Writer & writer) const {
-	writer.object_begin("DecibelComponent");
-	writer.write("id", id);
-	writer.write("pos_x", pos[0]);
-	writer.write("pos_y", pos[1]);
-	writer.object_end();
+
 }
 
 void DecibelComponent::deserialize(json::Object const & object) {

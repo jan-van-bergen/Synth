@@ -35,19 +35,12 @@ void CompressorComponent::render(Synth const & synth) {
 }
 
 void CompressorComponent::serialize(json::Writer & writer) const {
-	writer.object_begin("CompressorComponent");
-	writer.write("id", id);
-	writer.write("pos_x", pos[0]);
-	writer.write("pos_y", pos[1]);
-
 	writer.write("threshold", threshold);
 	writer.write("ratio",     ratio);
 	writer.write("gain",      gain);
 
 	writer.write("attack",  attack);
 	writer.write("release", release);
-
-	writer.object_end();
 }
 
 void CompressorComponent::deserialize(json::Object const & object) {

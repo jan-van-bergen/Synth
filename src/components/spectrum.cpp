@@ -97,11 +97,7 @@ void SpectrumComponent::render(Synth const & synth) {
 }
 
 void SpectrumComponent::serialize(json::Writer & writer) const {
-	writer.object_begin("SpectrumComponent");
-	writer.write("id", id);
-	writer.write("pos_x", pos[0]);
-	writer.write("pos_y", pos[1]);
-	writer.object_end();
+
 }
 
 void SpectrumComponent::deserialize(json::Object const & object) {

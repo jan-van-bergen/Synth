@@ -101,11 +101,7 @@ void SpeakerComponent::render(Synth const & synth) {
 }
 
 void SpeakerComponent::serialize(json::Writer & writer) const {
-	writer.object_begin("SpeakerComponent");
-	writer.write("id", id);
-	writer.write("pos_x", pos[0]);
-	writer.write("pos_y", pos[1]);
-	writer.object_end();
+
 }
 
 void SpeakerComponent::deserialize(json::Object const & object) {

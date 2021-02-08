@@ -41,14 +41,7 @@ void SequencerComponent::render(Synth const & synth) {
 }
 
 void SequencerComponent::serialize(json::Writer & writer) const {
-	writer.object_begin("SequencerComponent");
-	writer.write("id", id);
-	writer.write("pos_x", pos[0]);
-	writer.write("pos_y", pos[1]);
-
 	writer.write("pattern", 16, pattern);
-	
-	writer.object_end();
 }
 
 void SequencerComponent::deserialize(json::Object const & object) {

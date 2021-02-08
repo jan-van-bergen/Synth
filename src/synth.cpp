@@ -299,7 +299,14 @@ void Synth::render() {
 			writer.object_end();
 
 			for (auto const & component : components) {
+				writer.object_begin(util::get_type_name(*component.get()));
+				writer.write("id",    component->id);
+				writer.write("pos_x", component->pos[0]);
+				writer.write("pos_y", component->pos[1]);
+
 				component->serialize(writer);
+				
+				writer.object_end();
 			}
 
 			for (auto const & connection : connections) {
