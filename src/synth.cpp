@@ -336,6 +336,8 @@ void Synth::render() {
 			components.clear();
 			speakers.clear();
 
+			Param::links.clear();
+
 			time = 0;
 			
 			settings.tempo         = 130;
