@@ -25,5 +25,5 @@ void DistortionComponent::serialize(json::Writer & writer) const {
 }
 
 void DistortionComponent::deserialize(json::Object const & object) {
-	amount = object.find<json::ValueFloat const>("amount")->value;
+	amount = object.find_float("amount", amount.default_value);
 }

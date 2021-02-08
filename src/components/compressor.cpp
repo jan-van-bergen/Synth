@@ -44,10 +44,10 @@ void CompressorComponent::serialize(json::Writer & writer) const {
 }
 
 void CompressorComponent::deserialize(json::Object const & object) {
-	threshold = object.find<json::ValueFloat const>("threshold")->value;
-	ratio     = object.find<json::ValueFloat const>("ratio")    ->value;
-	gain      = object.find<json::ValueFloat const>("gain")     ->value;
+	threshold = object.find_float("threshold", threshold.default_value);
+	ratio     = object.find_float("ratio",     ratio    .default_value);
+	gain      = object.find_float("gain",      gain     .default_value);
 
-	attack  = object.find<json::ValueFloat const>("attack") ->value;
-	release = object.find<json::ValueFloat const>("release")->value;
+	attack  = object.find_float("attack",  attack .default_value);
+	release = object.find_float("release", release.default_value);
 }

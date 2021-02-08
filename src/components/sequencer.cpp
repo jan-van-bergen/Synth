@@ -45,19 +45,22 @@ void SequencerComponent::serialize(json::Writer & writer) const {
 }
 
 void SequencerComponent::deserialize(json::Object const & object) {
-	auto const & arr = object.find<json::Array const>("pattern")->values;
-	
-	if (arr.size() != TRACK_SIZE) {
-		printf("WARNGING: Non-matching track sizes! stored %zu, expected %i\n", arr.size(), TRACK_SIZE);
-	}
-
 	memset(pattern, 0, sizeof(pattern));
 	
-	auto size = std::min((int)arr.size(), TRACK_SIZE);
+	auto array = object.find<json::Array const>("pattern");
+	if (array == nullptr) return;
+
+	auto const & values = array->values;
+	
+	if (values.size() != TRACK_SIZE) {
+		printf("WARNGING: Non-matching track sizes! stored %zu, expected %i\n", values.size(), TRACK_SIZE);
+	}
+
+	auto size = std::min((int)values.size(), TRACK_SIZE);
 
 	for (int i = 0; i < size; i++) {
-		assert(arr[i]->type == json::JSON::Type::VALUE_FLOAT);
-		auto value = static_cast<json::ValueFloat const *>(arr[i].get());
+		assert(values[i]->type == json::JSON::Type::VALUE_FLOAT);
+		auto value = static_cast<json::ValueFloat const *>(values[i].get());
 
 		pattern[i] = value->value;
 	}

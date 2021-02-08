@@ -31,14 +31,16 @@ struct Parameter : Param {
 	std::string name;
 
 	T parameter;
+	T default_value;
 
 	std::pair<T, T> bounds;
 
 	std::vector<T> options; // Options available in context menu
 
-	Parameter(std::string const & name, T initial, std::pair<T, T> const & bounds, std::vector<T> options = { }, Curve curve = Curve::LINEAR) : 
+	Parameter(std::string const & name, T default_value, std::pair<T, T> const & bounds, std::vector<T> options = { }, Curve curve = Curve::LINEAR) : 
 		name(name), 
-		parameter(initial), 
+		parameter(default_value), 
+		default_value(default_value),
 		bounds(bounds), 
 		options(options)
 	{ 

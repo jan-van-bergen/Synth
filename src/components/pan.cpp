@@ -24,5 +24,5 @@ void PanComponent::serialize(json::Writer & writer) const {
 }
 
 void PanComponent::deserialize(json::Object const & object) {
-	pan = object.find<json::ValueFloat const>("pan")->value;
+	pan = object.find_float("pan", pan.default_value);
 }

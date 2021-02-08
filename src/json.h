@@ -35,14 +35,7 @@ namespace json {
 		std::vector<std::unique_ptr<JSON>> attributes;
 
 		Object(std::string name, std::vector<std::unique_ptr<JSON>> attributes) : JSON(JSON::Type::OBJECT, name), attributes(std::move(attributes)) { }
-		~Object() = default;
-
-		Object            (Object && other) = delete;
-		Object & operator=(Object && other) = delete;
-
-		Object            (Object const & other) = delete;
-		Object & operator=(Object const & other) = delete;
-
+		
 		template<typename T> requires std::derived_from<T, json::JSON>
 		T * find(char const * key) const {
 			auto found = std::find_if(attributes.begin(), attributes.end(), [key](auto const & attribute) {
@@ -55,58 +48,34 @@ namespace json {
 				return static_cast<T *>(found->get());
 			}
 		}
+
+		int         find_int   (char const * key, int                 default_value = 0)    const;
+		float       find_float (char const * key, float               default_value = 0.0f) const;
+		std::string find_string(char const * key, std::string const & default_value = "")   const;
 	};
 
 	struct Array : JSON {
 		std::vector<std::unique_ptr<JSON>> values;
 
 		Array(std::string name, std::vector<std::unique_ptr<JSON>> values) : JSON(JSON::Type::ARRAY, name), values(std::move(values)) { }
-		~Array() = default;
-		
-		Array            (Array && other) = default;
-		Array & operator=(Array && other) = default;
-
-		Array            (Array const & other) = delete;
-		Array & operator=(Array const & other) = delete;
 	};
 	
 	struct ValueInt : JSON {
 		int value;
 
 		ValueInt(std::string name, int value) : JSON(JSON::Type::VALUE_INT, name), value(value) { }
-		~ValueInt() = default;
-		
-		ValueInt            (ValueInt && other) = default;
-		ValueInt & operator=(ValueInt && other) = default;
-
-		ValueInt            (ValueInt const & other) = delete;
-		ValueInt & operator=(ValueInt const & other) = delete;
 	};
 
 	struct ValueFloat : JSON {
 		float value;
 
 		ValueFloat(std::string name, float value) : JSON(JSON::Type::VALUE_FLOAT, name), value(value) { }
-		~ValueFloat() = default;
-		
-		ValueFloat            (ValueFloat && other) = default;
-		ValueFloat & operator=(ValueFloat && other) = default;
-
-		ValueFloat            (ValueFloat const & other) = delete;
-		ValueFloat & operator=(ValueFloat const & other) = delete;
 	};
 
 	struct ValueString : JSON {
 		std::string value;
 
 		ValueString(std::string name, std::string value) : JSON(JSON::Type::VALUE_STRING, name), value(std::move(value)) { }
-		~ValueString() = default;
-		
-		ValueString            (ValueString && other) = default;
-		ValueString & operator=(ValueString && other) = default;
-
-		ValueString            (ValueString const & other) = delete;
-		ValueString & operator=(ValueString const & other) = delete;
 	};
 
 	struct Parser {

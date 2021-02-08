@@ -86,12 +86,15 @@ struct OscillatorComponent : Component {
 
 	int waveform_index = 3;
 	
+	Parameter<int>   invert = { "Invert", 0, std::make_pair(0, 1), { } };
+	Parameter<float> phase  = { "Phase",  0, std::make_pair(0.0f, 1.0f), { 0.0f, 0.25f, 0.5f, 0.75f, 1.0f } };
+
 	struct Voice {
 		int   note;
 		float velocity;
 
+		float phase;
 		float sample = 0.0f;
-		float phase  = 0.0f;
 
 		float release_time = INFINITY;
 	};
@@ -136,6 +139,8 @@ struct WaveTableComponent : Component {
 };
 
 struct SamplerComponent : Component {
+	static constexpr char const * DEFAULT_SAMPLE = "samples/kick.wav";
+
 	std::vector<Sample> samples;
 	int current_sample = 0;
 
@@ -144,7 +149,7 @@ struct SamplerComponent : Component {
 	char filename[128];
 
 	SamplerComponent(int id) : Component(id, Type::INTER, "Sampler", { { this, "Trigger" } }, { { this, "Out" } }) {
-		strcpy_s(filename, "samples/kick.wav");
+		strcpy_s(filename, DEFAULT_SAMPLE);
 		samples = util::load_wav(filename);
 	}
 	

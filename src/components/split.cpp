@@ -18,5 +18,5 @@ void SplitComponent::serialize(json::Writer & writer) const {
 }
 
 void SplitComponent::deserialize(json::Object const & object) {
-	mix = object.find<json::ValueFloat const>("mix")->value;
+	mix = object.find_float("mix", mix.default_value);
 }

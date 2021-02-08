@@ -52,7 +52,7 @@ void FilterComponent::serialize(json::Writer & writer) const {
 }
 
 void FilterComponent::deserialize(json::Object const & object) {
-	filter_type = object.find<json::ValueInt   const>("filter_type")->value;
-	cutoff      = object.find<json::ValueFloat const>("cutoff")     ->value;
-	resonance   = object.find<json::ValueFloat const>("resonance")  ->value;
+	filter_type = object.find_int  ("filter_type", 0);
+	cutoff      = object.find_float("cutoff",      cutoff   .default_value);
+	resonance   = object.find_float("resonance",   resonance.default_value);
 }

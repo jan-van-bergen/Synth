@@ -83,6 +83,9 @@
     <ClCompile Include="src\components\wave_table.cpp">
       <Filter>components</Filter>
     </ClCompile>
+    <ClCompile Include="src\json.cpp">
+      <Filter>json</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\json.h">

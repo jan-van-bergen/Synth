@@ -49,7 +49,7 @@ void OscillatorComponent::update(Synth const & synth) {
 	for (auto const & note : synth.notes) {
 		auto voice = std::find_if(voices.begin(), voices.end(), [note = note.note](auto voice) { return voice.note == note && std::isinf(voice.release_time); });
 		if (voice == voices.end()) {
-			voices.emplace_back(note.note, note.velocity);
+			voices.emplace_back(note.note, note.velocity, phase);
 		}
 	}
 
@@ -60,6 +60,8 @@ void OscillatorComponent::update(Synth const & synth) {
 			voice.release_time = voice.sample * SAMPLE_RATE_INV * steps_per_second;
 		}
 	}
+
+	auto sign = invert ? -1.0f : 1.0f;
 
 	struct PortamentoState {
 		int   index;
@@ -101,11 +103,11 @@ void OscillatorComponent::update(Synth const & synth) {
 
 			// Generate selected waveform
 			switch (waveform_index) {
-				case 0: outputs[0].values[i] += amplitude * generate_sine    (voice.phase); break;
-				case 1: outputs[0].values[i] += amplitude * generate_square  (voice.phase); break;
-				case 2: outputs[0].values[i] += amplitude * generate_triangle(voice.phase); break;
-				case 3: outputs[0].values[i] += amplitude * generate_saw     (voice.phase); break;
-				case 4: outputs[0].values[i] += amplitude * generate_noise(); break;
+				case 0: outputs[0].values[i] += sign * amplitude * generate_sine    (voice.phase); break;
+				case 1: outputs[0].values[i] += sign * amplitude * generate_square  (voice.phase); break;
+				case 2: outputs[0].values[i] += sign * amplitude * generate_triangle(voice.phase); break;
+				case 3: outputs[0].values[i] += sign * amplitude * generate_saw     (voice.phase); break;
+				case 4: outputs[0].values[i] += sign * amplitude * generate_noise(); break;
 
 				default: abort();
 			}
@@ -150,6 +152,9 @@ void OscillatorComponent::render(Synth const & synth) {
 		ImGui::EndCombo();
 	}
 
+	invert.render();
+	phase .render();
+
 	transpose.render();
 	detune   .render();
 
@@ -179,6 +184,8 @@ void OscillatorComponent::render(Synth const & synth) {
 
 void OscillatorComponent::serialize(json::Writer & writer) const {
 	writer.write("waveform", waveform_index);
+	writer.write("invert",   invert);
+	writer.write("phase",    phase);
 
 	writer.write("transpose",  transpose);
 	writer.write("detune",     detune);
@@ -192,13 +199,17 @@ void OscillatorComponent::serialize(json::Writer & writer) const {
 }
 
 void OscillatorComponent::deserialize(json::Object const & object) {
-	waveform_index = object.find<json::ValueInt   const>("waveform")  ->value;
-	transpose      = object.find<json::ValueInt   const>("transpose") ->value;
-	detune         = object.find<json::ValueFloat const>("detune")    ->value;
-	portamento     = object.find<json::ValueFloat const>("portamento")->value;
-	attack         = object.find<json::ValueFloat const>("attack")    ->value;
-	hold           = object.find<json::ValueFloat const>("hold")      ->value;
-	decay          = object.find<json::ValueFloat const>("decay")     ->value;
-	sustain        = object.find<json::ValueFloat const>("sustain")   ->value;
-	release        = object.find<json::ValueFloat const>("release")   ->value;
+	waveform_index = object.find_int  ("waveform", 3);
+	invert         = object.find_int  ("invert",   invert.default_value);
+	phase          = object.find_float("phase",    phase .default_value);
+
+	transpose  = object.find_int  ("transpose",  transpose .default_value);
+	detune     = object.find_float("detune",     detune    .default_value);
+	portamento = object.find_float("portamento", portamento.default_value);
+
+	attack  = object.find_float("attack",  attack .default_value);
+	hold    = object.find_float("hold",    hold   .default_value);
+	decay   = object.find_float("decay",   decay  .default_value);
+	sustain = object.find_float("sustain", sustain.default_value);
+	release = object.find_float("release", release.default_value);
 }

@@ -30,6 +30,8 @@ void SamplerComponent::serialize(json::Writer & writer) const {
 }
 
 void SamplerComponent::deserialize(json::Object const & object) {
-	strcpy_s(filename, object.find<json::ValueString const>("filename")->value.c_str());
+	auto const & found = object.find_string("filename", DEFAULT_SAMPLE);
+
+	strcpy_s(filename, found.c_str());
 	samples = util::load_wav(filename);
 }
