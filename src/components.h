@@ -82,9 +82,9 @@ struct PianoRollComponent : Component {
 };
 
 struct OscillatorComponent : Component {
-	static constexpr const char * waveform_names[] = { "Sine", "Square", "Triangle", "Sawtooth", "Noise" };
+	static constexpr const char * waveform_names[] = { "Sine", "Triangle", "Saw", "Square", "Pulse 25%", "Pulse 12.5%", "Noise" };
 
-	int waveform_index = 3;
+	int waveform_index = 2;
 	
 	Parameter<int>   invert = { "Invert", 0, std::make_pair(0, 1), { } };
 	Parameter<float> phase  = { "Phase",  0, std::make_pair(0.0f, 1.0f), { 0.0f, 0.25f, 0.5f, 0.75f, 1.0f } };

@@ -4,7 +4,7 @@
 inline constexpr auto SAMPLE_RATE     = 44100;
 inline constexpr auto SAMPLE_RATE_INV = 1.0f / float(SAMPLE_RATE);
 
-inline constexpr auto BLOCK_SIZE     = 1024; // Samples are processed in blocks of this size
+inline constexpr auto BLOCK_SIZE     = 512; // Samples are processed in blocks of this size
 inline constexpr auto BLOCK_SIZE_INV = 1.0f / float(BLOCK_SIZE);
 
 struct Sample {

@@ -7,8 +7,8 @@ static Sample generate_sine(float phase) {
 	return std::sin(TWO_PI * phase);
 }
 
-static Sample generate_square(float phase) {
-	return std::fmodf(phase, 1.0f) < 0.5f ? 1.0f : -1.0f;
+static Sample generate_square(float phase, float pulse_width = 0.5f) {
+	return std::fmodf(phase, 1.0f) < pulse_width ? 1.0f : -1.0f;
 }
 
 static Sample generate_triangle(float phase) {
@@ -104,10 +104,12 @@ void OscillatorComponent::update(Synth const & synth) {
 			// Generate selected waveform
 			switch (waveform_index) {
 				case 0: outputs[0].values[i] += sign * amplitude * generate_sine    (voice.phase); break;
-				case 1: outputs[0].values[i] += sign * amplitude * generate_square  (voice.phase); break;
-				case 2: outputs[0].values[i] += sign * amplitude * generate_triangle(voice.phase); break;
-				case 3: outputs[0].values[i] += sign * amplitude * generate_saw     (voice.phase); break;
-				case 4: outputs[0].values[i] += sign * amplitude * generate_noise(); break;
+				case 1: outputs[0].values[i] += sign * amplitude * generate_triangle(voice.phase); break;
+				case 2: outputs[0].values[i] += sign * amplitude * generate_saw     (voice.phase); break;
+				case 3: outputs[0].values[i] += sign * amplitude * generate_square  (voice.phase); break;
+				case 4: outputs[0].values[i] += sign * amplitude * generate_square  (voice.phase, 0.25f);  break;
+				case 5: outputs[0].values[i] += sign * amplitude * generate_square  (voice.phase, 0.125f); break;
+				case 6: outputs[0].values[i] += sign * amplitude * generate_noise(); break;
 
 				default: abort();
 			}
