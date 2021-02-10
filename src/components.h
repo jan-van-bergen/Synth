@@ -18,12 +18,6 @@
 #include "json.h"
 
 struct Component {
-	enum struct Type {
-		SOURCE, // Entry point in Node Graph
-		SINK,   // Exit point in Node Graph
-		INTER   // Neither
-	} type;
-
 	std::string name;
 
 	std::vector<ConnectorIn>  inputs;
@@ -32,10 +26,10 @@ struct Component {
 	int const id;
 	float pos[2] = { };
 	
-	Component(int id, Type type,
+	Component(int id,
 		std::string && name,
 		std::vector<ConnectorIn>  && inputs,
-		std::vector<ConnectorOut> && outputs) : id(id), type(type), name(name), inputs(inputs), outputs(outputs) { }
+		std::vector<ConnectorOut> && outputs) : id(id), name(name), inputs(inputs), outputs(outputs) { }
 
 	virtual void update(struct Synth const & synth) = 0;
 	virtual void render(struct Synth const & synth) = 0;
@@ -50,7 +44,7 @@ struct SequencerComponent : Component {
 
 	int current_step = 0;
 
-	SequencerComponent(int id) : Component(id, Type::SOURCE, "Sequencer", { }, { { this, "Out" } }) { }
+	SequencerComponent(int id) : Component(id, "Sequencer", { }, { { this, "Out" } }) { }
 
 	void update(struct Synth const & synth) override;
 	void render(struct Synth const & synth) override;
@@ -66,7 +60,7 @@ struct PianoRollComponent : Component {
 	
 	int midi_length;
 
-	PianoRollComponent(int id) : Component(id, Type::SOURCE, "Piano Roll", { }, { { this, "Out" } }) {
+	PianoRollComponent(int id) : Component(id, "Piano Roll", { }, { { this, "Out" } }) {
 		if (midi.events.size() == 0) {
 			midi_length = 0;
 		} else {		
@@ -113,7 +107,7 @@ struct OscillatorComponent : Component {
 	Parameter<float> sustain = { "Sustain", 0.5f, std::make_pair(0.0f, 1.0f) };
 	Parameter<float> release = { "Release", 0.0f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } };
 
-	OscillatorComponent(int id) : Component(id, Type::SOURCE, "Oscillator", { }, { { this, "Out" } }) { }
+	OscillatorComponent(int id) : Component(id, "Oscillator", { }, { { this, "Out" } }) { }
 
 	void update(struct Synth const & synth) override;
 	void render(struct Synth const & synth) override;
@@ -129,7 +123,7 @@ struct WaveTableComponent : Component {
 	std::vector<Sample> samples = util::load_wav("samples/piano.wav");
 	float current_sample = 0.0f;
 
-	WaveTableComponent(int id) : Component(id, Type::SOURCE, "Wave Table", { }, { { this, "Out" } }) { }
+	WaveTableComponent(int id) : Component(id, "Wave Table", { }, { { this, "Out" } }) { }
 	
 	void update(struct Synth const & synth) override;
 	void render(struct Synth const & synth) override;
@@ -148,7 +142,7 @@ struct SamplerComponent : Component {
 
 	char filename[128];
 
-	SamplerComponent(int id) : Component(id, Type::INTER, "Sampler", { { this, "Trigger" } }, { { this, "Out" } }) {
+	SamplerComponent(int id) : Component(id, "Sampler", { { this, "Trigger" } }, { { this, "Out" } }) {
 		strcpy_s(filename, DEFAULT_SAMPLE);
 		samples = util::load_wav(filename);
 	}
@@ -163,7 +157,7 @@ struct SamplerComponent : Component {
 struct SplitComponent : Component {
 	Parameter<float> mix = { "Mix A/B", 0.5f, std::make_pair(0.0f, 1.0f) };
 
-	SplitComponent(int id) : Component(id, Type::INTER, "Split", { { this, "In" } }, { { this, "Out A" }, { this, "Out B" } }) { }
+	SplitComponent(int id) : Component(id, "Split", { { this, "In" } }, { { this, "Out A" }, { this, "Out B" } }) { }
 	
 	void update(struct Synth const & synth) override;
 	void render(struct Synth const & synth) override;
@@ -175,7 +169,7 @@ struct SplitComponent : Component {
 struct PanComponent : Component {
 	Parameter<float> pan = { "Pan", 0.0f, std::make_pair(-1.0f, 1.0f) };
 
-	PanComponent(int id) : Component(id, Type::INTER, "Pan", { { this, "In" } }, { { this, "Out" } }) { }
+	PanComponent(int id) : Component(id, "Pan", { { this, "In" } }, { { this, "Out" } }) { }
 	
 	void update(struct Synth const & synth) override;
 	void render(struct Synth const & synth) override;
@@ -191,7 +185,7 @@ struct FilterComponent : Component {
 	Parameter<float> cutoff    = { "Cutoff",    1000.0f, std::make_pair(20.0f, 20000.0f), { 50, 100, 200, 400, 800, 1600, 3200, 6400, 12800, 19200 }, Param::Curve::LOGARITHMIC };
 	Parameter<float> resonance = { "Resonance",    0.5f, std::make_pair(0.0f, 1.0f) };
 
-	FilterComponent(int id) : Component(id, Type::INTER, "Filter", { { this, "In" } }, { { this, "Out" } }) { }
+	FilterComponent(int id) : Component(id, "Filter", { { this, "In" } }, { { this, "Out" } }) { }
 	
 	void update(struct Synth const & synth) override;
 	void render(struct Synth const & synth) override;
@@ -211,7 +205,7 @@ struct DelayComponent : Component {
 	std::vector<Sample> history;
 	int offset = 0;
 
-	DelayComponent(int id) : Component(id, Type::INTER, "Delay", { { this, "In" } }, { { this, "Out" } }) { }
+	DelayComponent(int id) : Component(id, "Delay", { { this, "In" } }, { { this, "Out" } }) { }
 
 	void history_resize(int size);
 	
@@ -225,7 +219,7 @@ struct DelayComponent : Component {
 struct DistortionComponent : Component {
 	Parameter<float> amount = { "Amount", 0.5f, std::make_pair(0.0f, 1.0f) };
 
-	DistortionComponent(int id) : Component(id, Type::INTER, "Distortion", { { this, "In" } }, { { this, "Out" } }) { }
+	DistortionComponent(int id) : Component(id, "Distortion", { { this, "In" } }, { { this, "Out" } }) { }
 
 	void update(struct Synth const & synth) override;
 	void render(struct Synth const & synth) override;
@@ -239,7 +233,7 @@ struct BitCrusherComponent : Component {
 	Parameter<int>   bits = { "Bits",             32,   std::make_pair(1, 32) };
 	Parameter<int>   rate = { "Sample Reduction",  1,   std::make_pair(1, 128) };
 
-	BitCrusherComponent(int id) : Component(id, Type::INTER, "Bit Crusher", { { this, "In" } }, { { this, "Out" } }) { }
+	BitCrusherComponent(int id) : Component(id, "Bit Crusher", { { this, "In" } }, { { this, "Out" } }) { }
 
 	void update(struct Synth const & synth) override;
 	void render(struct Synth const & synth) override;
@@ -255,7 +249,7 @@ struct CompressorComponent : Component {
 	Parameter<float> attack    = { "Attack",   15.0f, std::make_pair(  0.0f, 400.0f) };
 	Parameter<float> release   = { "Release", 200.0f, std::make_pair(  0.0f, 400.0f) };
 
-	CompressorComponent(int id) : Component(id, Type::INTER, "Compressor", { { this, "In" } }, { { this, "Out" } }) { }
+	CompressorComponent(int id) : Component(id, "Compressor", { { this, "In" } }, { { this, "Out" } }) { }
 
 	void update(struct Synth const & synth) override;
 	void render(struct Synth const & synth) override;
@@ -271,7 +265,7 @@ struct SpeakerComponent : Component {
 	std::vector<Sample> recorded_samples;
 	bool                recording = false;
 
-	SpeakerComponent(int id) : Component(id, Type::SINK, "Speaker", { { this, "Input" } }, { }) { }
+	SpeakerComponent(int id) : Component(id, "Speaker", { { this, "Input" } }, { }) { }
 	
 	void update(struct Synth const & synth) override;
 	void render(struct Synth const & synth) override;
@@ -288,7 +282,7 @@ struct SpectrumComponent : Component {
 
 	float spectrum[N] = { };
 
-	SpectrumComponent(int id) : Component(id, Type::INTER, "Spectrum", { { this, "Input" } }, { }) { }
+	SpectrumComponent(int id) : Component(id, "Spectrum", { { this, "Input" } }, { }) { }
 	
 	void update(struct Synth const & synth) override;
 	void render(struct Synth const & synth) override;
@@ -300,7 +294,7 @@ struct SpectrumComponent : Component {
 struct DecibelComponent : Component {
 	float decibels = -INFINITY;
 
-	DecibelComponent(int id) : Component(id, Type::INTER, "Decibel Meter", { { this, "Input" } }, { }) { }
+	DecibelComponent(int id) : Component(id, "Decibel Meter", { { this, "Input" } }, { }) { }
 	
 	void update(struct Synth const & synth) override;
 	void render(struct Synth const & synth) override;
