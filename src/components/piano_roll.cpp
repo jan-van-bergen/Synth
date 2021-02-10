@@ -44,11 +44,3 @@ void PianoRollComponent::update(Synth const & synth) {
 void PianoRollComponent::render(Synth const & synth) {
 
 }
-
-void PianoRollComponent::serialize(json::Writer & writer) const {
-
-}
-
-void PianoRollComponent::deserialize(json::Object const & object) {
-
-}

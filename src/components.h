@@ -34,8 +34,8 @@ struct Component {
 	virtual void update(struct Synth const & synth) = 0;
 	virtual void render(struct Synth const & synth) = 0;
 
-	virtual void   serialize(json::Writer & writer) const = 0;
-	virtual void deserialize(json::Object const & object) = 0;
+	virtual void   serialize(json::Writer & writer) const { }
+	virtual void deserialize(json::Object const & object) { }
 };
 
 struct SequencerComponent : Component {
@@ -70,9 +70,6 @@ struct PianoRollComponent : Component {
 
 	void update(struct Synth const & synth) override;
 	void render(struct Synth const & synth) override;
-
-	void   serialize(json::Writer & writer) const override;
-	void deserialize(json::Object const & object) override;
 };
 
 struct OscillatorComponent : Component {
@@ -127,9 +124,6 @@ struct WaveTableComponent : Component {
 	
 	void update(struct Synth const & synth) override;
 	void render(struct Synth const & synth) override;
-
-	void   serialize(json::Writer & writer) const override;
-	void deserialize(json::Object const & object) override;
 };
 
 struct SamplerComponent : Component {
@@ -269,9 +263,6 @@ struct SpeakerComponent : Component {
 	
 	void update(struct Synth const & synth) override;
 	void render(struct Synth const & synth) override;
-
-	void   serialize(json::Writer & writer) const override;
-	void deserialize(json::Object const & object) override;
 };
 
 struct SpectrumComponent : Component {
@@ -286,9 +277,6 @@ struct SpectrumComponent : Component {
 	
 	void update(struct Synth const & synth) override;
 	void render(struct Synth const & synth) override;
-
-	void   serialize(json::Writer & writer) const override;
-	void deserialize(json::Object const & object) override;
 };
 
 struct DecibelComponent : Component {
@@ -298,7 +286,4 @@ struct DecibelComponent : Component {
 	
 	void update(struct Synth const & synth) override;
 	void render(struct Synth const & synth) override;
-
-	void   serialize(json::Writer & writer) const override;
-	void deserialize(json::Object const & object) override;
 };

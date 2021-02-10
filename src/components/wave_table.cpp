@@ -26,11 +26,3 @@ void WaveTableComponent::update(Synth const & synth) {
 void WaveTableComponent::render(Synth const & synth) {
 
 }
-
-void WaveTableComponent::serialize(json::Writer & writer) const {
-
-}
-
-void WaveTableComponent::deserialize(json::Object const & object) {
-
-}

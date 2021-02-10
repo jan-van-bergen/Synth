@@ -99,11 +99,3 @@ void SpeakerComponent::render(Synth const & synth) {
 		recorded_samples.clear();
 	}
 }
-
-void SpeakerComponent::serialize(json::Writer & writer) const {
-
-}
-
-void SpeakerComponent::deserialize(json::Object const & object) {
-
-}

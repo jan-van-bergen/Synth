@@ -16,11 +16,3 @@ void DecibelComponent::update(Synth const & synth) {
 void DecibelComponent::render(Synth const & synth) {
 	ImGui::Text("%f dB", decibels);
 }
-
-void DecibelComponent::serialize(json::Writer & writer) const {
-
-}
-
-void DecibelComponent::deserialize(json::Object const & object) {
-
-}
