@@ -85,7 +85,7 @@ std::vector<char> util::read_file(char const * filename) {
 	FILE * file; fopen_s(&file, filename, "rb");
 
 	if (file == nullptr) {
-		printf("ERROR: Unable to open file '%s'!", filename);
+		printf("ERROR: Unable to open file '%s'!\n", filename);
 		return { };
 	}
 

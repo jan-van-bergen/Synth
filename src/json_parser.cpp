@@ -76,7 +76,7 @@ static std::unique_ptr<json::JSON> parse_json(char const *& cur, char const * en
 		}
 
 		return std::make_unique<json::Array>(name, std::move(values));
-	}else if (match(cur, end, "\"")) {
+	} else if (match(cur, end, "\"")) {
 		// Parse String
 		auto start = cur;
 		while (!match(cur, end, "\"")) cur++;

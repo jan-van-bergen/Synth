@@ -83,8 +83,7 @@ int main(int argc, char * argv[]) {
 	midi::open();
 
 	Synth synth;
-	synth.add_component<SpeakerComponent>();
-	
+
 	auto window_is_open = true;
 
 	while (window_is_open) {

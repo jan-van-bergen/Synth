@@ -32,6 +32,10 @@ struct Synth {
 	FileDialog file_dialog;
 	bool just_loaded = false;
 
+	Synth() {
+		open_file("projects/default.json");
+	}
+
 	template<typename T> requires std::derived_from<T, Component>
 	T * add_component(int id = -1) {
 		if (id == -1) id = unique_component_id++;
@@ -96,4 +100,7 @@ private:
 
 	void render_connector_in (ConnectorIn  & in);
 	void render_connector_out(ConnectorOut & out);
+
+	void open_file(char const * filename);
+	void save_file(char const * filename) const;
 };
