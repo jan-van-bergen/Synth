@@ -54,26 +54,44 @@ struct SequencerComponent : Component {
 };
 
 struct PianoRollComponent : Component {
-	midi::Track midi = midi::Track::load("midi/melody_2.mid");
-	int         midi_offset = 0;
-	int         midi_rounds = 0;
-	
-	int midi_length;
+	static constexpr char const * DEFAULT_FILENAME = "midi/melody_2.mid";
+
+	midi::Track midi;
+	int         midi_offset;
+	int         midi_length;
+
+	int channel = 0;
+
+	char filename[128];
 
 	PianoRollComponent(int id) : Component(id, "Piano Roll", { }, { { this, "Out" } }) {
+		strcpy_s(filename, DEFAULT_FILENAME);
+		reload_file();
+	}
+
+	void reload_file() {
+		midi = midi::Track::load(filename);
+
 		if (midi.events.size() == 0) {
 			midi_length = 0;
 		} else {		
 			midi_length = util::round_up(midi.events[midi.events.size() - 1].time, 4 * midi.ticks);
 		}
+
+		midi_offset = 0;
 	}
 
 	void update(struct Synth const & synth) override;
 	void render(struct Synth const & synth) override;
+	
+	void   serialize(json::Writer & writer) const override;
+	void deserialize(json::Object const & object) override;
 };
 
 struct OscillatorComponent : Component {
 	static constexpr const char * waveform_names[] = { "Sine", "Triangle", "Saw", "Square", "Pulse 25%", "Pulse 12.5%", "Noise" };
+
+	int channel = 0;
 
 	int waveform_index = 2;
 	
@@ -83,11 +101,15 @@ struct OscillatorComponent : Component {
 	struct Voice {
 		int   note;
 		float velocity;
+		
+		int start_time; // In samples
 
-		float phase;
+		float phase  = 0.0f;
 		float sample = 0.0f;
 
-		float release_time = INFINITY;
+		float release_time = INFINITY; // In steps
+
+		Voice(int note, float velocity, int start_time) : note(note), velocity(velocity), start_time(start_time) { } 
 	};
 
 	std::vector<Voice> voices;
@@ -104,7 +126,7 @@ struct OscillatorComponent : Component {
 	Parameter<float> sustain = { "Sustain", 0.5f, std::make_pair(0.0f, 1.0f) };
 	Parameter<float> release = { "Release", 0.0f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } };
 
-	OscillatorComponent(int id) : Component(id, "Oscillator", { }, { { this, "Out" } }) { }
+	OscillatorComponent(int id) : Component(id, "Oscillator", { { this, "TEMP" } }, { { this, "Out" } }) { }
 
 	void update(struct Synth const & synth) override;
 	void render(struct Synth const & synth) override;
@@ -127,7 +149,7 @@ struct WaveTableComponent : Component {
 };
 
 struct SamplerComponent : Component {
-	static constexpr char const * DEFAULT_SAMPLE = "samples/kick.wav";
+	static constexpr char const * DEFAULT_FILENAME = "samples/kick.wav";
 
 	std::vector<Sample> samples;
 	int current_sample = 0;
@@ -137,7 +159,7 @@ struct SamplerComponent : Component {
 	char filename[128];
 
 	SamplerComponent(int id) : Component(id, "Sampler", { { this, "Trigger" } }, { { this, "Out" } }) {
-		strcpy_s(filename, DEFAULT_SAMPLE);
+		strcpy_s(filename, DEFAULT_FILENAME);
 		samples = util::load_wav(filename);
 	}
 	

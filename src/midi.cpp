@@ -45,8 +45,8 @@ void check_mm(MMRESULT result, int line, char const * file) {
 	__debugbreak();
 }
 
-midi::Track midi::Track::load(std::string const & filename) {
-	FILE * file; fopen_s(&file, filename.c_str(), "rb");
+midi::Track midi::Track::load(char const * filename) {
+	FILE * file; fopen_s(&file, filename, "rb");
 	if (file == nullptr) abort();
 
 	unsigned char file_header[14]; fread_s(file_header, sizeof(file_header), 1, sizeof(file_header), file);
@@ -112,7 +112,7 @@ midi::Track midi::Track::load(std::string const & filename) {
 					}
 
 					default: {
-						printf("WARNING: MIDI Meta Command 0x%02x in file '%s' was ignored!\n", meta_cmd, filename.c_str()); 
+						printf("WARNING: MIDI Meta Command 0x%02x in file '%s' was ignored!\n", meta_cmd, filename); 
 
 						fseek(file, num_bytes, SEEK_CUR);
 

@@ -32,6 +32,8 @@ void Synth::update(Sample buf[BLOCK_SIZE]) {
 	}
 
 	for (int i = 0; i < BLOCK_SIZE; i++) buf[i] *= settings.master_volume;
+
+	for (int channel = 0; channel < NUM_CHANNELS; channel++) note_events[channel].clear();
 }
 
 void Synth::render() {

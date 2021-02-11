@@ -1,0 +1,75 @@
+{
+	"Settings": {
+		"tempo": 130,
+		"master_volume": 1.000000
+	},
+	"SpeakerComponent": {
+		"id": 0,
+		"pos_x": 1372.000000,
+		"pos_y": 348.000000
+	},
+	"PianoRollComponent": {
+		"id": 1,
+		"pos_x": 60.000000,
+		"pos_y": 60.000000,
+		"filename": "midi/melody_2.mid",
+		"channel": 0
+	},
+	"OscillatorComponent": {
+		"id": 4,
+		"pos_x": 359.000000,
+		"pos_y": 50.000000,
+		"channel": 0,
+		"waveform": 2,
+		"invert": 0,
+		"phase": 0.000000,
+		"transpose": -24,
+		"detune": 0.000000,
+		"portamento": 2.250001,
+		"attack": 0.100000,
+		"hold": 0.500000,
+		"decay": 1.000000,
+		"sustain": 0.186000,
+		"release": 0.930000
+	},
+	"SequencerComponent": {
+		"id": 6,
+		"pos_x": 586.000000,
+		"pos_y": 98.000000,
+		"pattern": [ 1.000000, 0.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000, 0.000000 ]
+	},
+	"SamplerComponent": {
+		"id": 7,
+		"pos_x": 1034.000000,
+		"pos_y": 109.000000,
+		"filename": "samples/kick.wav"
+	},
+	"Connection": {
+		"component_out": 1,
+		"component_in": 4,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 4,
+		"component_in": 0,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 0.300000
+	},
+	"Connection": {
+		"component_out": 6,
+		"component_in": 7,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 7,
+		"component_in": 0,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	}
+}

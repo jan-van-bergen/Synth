@@ -93,6 +93,8 @@ int main(int argc, char * argv[]) {
 			
 			switch (event.type) {
 				case SDL_KEYDOWN: {
+					if (event.key.repeat) continue;
+
 					auto note = util::scancode_to_note(event.key.keysym.scancode);
 					if (note != -1) {
 						synth.note_press(note, 0.2f);
@@ -102,6 +104,8 @@ int main(int argc, char * argv[]) {
 				}
 
 				case SDL_KEYUP: {
+					if (event.key.repeat) continue;
+
 					auto note = util::scancode_to_note(event.key.keysym.scancode);
 					if (note != -1) {
 						synth.note_release(note);

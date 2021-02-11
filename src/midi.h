@@ -1,5 +1,4 @@
 #pragma once
-#include <string>
 #include <vector>
 #include <optional>
 
@@ -38,7 +37,7 @@ namespace midi {
 
 		std::vector<Event> events;
 
-		static Track load(std::string const & filename);
+		static Track load(char const * filename);
 	};
 
 	void open();
