@@ -23,31 +23,7 @@ struct Synth {
 
 	int time = 0;
 	
-	inline static constexpr int NUM_CHANNELS = 16;
-
-	struct NoteEvent {
-		bool pressed;
-		int  time;
-
-		int   note;
-		float velocity;
-
-		struct Compare {
-			bool operator()(NoteEvent const & a, NoteEvent const & b) const {
-				if (a.time == b.time) {
-					if (a.note == b.note) {
-						return a.pressed > b.pressed;
-					} else {
-						return a.note < b.note;
-					}
-				} else {
-					return a.time < b.time;
-				}
-			}
-		};
-	};
-
-	std::set<NoteEvent, NoteEvent::Compare> mutable note_events[NUM_CHANNELS]; // Note Events, seperate for each channel
+	std::set<NoteEvent, NoteEvent::Compare> mutable note_events; // Note Events, seperate for each channel
 	
 	FileDialog file_dialog;
 	bool just_loaded = false;
@@ -79,16 +55,12 @@ struct Synth {
 	void    connect(ConnectorOut & out, ConnectorIn & in, float weight = 1.0f);
 	void disconnect(ConnectorOut & out, ConnectorIn & in);
 
-	void note_press(int note, float velocity, int channel = 0, int time_offset = 0) const {
-		assert(0 <= channel && channel < NUM_CHANNELS);
-
-		note_events[channel].insert(NoteEvent { true, time + time_offset, note, velocity });
+	void note_press(int note, float velocity, int time_offset = 0) const {
+		note_events.insert(NoteEvent { true, time + time_offset, note, velocity });
 	}
 
-	void note_release(int note, int channel = 0, int time_offset = 0) const {
-		assert(0 <= channel && channel < NUM_CHANNELS);
-
-		note_events[channel].insert(NoteEvent { false, time + time_offset, note });
+	void note_release(int note, int time_offset = 0) const {
+		note_events.insert(NoteEvent { false, time + time_offset, note });
 	}
 
 	void control_update(int control, float value) {

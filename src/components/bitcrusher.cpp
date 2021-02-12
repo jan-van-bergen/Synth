@@ -5,7 +5,7 @@ void BitCrusherComponent::update(Synth const & synth) {
 	auto num_quantizations_inv = 1.0f / num_quantizations;
 
 	for (int i = 0; i < BLOCK_SIZE; i += rate) {
-		auto sample = gain * inputs[0].get_value(i); // Sample and hold
+		auto sample = gain * inputs[0].get_sample(i); // Sample and hold
 
 		// Quantize
 		sample.left  = std::round(sample.left  * num_quantizations) / num_quantizations;
@@ -14,7 +14,7 @@ void BitCrusherComponent::update(Synth const & synth) {
 		for (int j = 0; j < rate; j++) {
 			auto idx = i + j;
 			if (idx < BLOCK_SIZE) {
-				outputs[0].values[idx] = sample;	
+				outputs[0].set_sample(idx, sample);	
 			}
 		}
 	}

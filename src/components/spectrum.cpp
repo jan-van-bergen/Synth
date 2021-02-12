@@ -15,7 +15,7 @@ void SpectrumComponent::update(Synth const& synth) {
 	Sample fourier[N] = { };
 	
 	for (int i = 0; i < BLOCK_SIZE; i++) {
-		fourier[i] = hamming_lut[i] * inputs[0].get_value(i);
+		fourier[i] = hamming_lut[i] * inputs[0].get_sample(i);
 	}
 
 	// Reverse bits

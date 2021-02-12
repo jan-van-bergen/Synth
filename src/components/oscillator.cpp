@@ -45,7 +45,9 @@ static float envelope(float t, float attack, float hold, float decay, float sust
 void OscillatorComponent::update(Synth const & synth) {
 	auto steps_per_second = 4.0f / 60.0f * float(synth.settings.tempo);
 
-	for (auto const & note_event : synth.note_events[channel]) {
+	auto note_events = inputs[0].get_events();
+
+	for (auto const & note_event : note_events) {
 		if (note_event.pressed) {
 			voices.emplace_back(note_event.note, note_event.velocity, note_event.time);
 		} else {
@@ -101,13 +103,13 @@ void OscillatorComponent::update(Synth const & synth) {
 
 			// Generate selected waveform
 			switch (waveform_index) {
-				case 0: outputs[0].values[i] += sign * amplitude * generate_sine    (phase + voice.phase); break;
-				case 1: outputs[0].values[i] += sign * amplitude * generate_triangle(phase + voice.phase); break;
-				case 2: outputs[0].values[i] += sign * amplitude * generate_saw     (phase + voice.phase); break;
-				case 3: outputs[0].values[i] += sign * amplitude * generate_square  (phase + voice.phase); break;
-				case 4: outputs[0].values[i] += sign * amplitude * generate_square  (phase + voice.phase, 0.25f);  break;
-				case 5: outputs[0].values[i] += sign * amplitude * generate_square  (phase + voice.phase, 0.125f); break;
-				case 6: outputs[0].values[i] += sign * amplitude * generate_noise(); break;
+				case 0: outputs[0].get_sample(i) += sign * amplitude * generate_sine    (phase + voice.phase); break;
+				case 1: outputs[0].get_sample(i) += sign * amplitude * generate_triangle(phase + voice.phase); break;
+				case 2: outputs[0].get_sample(i) += sign * amplitude * generate_saw     (phase + voice.phase); break;
+				case 3: outputs[0].get_sample(i) += sign * amplitude * generate_square  (phase + voice.phase); break;
+				case 4: outputs[0].get_sample(i) += sign * amplitude * generate_square  (phase + voice.phase, 0.25f);  break;
+				case 5: outputs[0].get_sample(i) += sign * amplitude * generate_square  (phase + voice.phase, 0.125f); break;
+				case 6: outputs[0].get_sample(i) += sign * amplitude * generate_noise(); break;
 
 				default: abort();
 			}
@@ -142,10 +144,6 @@ void OscillatorComponent::update(Synth const & synth) {
 }
 
 void OscillatorComponent::render(Synth const & synth) {
-	if (ImGui::DragInt("Channel In", &channel, 0.1f, 0, Synth::NUM_CHANNELS - 1)) {
-		voices.clear();
-	}
-
 	if (ImGui::BeginCombo("Waveform", waveform_names[waveform_index])) {
 		for (int j = 0; j < util::array_element_count(waveform_names); j++) {
 			if (ImGui::Selectable(waveform_names[j], waveform_index == j)) {
@@ -184,11 +182,11 @@ void OscillatorComponent::render(Synth const & synth) {
 	decay  .render();
 	sustain.render();
 	release.render();
+
+	ImGui::Text("%f", outputs[0].get_sample(0));
 }
 
 void OscillatorComponent::serialize(json::Writer & writer) const {
-	writer.write("channel", channel);
-	
 	writer.write("waveform", waveform_index);
 	writer.write("invert",   invert);
 	writer.write("phase",    phase);
@@ -205,8 +203,6 @@ void OscillatorComponent::serialize(json::Writer & writer) const {
 }
 
 void OscillatorComponent::deserialize(json::Object const & object) {
-	channel = object.find_int("channel");
-
 	waveform_index = object.find_int  ("waveform", 3);
 	invert         = object.find_int  ("invert",   invert.default_value);
 	phase          = object.find_float("phase",    phase .default_value);

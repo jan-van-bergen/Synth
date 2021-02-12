@@ -31,15 +31,14 @@ void PianoRollComponent::update(Synth const & synth) {
 		auto const & midi_event = midi.events[midi_offset];
 
 		auto midi_time = time_wrap + midi_ticks_to_samples(midi_event.time, midi.tempo, midi.ticks, synth.settings.tempo);
+		if  (midi_time > t) break;
 
-		if (midi_time > t) break;
-
-		auto time_offset = midi_time - time_start;
+		int time_offset = midi_time - time_start;
 
 		if (midi_event.type == midi::Event::Type::PRESS) {
-			synth.note_press(midi_event.note.note, midi_event.note.velocity / 128.0f, channel, time_offset);
+			outputs[0].add_event(NoteEvent { true, synth.time + time_offset, midi_event.note.note, midi_event.note.velocity / 128.0f });
 		} else if (midi_event.type == midi::Event::Type::RELEASE) {
-			synth.note_release(midi_event.note.note, channel, time_offset);
+			outputs[0].add_event(NoteEvent { false, synth.time + time_offset, midi_event.note.note });
 		}
 
 		midi_offset++;
@@ -55,14 +54,6 @@ void PianoRollComponent::update(Synth const & synth) {
 }
 
 void PianoRollComponent::render(Synth const & synth) {
-	auto channel_prev = channel;
-	if (ImGui::DragInt("Channel Out", &channel, 0.1f, 0, Synth::NUM_CHANNELS - 1)) {
-		// Release all notes to ensure no infinitely playing notes
-		for (auto const & midi_event : midi.events) {
-			synth.note_release(midi_event.note.note, channel_prev, 0);
-		}
-	}
-
 	ImGui::InputText("File", filename, sizeof(filename));
 	ImGui::SameLine();
 	
@@ -71,14 +62,11 @@ void PianoRollComponent::render(Synth const & synth) {
 
 void PianoRollComponent::serialize(json::Writer & writer) const {
 	writer.write("filename", filename);
-	writer.write("channel",  channel);
 }
 
 void PianoRollComponent::deserialize(json::Object const & object) {
 	auto name = object.find_string("filename", DEFAULT_FILENAME);
 	strcpy_s(filename, name.c_str());
-
-	channel = object.find_int("channel");
 
 	reload_file();
 }

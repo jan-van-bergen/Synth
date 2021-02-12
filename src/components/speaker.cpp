@@ -35,7 +35,7 @@ void SpeakerComponent::update(Synth const & synth) {
 	recorded_samples.resize(start + BLOCK_SIZE);
 
 	for (int i = 0; i < BLOCK_SIZE; i++) {
-		recorded_samples[start + i] = inputs[0].get_value(i);
+		recorded_samples[start + i] = inputs[0].get_sample(i);
 	}
 }
 

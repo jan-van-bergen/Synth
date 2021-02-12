@@ -97,7 +97,7 @@ int main(int argc, char * argv[]) {
 
 					auto note = util::scancode_to_note(event.key.keysym.scancode);
 					if (note != -1) {
-						synth.note_press(note, 0.2f);
+						synth.note_press(note, 0.8f);
 					}
 
 					break;

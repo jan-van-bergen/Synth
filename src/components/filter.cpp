@@ -9,7 +9,7 @@ void FilterComponent::update(Synth const & synth) {
 	auto denom_inv = 1.0f / (1.0f + (2.0f * R * g) + g * g);
 
 	for (int i = 0; i < BLOCK_SIZE; i++) {
-		auto sample = inputs[0].get_value(i);
+		auto sample = inputs[0].get_sample(i);
 
 		auto high_pass = (sample - (2.0f * R + g) * state_1 - state_2) * denom_inv;
 		auto band_pass = high_pass * g + state_1;
@@ -19,13 +19,13 @@ void FilterComponent::update(Synth const & synth) {
 		state_2 = g * band_pass + low_pass;
 
 		if (filter_type == 0) {
-			outputs[0].values[i] = low_pass;
+			outputs[0].set_sample(i, low_pass);
 		} else if (filter_type == 1) {
-			outputs[0].values[i] = high_pass;
+			outputs[0].set_sample(i, high_pass);
 		} else if (filter_type == 2) {
-			outputs[0].values[i] = band_pass;
+			outputs[0].set_sample(i, band_pass);
 		} else {
-			outputs[0].values[i] = sample; // Unfiltered
+			outputs[0].set_sample(i, sample); // Unfiltered
 		}
 	}
 }

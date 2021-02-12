@@ -184,6 +184,7 @@
     <ClCompile Include="src\components\delay.cpp" />
     <ClCompile Include="src\components\distortion.cpp" />
     <ClCompile Include="src\components\filter.cpp" />
+    <ClCompile Include="src\components\keyboard.cpp" />
     <ClCompile Include="src\components\oscillator.cpp" />
     <ClCompile Include="src\components\pan.cpp" />
     <ClCompile Include="src\components\piano_roll.cpp" />
@@ -209,6 +210,7 @@
     <ClInclude Include="src\file_dialog.h" />
     <ClInclude Include="src\json.h" />
     <ClInclude Include="src\midi.h" />
+    <ClInclude Include="src\note_event.h" />
     <ClInclude Include="src\parameter.h" />
     <ClInclude Include="src\ring_buffer.h" />
     <ClInclude Include="src\sample.h" />

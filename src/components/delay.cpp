@@ -15,14 +15,14 @@ void DelayComponent::update(Synth const & synth) {
 	}
 
 	for (int i = 0; i < BLOCK_SIZE; i++) {
-		auto sample = inputs[0].get_value(i);
+		auto sample = inputs[0].get_sample(i);
 
 		sample = sample + feedback * history[offset];
 		history[offset] = sample;
 	
 		offset = (offset + 1) % history.size();
 
-		outputs[0].values[i] = sample;
+		outputs[0].set_sample(i, sample);
 	}
 }
 

@@ -8,7 +8,7 @@ void CompressorComponent::update(Synth const & synth) {
 	auto coef_release = std::exp(-1000.0f / (release * SAMPLE_RATE));
 
 	for (int i = 0; i < BLOCK_SIZE; i++) {
-		auto sample = inputs[0].get_value(i);
+		auto sample = inputs[0].get_sample(i);
 
 		auto link    = std::max(std::abs(sample.left), std::abs(sample.right));
 		auto link_db = util::linear_to_db(link);
@@ -21,7 +21,7 @@ void CompressorComponent::update(Synth const & synth) {
 			env = exceeded_db + coef_release * (env - exceeded_db);
 		}
 		
-		outputs[0].values[i] = util::db_to_linear(env * (1.0f / ratio - 1.0f) + gain) * sample;
+		outputs[0].set_sample(i, util::db_to_linear(env * (1.0f / ratio - 1.0f) + gain) * sample);
 	}
 }
 

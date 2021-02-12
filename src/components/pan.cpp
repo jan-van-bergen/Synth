@@ -8,10 +8,12 @@ void PanComponent::update(Synth const & synth) {
 	auto right = std::sin(0.5f * PI * alpha);
 
 	for (int i = 0; i < BLOCK_SIZE; i++) {
-		auto sample = inputs[0].get_value(i);
+		auto sample = inputs[0].get_sample(i);
 
-		outputs[0].values[i].left  = left  * sample.left;
-		outputs[0].values[i].right = right * sample.right;
+		outputs[0].set_sample(i, Sample(
+			left  * sample.left,
+			right * sample.right
+		));
 	}
 }
 

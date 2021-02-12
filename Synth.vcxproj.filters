@@ -86,6 +86,9 @@
     <ClCompile Include="src\json.cpp">
       <Filter>json</Filter>
     </ClCompile>
+    <ClCompile Include="src\components\keyboard.cpp">
+      <Filter>components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\json.h">
@@ -110,6 +113,9 @@
     <ClInclude Include="src\util.h" />
     <ClInclude Include="src\components.h">
       <Filter>components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\note_event.h">
+      <Filter>synth</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

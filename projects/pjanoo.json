@@ -12,14 +12,12 @@
 		"id": 1,
 		"pos_x": 60.000000,
 		"pos_y": 60.000000,
-		"filename": "midi/pjanoo_synth.mid",
-		"channel": 1
+		"filename": "midi/pjanoo_synth.mid"
 	},
 	"OscillatorComponent": {
 		"id": 2,
 		"pos_x": 301.000000,
 		"pos_y": 42.000000,
-		"channel": 1,
 		"waveform": 2,
 		"invert": 0,
 		"phase": 0.000000,
@@ -36,7 +34,6 @@
 		"id": 3,
 		"pos_x": 305.000000,
 		"pos_y": 451.000000,
-		"channel": 2,
 		"waveform": 3,
 		"invert": 0,
 		"phase": 0.000000,
@@ -53,14 +50,12 @@
 		"id": 4,
 		"pos_x": 25.000000,
 		"pos_y": 345.000000,
-		"filename": "midi/pjanoo_bass.mid",
-		"channel": 2
+		"filename": "midi/pjanoo_bass.mid"
 	},
 	"OscillatorComponent": {
 		"id": 5,
 		"pos_x": 482.000000,
 		"pos_y": 47.000000,
-		"channel": 1,
 		"waveform": 2,
 		"invert": 0,
 		"phase": 0.233000,
@@ -137,6 +132,13 @@
 		"weight": 1.000000
 	},
 	"Connection": {
+		"component_out": 1,
+		"component_in": 5,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
 		"component_out": 2,
 		"component_in": 13,
 		"offset_out": 0,
@@ -169,7 +171,7 @@
 		"component_in": 13,
 		"offset_out": 0,
 		"offset_in": 0,
-		"weight": 1.000000
+		"weight": 0.800000
 	},
 	"Connection": {
 		"component_out": 6,
@@ -190,7 +192,7 @@
 		"component_in": 0,
 		"offset_out": 0,
 		"offset_in": 0,
-		"weight": 1.000000
+		"weight": 0.900000
 	},
 	"Connection": {
 		"component_out": 9,
@@ -211,7 +213,7 @@
 		"component_in": 0,
 		"offset_out": 0,
 		"offset_in": 0,
-		"weight": 0.200000
+		"weight": 0.100000
 	},
 	"Connection": {
 		"component_out": 13,
@@ -225,6 +227,6 @@
 		"component_in": 0,
 		"offset_out": 0,
 		"offset_in": 0,
-		"weight": 0.800000
+		"weight": 0.400000
 	}
 }

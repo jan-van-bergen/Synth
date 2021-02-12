@@ -23,17 +23,15 @@ void Synth::update(Sample buf[BLOCK_SIZE]) {
 
 	for (auto const & speaker : speakers) {
 		for (auto const & input : speaker->inputs) {
-			for (auto const & [other, weight] : input.others) {
-				for (int i = 0; i < BLOCK_SIZE; i++) {
-					buf[i] += weight * other->values[i];
-				}
+			for (int i = 0; i < BLOCK_SIZE; i++) {
+				buf[i] += input.get_sample(i);
 			}
 		}
 	}
 
 	for (int i = 0; i < BLOCK_SIZE; i++) buf[i] *= settings.master_volume;
 
-	for (int channel = 0; channel < NUM_CHANNELS; channel++) note_events[channel].clear();
+	note_events.clear();
 }
 
 void Synth::render() {
@@ -53,6 +51,7 @@ void Synth::render() {
 		}
 		
 		if (ImGui::BeginMenu("Components")) {
+			if (ImGui::MenuItem("Keyboard"))   add_component<KeyboardComponent>();
 			if (ImGui::MenuItem("Sequencer"))  add_component<SequencerComponent>();
 			if (ImGui::MenuItem("Piano Roll")) add_component<PianoRollComponent>();
 
@@ -177,6 +176,10 @@ void Synth::render() {
 	};
 
 	auto idx = 0;
+	
+	auto const CONNECTION_COLOUR_SELECTED = ImColor(255, 100, 100);
+	auto const CONNECTION_COLOUR_MIDI     = ImColor(100, 200, 100);
+	auto const CONNECTION_COLOUR_AUDIO    = ImColor(200, 200, 100);
 
 	// Draw Hermite Splite between Connectors
 	for (auto const & connection : connections) {
@@ -187,7 +190,16 @@ void Synth::render() {
 			selected_connection.value().first  == connection.first &&
 			selected_connection.value().second == connection.second;
 
-		auto intersects = draw_connection(spline_start, spline_end, selected ? ImColor(255, 100, 100) : ImColor(200, 200, 100));
+		ImColor colour;
+		if (selected) {
+			colour = CONNECTION_COLOUR_SELECTED;
+		} else if (connection.first->is_midi) {
+			colour = CONNECTION_COLOUR_MIDI;	
+		} else {
+			colour = CONNECTION_COLOUR_AUDIO;
+		}
+
+		auto intersects = draw_connection(spline_start, spline_end, colour);
 
 		if (intersects && ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
 			selected_connection = connection;
@@ -253,7 +265,7 @@ void Synth::render() {
 
 		if (dragging->is_input) std::swap(spline_start, spline_end); // Always draw from out to in
 
-		draw_connection(spline_start, spline_end, ImColor(200, 200, 100));
+		draw_connection(spline_start, spline_end, dragging->is_midi ? CONNECTION_COLOUR_MIDI : CONNECTION_COLOUR_AUDIO);
 	}
 
 	// If a Component window was closed, do the bookkeeping required to remove it
@@ -298,10 +310,21 @@ void Synth::render() {
 			open_file(filename.c_str());
 		}
 	}
+
+	// Debug tool to terminate infinite notes
+	if (ImGui::IsKeyPressed(SDL_SCANCODE_F5)) {
+		for (auto const & component : components) {
+			auto osc = dynamic_cast<OscillatorComponent *>(component.get());
+
+			if (osc) osc->voices.clear();
+		}
+	}
 }
 
 void Synth::connect(ConnectorOut & out, ConnectorIn & in, float weight) {
 	if (out.component == in.component) return;
+
+	if (out.is_midi != in.is_midi) return;
 
 	out.others.push_back(&in);
 	in .others.push_back(std::make_pair(&out, weight));
@@ -310,6 +333,8 @@ void Synth::connect(ConnectorOut & out, ConnectorIn & in, float weight) {
 }
 
 void Synth::disconnect(ConnectorOut & out, ConnectorIn & in) {
+	assert(out.is_midi == in.is_midi);
+
 	out.others.erase(std::find   (out.others.begin(), out.others.end(), &in));
 	in .others.erase(std::find_if(in .others.begin(), in .others.end(), [&out](auto pair) {
 		return pair.first == &out;	
@@ -342,6 +367,7 @@ void Synth::reconstruct_update_graph() {
 
 	std::unordered_map<Component *, int> num_outputs_satisfied;
 
+	// Breadth First Search in reverse, starting at the outputs
 	while (!queue.empty()) {
 		auto component = queue.front();
 		queue.pop();

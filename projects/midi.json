@@ -29,8 +29,8 @@
 		"attack": 0.100000,
 		"hold": 0.500000,
 		"decay": 1.000000,
-		"sustain": 0.186000,
-		"release": 0.930000
+		"sustain": 0.314000,
+		"release": 3.163000
 	},
 	"SequencerComponent": {
 		"id": 6,
@@ -43,6 +43,12 @@
 		"pos_x": 1034.000000,
 		"pos_y": 109.000000,
 		"filename": "samples/kick.wav"
+	},
+	"DistortionComponent": {
+		"id": 5,
+		"pos_x": 1052.000000,
+		"pos_y": 291.000000,
+		"amount": 0.782000
 	},
 	"Connection": {
 		"component_out": 1,
@@ -67,9 +73,16 @@
 	},
 	"Connection": {
 		"component_out": 7,
-		"component_in": 0,
+		"component_in": 5,
 		"offset_out": 0,
 		"offset_in": 0,
 		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 5,
+		"component_in": 0,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 0.600000
 	}
 }

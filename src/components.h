@@ -38,6 +38,13 @@ struct Component {
 	virtual void deserialize(json::Object const & object) { }
 };
 
+struct KeyboardComponent : Component {
+	KeyboardComponent(int id) : Component(id, "Keyboard", { }, { { this, "MIDI Out", true } }) { }
+	
+	void update(struct Synth const & synth) override;
+	void render(struct Synth const & synth) override;
+};
+
 struct SequencerComponent : Component {
 	static constexpr auto TRACK_SIZE = 16;
 	float pattern[TRACK_SIZE] = { };
@@ -60,11 +67,9 @@ struct PianoRollComponent : Component {
 	int         midi_offset;
 	int         midi_length;
 
-	int channel = 0;
-
 	char filename[128];
 
-	PianoRollComponent(int id) : Component(id, "Piano Roll", { }, { { this, "Out" } }) {
+	PianoRollComponent(int id) : Component(id, "Piano Roll", { }, { { this, "MIDI Out", true } }) {
 		strcpy_s(filename, DEFAULT_FILENAME);
 		reload_file();
 	}
@@ -90,8 +95,6 @@ struct PianoRollComponent : Component {
 
 struct OscillatorComponent : Component {
 	static constexpr const char * waveform_names[] = { "Sine", "Triangle", "Saw", "Square", "Pulse 25%", "Pulse 12.5%", "Noise" };
-
-	int channel = 0;
 
 	int waveform_index = 2;
 	
@@ -126,7 +129,7 @@ struct OscillatorComponent : Component {
 	Parameter<float> sustain = { "Sustain", 0.5f, std::make_pair(0.0f, 1.0f) };
 	Parameter<float> release = { "Release", 0.0f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } };
 
-	OscillatorComponent(int id) : Component(id, "Oscillator", { { this, "TEMP" } }, { { this, "Out" } }) { }
+	OscillatorComponent(int id) : Component(id, "Oscillator", { { this, "MIDI In", true } }, { { this, "Out" } }) { }
 
 	void update(struct Synth const & synth) override;
 	void render(struct Synth const & synth) override;

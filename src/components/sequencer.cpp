@@ -12,7 +12,7 @@ void SequencerComponent::update(Synth const & synth) {
 		auto hit  = time % sixteenth_note == 0;
 
 		if (hit) {
-			outputs[0].values[i] = pattern[step];
+			outputs[0].set_sample(i, pattern[step]);
 
 			current_step = step;
 		}

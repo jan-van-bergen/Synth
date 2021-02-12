@@ -4,14 +4,14 @@ void SamplerComponent::update(Synth const & synth) {
 	for (int i = 0; i < BLOCK_SIZE; i++) {
 		static constexpr auto EPSILON = 0.001f;
 
-		auto abs = Sample::apply_function(std::fabsf, inputs[0].get_value(i));
+		auto abs = Sample::apply_function(std::fabsf, inputs[0].get_sample(i));
 		if (abs.left > EPSILON && abs.right > EPSILON) {
 			velocity = abs.left;
 			current_sample = 0; // Trigger sample on input
 		}
 
 		if (current_sample < samples.size()) {
-			outputs[0].values[i] = velocity * samples[current_sample];
+			outputs[0].set_sample(i, velocity * samples[current_sample]);
 		}
 
 		current_sample++;
