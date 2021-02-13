@@ -193,7 +193,6 @@
     <ClCompile Include="src\components\speaker.cpp" />
     <ClCompile Include="src\components\spectrum.cpp" />
     <ClCompile Include="src\components\split.cpp" />
-    <ClCompile Include="src\components\wave_table.cpp" />
     <ClCompile Include="src\connector.cpp" />
     <ClCompile Include="src\file_dialog.cpp" />
     <ClCompile Include="src\json.cpp" />

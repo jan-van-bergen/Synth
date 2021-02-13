@@ -182,8 +182,6 @@ void OscillatorComponent::render(Synth const & synth) {
 	decay  .render();
 	sustain.render();
 	release.render();
-
-	ImGui::Text("%f", outputs[0].get_sample(0));
 }
 
 void OscillatorComponent::serialize(json::Writer & writer) const {

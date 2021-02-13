@@ -80,9 +80,6 @@
     <ClCompile Include="src\components\split.cpp">
       <Filter>components</Filter>
     </ClCompile>
-    <ClCompile Include="src\components\wave_table.cpp">
-      <Filter>components</Filter>
-    </ClCompile>
     <ClCompile Include="src\json.cpp">
       <Filter>json</Filter>
     </ClCompile>

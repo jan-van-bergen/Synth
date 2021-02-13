@@ -51,7 +51,7 @@ struct SequencerComponent : Component {
 
 	int current_step = 0;
 
-	SequencerComponent(int id) : Component(id, "Sequencer", { }, { { this, "Out" } }) { }
+	SequencerComponent(int id) : Component(id, "Sequencer", { }, { { this, "MIDI Out", true } }) { }
 
 	void update(struct Synth const & synth) override;
 	void render(struct Synth const & synth) override;
@@ -141,27 +141,20 @@ private:
 	float portamento_frequency = 0.0f;
 };
 
-struct WaveTableComponent : Component {
-	std::vector<Sample> samples = util::load_wav("samples/piano.wav");
-	float current_sample = 0.0f;
-
-	WaveTableComponent(int id) : Component(id, "Wave Table", { }, { { this, "Out" } }) { }
-	
-	void update(struct Synth const & synth) override;
-	void render(struct Synth const & synth) override;
-};
-
 struct SamplerComponent : Component {
 	static constexpr char const * DEFAULT_FILENAME = "samples/kick.wav";
 
 	std::vector<Sample> samples;
-	int current_sample = 0;
+	float current_sample = 0.0f;
+	float step           = 0.0f;
 
-	float velocity = 0.0f;
+	float velocity = 1.0f;
 
 	char filename[128];
 
-	SamplerComponent(int id) : Component(id, "Sampler", { { this, "Trigger" } }, { { this, "Out" } }) {
+	Parameter<int> base_note = { "Base Note", 36, std::make_pair(0, 127), { 0, 12, 24, 36, 48, 60, 72, 84, 96, 108, 120 } };
+
+	SamplerComponent(int id) : Component(id, "Sampler", { { this, "MIDI In", true } }, { { this, "Out" } }) {
 		strcpy_s(filename, DEFAULT_FILENAME);
 		samples = util::load_wav(filename);
 	}

@@ -179,3 +179,17 @@ float util::note_freq(int note) {
 
 	return freq * pow_lut[note];
 }
+
+void util::note_name(int note, char str[], int len) {
+	if (note < 0) {
+		str[0] = '\0';
+		return;
+	}
+
+	auto tone   = note % 12;
+	auto octave = note / 12;
+
+	constexpr char const * tones[12] = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
+
+	sprintf_s(str, len, "%s%i", tones[tone], octave);
+}

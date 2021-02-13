@@ -91,6 +91,11 @@
 		"steps": 3,
 		"feedback": 0.429000
 	},
+	"KeyboardComponent": {
+		"id": 11,
+		"pos_x": 64.000000,
+		"pos_y": 469.000000
+	},
 	"Connection": {
 		"component_out": 1,
 		"component_in": 0,
@@ -157,6 +162,20 @@
 	"Connection": {
 		"component_out": 10,
 		"component_in": 0,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 11,
+		"component_in": 7,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 11,
+		"component_in": 8,
 		"offset_out": 0,
 		"offset_in": 0,
 		"weight": 1.000000

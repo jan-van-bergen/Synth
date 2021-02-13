@@ -2,6 +2,8 @@
 
 #include "synth.h"
 
+static constexpr auto EPSILON = 0.001f;
+
 void SequencerComponent::update(Synth const & synth) {
 	auto sixteenth_note = size_t(60) * SAMPLE_RATE / (4 * synth.settings.tempo);
 	
@@ -12,7 +14,9 @@ void SequencerComponent::update(Synth const & synth) {
 		auto hit  = time % sixteenth_note == 0;
 
 		if (hit) {
-			outputs[0].set_sample(i, pattern[step]);
+			if (pattern[step] > EPSILON) {
+				outputs[0].add_event(NoteEvent { true, synth.time + i, 36, pattern[step] });
+			}
 
 			current_step = step;
 		}

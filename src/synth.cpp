@@ -58,7 +58,6 @@ void Synth::render() {
 			ImGui::Separator();
 
 			if (ImGui::MenuItem("Oscillator")) add_component<OscillatorComponent>();
-			if (ImGui::MenuItem("Wave Table")) add_component<WaveTableComponent>();
 			if (ImGui::MenuItem("Sampler"))    add_component<SamplerComponent>();
 			
 			ImGui::Separator();
@@ -520,7 +519,7 @@ void Synth::open_file(char const * filename) {
 
 				Component * component = nullptr;
 
-						if (obj->name == "BitCrusherComponent") component = add_component<BitCrusherComponent>(id);
+				     if (obj->name == "BitCrusherComponent") component = add_component<BitCrusherComponent>(id);
 				else if (obj->name == "CompressorComponent") component = add_component<CompressorComponent>(id);
 				else if (obj->name == "DecibelComponent")    component = add_component<DecibelComponent>(id);
 				else if (obj->name == "DelayComponent")      component = add_component<DelayComponent>(id);
@@ -534,7 +533,6 @@ void Synth::open_file(char const * filename) {
 				else if (obj->name == "SpeakerComponent")    component = add_component<SpeakerComponent>(id);
 				else if (obj->name == "SpectrumComponent")   component = add_component<SpectrumComponent>(id);
 				else if (obj->name == "SplitComponent")      component = add_component<SplitComponent>(id);
-				else if (obj->name == "WaveTableComponent")  component = add_component<WaveTableComponent>(id);
 
 				if (!component) {
 					printf("WARNING: Unsupported Component '%s'!\n", obj->name.c_str());

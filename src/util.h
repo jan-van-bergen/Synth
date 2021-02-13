@@ -94,4 +94,6 @@ namespace util {
 	int scancode_to_note(SDL_Scancode scancode);
 	
 	float note_freq(int note);
+
+	void note_name(int note, char str[], int len);
 }

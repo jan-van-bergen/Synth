@@ -59,22 +59,27 @@ struct Parameter : Param {
 		}
 	}
 
-	void render() {
+	using Formatter = void (*)(T, char *, int);
+
+	void render(Formatter formatter = nullptr) {
 		auto [lower, upper] = bounds;
 
-		char const * fmt = nullptr;
-		
+		char fmt[128] = { };
+		if (formatter) {
+			formatter(parameter, fmt, sizeof(fmt));
+		}
+
 		float scroll_speed;
 
 		// Render slider
 		if constexpr (is_float) {
-			fmt = "%.3f";
+			if (!formatter) strcpy_s(fmt, "%.3f");
 
 			ImGui::SliderFloat(name.c_str(), &parameter, lower, upper, fmt, curve == Param::Curve::LINEAR ? 0 : ImGuiSliderFlags_Logarithmic);
 
 			scroll_speed = ImGui::IsKeyDown(SDL_SCANCODE_LCTRL) ? 0.01f : 0.1f; // Allow for fine scrolling using CONTROL key
 		} else if constexpr (is_int) {
-			fmt = "%i";
+			if (!formatter) strcpy_s(fmt, "%i");
 
 			ImGui::SliderInt(name.c_str(), &parameter, lower, upper, fmt, curve == Param::Curve::LINEAR ? 0 : ImGuiSliderFlags_Logarithmic);
 
@@ -93,7 +98,10 @@ struct Parameter : Param {
 
 			auto should_close_popup = false;
 
-			for (auto const & option : options) {
+			for (auto const & option : options) {			
+				if (formatter) {
+					formatter(option, fmt, sizeof(fmt));
+				}
 				sprintf_s(label, fmt, option);
 
 				if (ImGui::Button(label)) {
