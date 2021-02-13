@@ -11,23 +11,34 @@ void SamplerComponent::update(Synth const & synth) {
 
 			auto frequency_note = util::note_freq(note_event.note);
 			auto frequency_base = util::note_freq(base_note);
+			
+			auto step = frequency_note / frequency_base;
+			auto current_sample = -step * time_offset;
 
-			step = frequency_note / frequency_base;
-
-			current_sample = -step * time_offset;
-
-			velocity = note_event.velocity;
+			voices.emplace_back(current_sample, step, note_event.velocity);
 		}
 	}
 
-	for (int i = 0; i < BLOCK_SIZE; i++) {
-		auto sample_index = util::round(current_sample);
+	for (int v = 0; v < voices.size(); v++) {
+		auto & voice = voices[v];
 
-		if (0 <= sample_index && sample_index < samples.size()) {
-			outputs[0].set_sample(i, velocity * samples[sample_index]);
+		for (int i = 0; i < BLOCK_SIZE; i++) {
+			auto sample_index = util::round(voice.current_sample);
+
+			if (sample_index >= 0) {
+				if (sample_index < samples.size()) {
+					outputs[0].get_sample(i) += voice.velocity * samples[sample_index];
+				} else {
+					// Voice is done playing, remove
+					voices.erase(voices.begin() + v);
+					v--;
+
+					break;
+				}
+			}
+
+			voice.current_sample += voice.step;
 		}
-
-		current_sample += step;
 	}
 }
 

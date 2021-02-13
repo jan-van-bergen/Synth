@@ -78,7 +78,7 @@ bool FileDialog::render() {
 					strcat_s(selected, ".json");
 				}
 
-				selected_path = path / selected;
+				selected_path = path/selected;
 
 				if (std::filesystem::exists(selected_path)) {
 					ImGui::OpenPopup("Overwrite");
@@ -103,7 +103,7 @@ bool FileDialog::render() {
 				ImGui::EndPopup();
 			}
 		} else if (confirmed) {	
-			selected_path = path / selected;
+			selected_path = path/selected;
 		}
 
 		if (confirmed || ImGui::IsKeyPressed(SDL_SCANCODE_ESCAPE)) ImGui::CloseCurrentPopup(); 

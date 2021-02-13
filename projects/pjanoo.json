@@ -10,8 +10,8 @@
 	},
 	"PianoRollComponent": {
 		"id": 1,
-		"pos_x": 60.000000,
-		"pos_y": 60.000000,
+		"pos_x": 32.000000,
+		"pos_y": 59.000000,
 		"filename": "midi/pjanoo_synth.mid"
 	},
 	"OscillatorComponent": {
@@ -98,8 +98,8 @@
 	},
 	"DistortionComponent": {
 		"id": 12,
-		"pos_x": 882.000000,
-		"pos_y": 582.000000,
+		"pos_x": 861.000000,
+		"pos_y": 618.000000,
 		"amount": 0.294000
 	},
 	"FilterComponent": {
@@ -116,7 +116,7 @@
 		"pos_y": 397.000000,
 		"threshold": -17.561001,
 		"ratio": 4.129000,
-		"gain": -2.927000,
+		"gain": -10.244000,
 		"attack": 15.000000,
 		"release": 200.000000
 	},
@@ -143,6 +143,13 @@
 	"Connection": {
 		"component_out": 1,
 		"component_in": 5,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 1,
+		"component_in": 14,
 		"offset_out": 0,
 		"offset_in": 0,
 		"weight": 1.000000
@@ -230,6 +237,13 @@
 		"offset_out": 0,
 		"offset_in": 0,
 		"weight": 0.700000
+	},
+	"Connection": {
+		"component_out": 14,
+		"component_in": 0,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 0.400000
 	},
 	"Connection": {
 		"component_out": 14,

@@ -145,11 +145,7 @@ struct SamplerComponent : Component {
 	static constexpr char const * DEFAULT_FILENAME = "samples/kick.wav";
 
 	std::vector<Sample> samples;
-	float current_sample = 0.0f;
-	float step           = 0.0f;
-
-	float velocity = 1.0f;
-
+	
 	char filename[128];
 
 	Parameter<int> base_note = { "Base Note", 36, std::make_pair(0, 127), { 0, 12, 24, 36, 48, 60, 72, 84, 96, 108, 120 } };
@@ -164,6 +160,15 @@ struct SamplerComponent : Component {
 
 	void   serialize(json::Writer & writer) const override;
 	void deserialize(json::Object const & object) override;
+
+private:
+	struct Voice {
+		float current_sample = 0.0f;
+		float step           = 0.0f;
+
+		float velocity = 1.0f;
+	};
+	std::vector<Voice> voices;
 };
 
 struct SplitComponent : Component {
