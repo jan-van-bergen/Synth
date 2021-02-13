@@ -2,6 +2,8 @@
 
 #include <ImGui/imgui.h>
 
+#include <SDL2/SDL_scancode.h>
+
 void FileDialog::show(bool saving) {
 	this->saving = saving;
 	if (saving) {
@@ -104,7 +106,7 @@ bool FileDialog::render() {
 			selected_path = path / selected;
 		}
 
-		if (confirmed) ImGui::CloseCurrentPopup(); 
+		if (confirmed || ImGui::IsKeyPressed(SDL_SCANCODE_ESCAPE)) ImGui::CloseCurrentPopup(); 
 
 		ImGui::EndPopup();
 

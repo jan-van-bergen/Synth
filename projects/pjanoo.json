@@ -32,8 +32,8 @@
 	},
 	"OscillatorComponent": {
 		"id": 3,
-		"pos_x": 305.000000,
-		"pos_y": 451.000000,
+		"pos_x": 284.000000,
+		"pos_y": 472.000000,
 		"waveform": 3,
 		"invert": 0,
 		"phase": 0.000000,
@@ -74,23 +74,19 @@
 		"pos_y": 52.000000,
 		"pattern": [ 1.000000, 0.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000, 0.000000 ]
 	},
-	"SequencerComponent": {
-		"id": 7,
-		"pos_x": 662.000000,
-		"pos_y": 175.000000,
-		"pattern": [ 0.000000, 0.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000, 0.000000 ]
-	},
 	"SamplerComponent": {
 		"id": 8,
 		"pos_x": 1127.000000,
 		"pos_y": 58.000000,
-		"filename": "samples/kick.wav"
+		"filename": "samples/kick.wav",
+		"base_note": 36
 	},
 	"SamplerComponent": {
 		"id": 9,
 		"pos_x": 1131.000000,
 		"pos_y": 292.000000,
-		"filename": "samples/909_clap.wav"
+		"filename": "samples/909_clap.wav",
+		"base_note": 36
 	},
 	"FilterComponent": {
 		"id": 11,
@@ -123,6 +119,19 @@
 		"gain": -2.927000,
 		"attack": 15.000000,
 		"release": 200.000000
+	},
+	"SamplerComponent": {
+		"id": 14,
+		"pos_x": 511.000000,
+		"pos_y": 439.000000,
+		"filename": "samples/piano.wav",
+		"base_note": 48
+	},
+	"PianoRollComponent": {
+		"id": 16,
+		"pos_x": 667.000000,
+		"pos_y": 193.000000,
+		"filename": "midi/pattern_clap.mid"
 	},
 	"Connection": {
 		"component_out": 1,
@@ -167,6 +176,13 @@
 		"weight": 1.000000
 	},
 	"Connection": {
+		"component_out": 4,
+		"component_in": 14,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
 		"component_out": 5,
 		"component_in": 13,
 		"offset_out": 0,
@@ -176,13 +192,6 @@
 	"Connection": {
 		"component_out": 6,
 		"component_in": 8,
-		"offset_out": 0,
-		"offset_in": 0,
-		"weight": 1.000000
-	},
-	"Connection": {
-		"component_out": 7,
-		"component_in": 9,
 		"offset_out": 0,
 		"offset_in": 0,
 		"weight": 1.000000
@@ -228,5 +237,19 @@
 		"offset_out": 0,
 		"offset_in": 0,
 		"weight": 0.400000
+	},
+	"Connection": {
+		"component_out": 14,
+		"component_in": 0,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 16,
+		"component_in": 9,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
 	}
 }

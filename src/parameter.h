@@ -59,7 +59,7 @@ struct Parameter : Param {
 		}
 	}
 
-	using Formatter = void (*)(T, char *, int);
+	using Formatter = void (*)(T value, char * fmt, int len);
 
 	void render(Formatter formatter = nullptr) {
 		auto [lower, upper] = bounds;
