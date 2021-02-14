@@ -34,7 +34,7 @@ struct Synth {
 
 	template<IsComponent T>
 	T * add_component(int id = -1) {
-		static_assert(meta::TypeListContains<AllComponents, T>::value);
+		static_assert(meta::TypeListContains<AllComponents, T>::value); // Ensure we only instantiate known Components
 
 		if (id == -1) id = unique_component_id++;
 

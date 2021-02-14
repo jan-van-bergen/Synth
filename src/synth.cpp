@@ -470,16 +470,16 @@ void Synth::render_connector_out(ConnectorOut & out) {
 	out.pos[1] = pos.y + 0.5f * CONNECTOR_SIZE;
 }
 
-template<typename TypeList>
+template<typename ComponentList>
 Component * try_add_component(Synth & synth, std::string const & name, int id) {
-	using C = typename TypeList::Head;
+	using ComponentType = typename ComponentList::Head;
 
-	if (name == util::get_type_name<C>()) {
-		return synth.add_component<C>(id);
+	if (name == util::get_type_name<ComponentType>()) {
+		return synth.add_component<ComponentType>(id);
 	}
 
-	if constexpr (TypeList::size > 1) {
-		return try_add_component<TypeList::Tail>(synth, name, id);
+	if constexpr (ComponentList::size > 1) {
+		return try_add_component<ComponentList::Tail>(synth, name, id);
 	} else {
 		return nullptr;
 	}
