@@ -508,14 +508,14 @@ void Synth::open_file(char const * filename) {
 			auto obj = static_cast<json::Object const *>(object.get());
 
 			if (obj->name == "Settings") {
-				settings.tempo         = obj->find<json::ValueInt   const>("tempo")        ->value;
-				settings.master_volume = obj->find<json::ValueFloat const>("master_volume")->value;
+				settings.tempo         = obj->find_int  ("tempo",         settings.tempo        .default_value);
+				settings.master_volume = obj->find_float("master_volume", settings.master_volume.default_value);
 			} else if (obj->name == "Connection") {
-				auto id_out     = obj->find<json::ValueInt   const>("component_out")->value;
-				auto id_in      = obj->find<json::ValueInt   const>("component_in") ->value;
-				auto offset_out = obj->find<json::ValueInt   const>("offset_out")   ->value;
-				auto offset_in  = obj->find<json::ValueInt   const>("offset_in")    ->value;
-				auto weight     = obj->find<json::ValueFloat const>("weight")       ->value;
+				auto id_out     = obj->find_int("component_out", -1);
+				auto id_in      = obj->find_int("component_in",  -1);
+				auto offset_out = obj->find_int("offset_out");
+				auto offset_in  = obj->find_int("offset_in");
+				auto weight     = obj->find_float("weight");
 
 				auto component_out = components_by_id[id_out];
 				auto component_in  = components_by_id[id_in];
@@ -530,9 +530,16 @@ void Synth::open_file(char const * filename) {
 
 				connect(connector_out, connector_in, weight);
 			} else {
-				auto id    = obj->find<json::ValueInt   const>("id")   ->value;
-				auto pos_x = obj->find<json::ValueFloat const>("pos_x")->value;
-				auto pos_y = obj->find<json::ValueFloat const>("pos_y")->value;
+				auto obj_id = obj->find<json::ValueInt const>("id");
+				if (!obj_id) {
+					printf("WARNING: Component '%s' does not have an ID!\n", obj->name.c_str());
+					return;
+				}
+
+				auto id = obj_id->value;
+
+				auto pos_x = obj->find_float("pos_x", 100.0f);
+				auto pos_y = obj->find_float("pos_y", 100.0f);
 
 				Component * component = try_add_component<AllComponents>(*this, obj->name, id);
 
