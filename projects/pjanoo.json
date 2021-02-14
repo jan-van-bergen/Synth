@@ -121,7 +121,7 @@
 		"release": 200.000000
 	},
 	"SamplerComponent": {
-		"id": 14,
+		"id": 15,
 		"pos_x": 511.000000,
 		"pos_y": 439.000000,
 		"filename": "samples/piano.wav",
@@ -149,7 +149,7 @@
 	},
 	"Connection": {
 		"component_out": 1,
-		"component_in": 14,
+		"component_in": 15,
 		"offset_out": 0,
 		"offset_in": 0,
 		"weight": 1.000000
@@ -184,7 +184,7 @@
 	},
 	"Connection": {
 		"component_out": 4,
-		"component_in": 14,
+		"component_in": 15,
 		"offset_out": 0,
 		"offset_in": 0,
 		"weight": 1.000000
@@ -236,24 +236,38 @@
 		"component_in": 14,
 		"offset_out": 0,
 		"offset_in": 0,
-		"weight": 0.700000
+		"weight": 1.000000
 	},
 	"Connection": {
 		"component_out": 14,
 		"component_in": 0,
 		"offset_out": 0,
 		"offset_in": 0,
-		"weight": 0.400000
+		"weight": 1.000000
 	},
 	"Connection": {
 		"component_out": 14,
 		"component_in": 0,
 		"offset_out": 0,
 		"offset_in": 0,
-		"weight": 0.400000
+		"weight": 1.000000
 	},
 	"Connection": {
 		"component_out": 14,
+		"component_in": 0,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 14,
+		"component_in": 0,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 15,
 		"component_in": 0,
 		"offset_out": 0,
 		"offset_in": 0,

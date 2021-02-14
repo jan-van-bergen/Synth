@@ -54,7 +54,7 @@ struct Synth {
 	void update(Sample buf[BLOCK_SIZE]);
 	void render();
 	
-	void    connect(ConnectorOut & out, ConnectorIn & in, float weight = 1.0f);
+	bool    connect(ConnectorOut & out, ConnectorIn & in, float weight = 1.0f);
 	void disconnect(ConnectorOut & out, ConnectorIn & in);
 
 	void note_press(int note, float velocity, int time_offset = 0) const {

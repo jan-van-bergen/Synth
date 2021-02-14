@@ -321,15 +321,16 @@ void Synth::render() {
 	}
 }
 
-void Synth::connect(ConnectorOut & out, ConnectorIn & in, float weight) {
-	if (out.component == in.component) return;
-
-	if (out.is_midi != in.is_midi) return;
+bool Synth::connect(ConnectorOut & out, ConnectorIn & in, float weight) {
+	if (out.component == in.component) return false;
+	if (out.is_midi   != in.is_midi)   return false;
 
 	out.others.push_back(&in);
 	in .others.push_back(std::make_pair(&out, weight));
 
 	reconstruct_update_graph();
+
+	return true;
 }
 
 void Synth::disconnect(ConnectorOut & out, ConnectorIn & in) {
@@ -497,6 +498,8 @@ void Synth::open_file(char const * filename) {
 			
 	settings.tempo         = 130;
 	settings.master_volume = 1.0f;
+	
+	auto max_id = -1;
 
 	if (parser.root->type == json::JSON::Type::OBJECT) {
 		auto json = static_cast<json::Object const *>(parser.root.get()); 
@@ -528,12 +531,16 @@ void Synth::open_file(char const * filename) {
 				auto & connector_out = component_out->outputs[offset_out];
 				auto & connector_in  = component_in ->inputs [offset_in];
 
-				connect(connector_out, connector_in, weight);
+				auto valid = connect(connector_out, connector_in, weight);
+				if (!valid) {
+					printf("WARNING: Failed to connect %i <-> %i!\n", id_out, id_in);
+					continue;
+				}
 			} else {
 				auto obj_id = obj->find<json::ValueInt const>("id");
 				if (!obj_id) {
 					printf("WARNING: Component '%s' does not have an ID!\n", obj->name.c_str());
-					return;
+					continue;
 				}
 
 				auto id = obj_id->value;
@@ -553,14 +560,17 @@ void Synth::open_file(char const * filename) {
 				component->pos[0] = pos_x;
 				component->pos[1] = pos_y;
 
+				assert(!components_by_id.contains(id));
 				components_by_id[id] = component;
+
+				max_id = std::max(max_id, id);
 			}
 		}
 	}
 
 	reconstruct_update_graph();
 
-	unique_component_id = components.size();
+	unique_component_id = max_id + 1;
 
 	just_loaded = true;
 }
