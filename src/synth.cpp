@@ -520,20 +520,21 @@ void Synth::open_file(char const * filename) {
 
 				Component * component = nullptr;
 
-				     if (obj->name == "BitCrusherComponent") component = add_component<BitCrusherComponent>(id);
-				else if (obj->name == "CompressorComponent") component = add_component<CompressorComponent>(id);
-				else if (obj->name == "DecibelComponent")    component = add_component<DecibelComponent>(id);
-				else if (obj->name == "DelayComponent")      component = add_component<DelayComponent>(id);
-				else if (obj->name == "DistortionComponent") component = add_component<DistortionComponent>(id);
-				else if (obj->name == "FilterComponent")     component = add_component<FilterComponent>(id);
-				else if (obj->name == "OscillatorComponent") component = add_component<OscillatorComponent>(id);
-				else if (obj->name == "PanComponent")        component = add_component<PanComponent>(id);
-				else if (obj->name == "PianoRollComponent")  component = add_component<PianoRollComponent>(id);
-				else if (obj->name == "SamplerComponent")    component = add_component<SamplerComponent>(id);
-				else if (obj->name == "SequencerComponent")  component = add_component<SequencerComponent>(id);
-				else if (obj->name == "SpeakerComponent")    component = add_component<SpeakerComponent>(id);
-				else if (obj->name == "SpectrumComponent")   component = add_component<SpectrumComponent>(id);
-				else if (obj->name == "SplitComponent")      component = add_component<SplitComponent>(id);
+				     if (obj->name == "BitCrusherComponent")   component = add_component<BitCrusherComponent>(id);
+				else if (obj->name == "CompressorComponent")   component = add_component<CompressorComponent>(id);
+				else if (obj->name == "DecibelComponent")      component = add_component<DecibelComponent>(id);
+				else if (obj->name == "DelayComponent")        component = add_component<DelayComponent>(id);
+				else if (obj->name == "DistortionComponent")   component = add_component<DistortionComponent>(id);
+				else if (obj->name == "FilterComponent")       component = add_component<FilterComponent>(id);
+				else if (obj->name == "OscillatorComponent")   component = add_component<OscillatorComponent>(id);
+				else if (obj->name == "OscilloscopeComponent") component = add_component<OscilloscopeComponent>(id);
+				else if (obj->name == "PanComponent")          component = add_component<PanComponent>(id);
+				else if (obj->name == "PianoRollComponent")    component = add_component<PianoRollComponent>(id);
+				else if (obj->name == "SamplerComponent")      component = add_component<SamplerComponent>(id);
+				else if (obj->name == "SequencerComponent")    component = add_component<SequencerComponent>(id);
+				else if (obj->name == "SpeakerComponent")      component = add_component<SpeakerComponent>(id);
+				else if (obj->name == "SpectrumComponent")     component = add_component<SpectrumComponent>(id);
+				else if (obj->name == "SplitComponent")        component = add_component<SplitComponent>(id);
 
 				if (!component) {
 					printf("WARNING: Unsupported Component '%s'!\n", obj->name.c_str());
