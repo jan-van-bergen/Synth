@@ -86,6 +86,9 @@
     <ClCompile Include="src\components\keyboard.cpp">
       <Filter>components</Filter>
     </ClCompile>
+    <ClCompile Include="src\components\oscilloscope.cpp">
+      <Filter>components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\json.h">

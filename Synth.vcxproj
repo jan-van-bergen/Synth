@@ -186,6 +186,7 @@
     <ClCompile Include="src\components\filter.cpp" />
     <ClCompile Include="src\components\keyboard.cpp" />
     <ClCompile Include="src\components\oscillator.cpp" />
+    <ClCompile Include="src\components\oscilloscope.cpp" />
     <ClCompile Include="src\components\pan.cpp" />
     <ClCompile Include="src\components\piano_roll.cpp" />
     <ClCompile Include="src\components\sampler.cpp" />
