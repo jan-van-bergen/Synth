@@ -87,7 +87,12 @@ namespace util {
 	
 	template<typename T>
 	inline constexpr char const * get_type_name(T const & object) {
-		return get_type_name<T>();
+		auto name = typeid(object).name();
+
+		if (memcmp(name, "struct ", 7) == 0) return name + 7;
+		if (memcmp(name, "class ",  6) == 0) return name + 6;
+
+		return name;
 	}
 
 	std::vector<Sample> load_wav(char const * filename);

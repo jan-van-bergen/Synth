@@ -39,7 +39,7 @@ namespace json {
 		template<typename T> requires std::derived_from<T, json::JSON>
 		T * find(char const * key) const {
 			auto found = std::find_if(attributes.begin(), attributes.end(), [key](auto const & attribute) {
-				return strcmp(attribute->name.c_str(), key) == 0;
+				return attribute->name == key;
 			});
 
 			if (found == attributes.end()) {
