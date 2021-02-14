@@ -501,6 +501,8 @@ void Synth::open_file(char const * filename) {
 	if (parser.root->type == json::JSON::Type::OBJECT) {
 		auto json = static_cast<json::Object const *>(parser.root.get()); 
 
+		std::unordered_map<int, Component *> components_by_id; // Used to find Component by its ID in O(1) time
+
 		for (auto const & object : json->attributes) {
 			assert(object->type == json::JSON::Type::OBJECT);
 			auto obj = static_cast<json::Object const *>(object.get());
@@ -515,17 +517,16 @@ void Synth::open_file(char const * filename) {
 				auto offset_in  = obj->find<json::ValueInt   const>("offset_in")    ->value;
 				auto weight     = obj->find<json::ValueFloat const>("weight")       ->value;
 
-				// Find Components by ID
-				auto component_out = std::find_if(components.begin(), components.end(), [id_out](auto const & component) { return component->id == id_out; });
-				auto component_in  = std::find_if(components.begin(), components.end(), [id_in] (auto const & component) { return component->id == id_in;  });
+				auto component_out = components_by_id[id_out];
+				auto component_in  = components_by_id[id_in];
 
-				if (component_out == components.end() || component_in == components.end()) {
+				if (component_out == nullptr || component_in == nullptr) {
 					printf("WARNING: Failed to load connection %i <-> %i!\n", id_out, id_in);
 					continue;
 				}
 
-				auto & connector_out = (*component_out)->outputs[offset_out];
-				auto & connector_in  = (*component_in) ->inputs [offset_in];
+				auto & connector_out = component_out->outputs[offset_out];
+				auto & connector_in  = component_in ->inputs [offset_in];
 
 				connect(connector_out, connector_in, weight);
 			} else {
@@ -544,9 +545,12 @@ void Synth::open_file(char const * filename) {
 
 				component->pos[0] = pos_x;
 				component->pos[1] = pos_y;
+
+				components_by_id[id] = component;
 			}
 		}
 	}
+
 	reconstruct_update_graph();
 
 	unique_component_id = components.size();
@@ -562,6 +566,7 @@ void Synth::save_file(char const * filename) const {
 	writer.write("master_volume", settings.master_volume);
 	writer.object_end();
 
+	// Serialize Components
 	for (auto const & component : components) {
 		writer.object_begin(util::get_type_name(*component.get()));
 		writer.write("id",    component->id);
@@ -573,6 +578,7 @@ void Synth::save_file(char const * filename) const {
 		writer.object_end();
 	}
 
+	// Serialize Connections
 	for (auto const & connection : connections) {
 		float * connection_weight = nullptr;
 

@@ -20,7 +20,7 @@ namespace meta {
 		static constexpr auto size = 1 + sizeof ... (Ts);
 	};
 
-	template<typename TypeList, typename Target>
+	template<typename ComponentList, typename Target>
 	struct TypeListContains;
 
 	template<typename Target, typename T>
