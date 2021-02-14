@@ -37,7 +37,6 @@
     <ClCompile Include="src\file_dialog.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\midi.cpp" />
-    <ClCompile Include="src\util.cpp" />
     <ClCompile Include="src\components\bitcrusher.cpp">
       <Filter>components</Filter>
     </ClCompile>
@@ -89,6 +88,9 @@
     <ClCompile Include="src\components\oscilloscope.cpp">
       <Filter>components</Filter>
     </ClCompile>
+    <ClCompile Include="src\util.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\json.h">
@@ -108,14 +110,23 @@
     </ClInclude>
     <ClInclude Include="src\file_dialog.h" />
     <ClInclude Include="src\midi.h" />
-    <ClInclude Include="src\ring_buffer.h" />
-    <ClInclude Include="src\scope_timer.h" />
-    <ClInclude Include="src\util.h" />
     <ClInclude Include="src\components.h">
       <Filter>components</Filter>
     </ClInclude>
     <ClInclude Include="src\note_event.h">
       <Filter>synth</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scope_timer.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ring_buffer.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\meta.h">
+      <Filter>util</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -130,6 +141,9 @@
     </Filter>
     <Filter Include="json">
       <UniqueIdentifier>{724ab5ce-603f-4037-94c3-b3c6484fc54c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="util">
+      <UniqueIdentifier>{b172cac6-c46d-4e46-94d3-8db94961c5ce}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

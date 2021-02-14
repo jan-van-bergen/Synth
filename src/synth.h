@@ -32,8 +32,10 @@ struct Synth {
 		open_file("projects/default.json");
 	}
 
-	template<typename T> requires std::derived_from<T, Component>
+	template<IsComponent T>
 	T * add_component(int id = -1) {
+		static_assert(meta::TypeListContains<AllComponents, T>::value);
+
 		if (id == -1) id = unique_component_id++;
 
 		auto component = std::make_unique<T>(id);

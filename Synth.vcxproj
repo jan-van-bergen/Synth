@@ -209,6 +209,7 @@
     <ClInclude Include="src\connector.h" />
     <ClInclude Include="src\file_dialog.h" />
     <ClInclude Include="src\json.h" />
+    <ClInclude Include="src\meta.h" />
     <ClInclude Include="src\midi.h" />
     <ClInclude Include="src\note_event.h" />
     <ClInclude Include="src\parameter.h" />

@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <optional>
+#include <type_traits>
 
 #include <memory>
 #include <unordered_map>
@@ -14,6 +15,8 @@
 
 #include "parameter.h"
 #include "connector.h"
+
+#include "meta.h"
 
 #include "json.h"
 
@@ -319,3 +322,28 @@ struct DecibelComponent : Component {
 	void update(struct Synth const & synth) override;
 	void render(struct Synth const & synth) override;
 };
+
+template<typename T>
+concept IsComponent = std::derived_from<T, Component>;
+
+template<IsComponent ... Ts>
+using ComponentTypeList = meta::TypeList<Ts ...>;
+
+using AllComponents = ComponentTypeList<
+	BitCrusherComponent,
+	CompressorComponent,
+	DecibelComponent,
+	DelayComponent,
+	DistortionComponent,
+	FilterComponent,
+	KeyboardComponent,
+	OscillatorComponent,
+	OscilloscopeComponent,
+	PanComponent,
+	PianoRollComponent,
+	SamplerComponent,
+	SequencerComponent,
+	SpeakerComponent,
+	SpectrumComponent,
+	SplitComponent
+>; // TypeList of all Components, used for deserialization. Synth::add_component<T> will only accept T that occur in this TypeList.

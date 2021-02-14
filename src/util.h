@@ -76,13 +76,18 @@ namespace util {
 	inline float db_to_linear(float x) { return std::pow(10.0f, x / 20.0f); }
 
 	template<typename T>
-	inline constexpr char const * get_type_name(T const & object) {
-		auto name = typeid(object).name();
+	inline constexpr char const * get_type_name() {
+		auto name = typeid(T).name();
 
 		if (memcmp(name, "struct ", 7) == 0) return name + 7;
 		if (memcmp(name, "class ",  6) == 0) return name + 6;
 
 		return name;
+	}
+	
+	template<typename T>
+	inline constexpr char const * get_type_name(T const & object) {
+		return get_type_name<T>();
 	}
 
 	std::vector<Sample> load_wav(char const * filename);
