@@ -285,13 +285,13 @@ void Synth::render_connections() {
 	auto draw_connection = [](ImVec2 spline_start, ImVec2 spline_end, ImColor colour) {
 		auto draw_list = ImGui::GetBackgroundDrawList();
 
-		const auto t1 = ImVec2(200.0f, 0.0f);
-		const auto t2 = ImVec2(200.0f, 0.0f);
+		auto const t1 = ImVec2(200.0f, 0.0f);
+		auto const t2 = ImVec2(200.0f, 0.0f);
 
 		static constexpr auto NUM_STEPS = 100;
 		static constexpr auto THICKNESS = 3.0f;
 
-		bool intersects = false;
+		auto intersects = false;
 
 		auto const & io = ImGui::GetIO();
 
@@ -379,7 +379,13 @@ void Synth::render_connections() {
 		ImGui::SetNextWindowPos(pos);
 		ImGui::SetNextWindowSize(ImVec2(64, 16));
 		
-		ImGui::Begin(label, nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoScrollbar);
+		ImGui::Begin(label, nullptr,
+			ImGuiWindowFlags_NoTitleBar |
+			ImGuiWindowFlags_NoMove |
+			ImGuiWindowFlags_NoResize |
+			ImGuiWindowFlags_NoSavedSettings |
+			ImGuiWindowFlags_NoScrollbar
+		);
 		ImGui::SliderFloat("", connection.weight, 0.0f, 1.0f, "%.1f");
 		ImGui::End();
 	}
@@ -405,7 +411,9 @@ void Synth::render_connections() {
 
 		if (dragging->is_input) std::swap(spline_start, spline_end); // Always draw from output to input
 
-		draw_connection(spline_start, spline_end, dragging->is_midi ? CONNECTION_COLOUR_MIDI : CONNECTION_COLOUR_AUDIO);
+		auto colour = dragging->is_midi ? CONNECTION_COLOUR_MIDI : CONNECTION_COLOUR_AUDIO;
+		
+		draw_connection(spline_start, spline_end, colour);
 	}
 }
 
@@ -506,9 +514,9 @@ void Synth::open_file(char const * filename) {
 	Param::links.clear();
 
 	time = 0;
-			
-	settings.tempo         = 130;
-	settings.master_volume = 1.0f;
+	
+	settings.tempo         = settings.tempo        .default_value;
+	settings.master_volume = settings.master_volume.default_value;
 	
 	auto max_id = -1;
 
@@ -608,17 +616,6 @@ void Synth::save_file(char const * filename) const {
 
 	// Serialize Connections
 	for (auto const & connection : connections) {
-		float * connection_weight = nullptr;
-
-		for (auto & [other, weight] : connection.in->others) {
-			if (other == connection.out) {
-				connection_weight = &weight;
-				break;
-			}
-		}
-
-		assert(connection_weight);
-
 		// Unique IDs that identify the Components
 		auto component_out = connection.out->component->id;
 		auto component_in  = connection.in ->component->id;
@@ -632,7 +629,7 @@ void Synth::save_file(char const * filename) const {
 		writer.write("component_in",  component_in);
 		writer.write("offset_out", offset_out);
 		writer.write("offset_in",  offset_in);
-		writer.write("weight", *connection_weight);
+		writer.write("weight", *connection.weight);
 		writer.object_end();
 	}
 }
