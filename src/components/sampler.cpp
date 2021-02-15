@@ -19,23 +19,21 @@ void SamplerComponent::update(Synth const & synth) {
 		}
 	}
 
+	auto sample_length = float(samples.size());
+
 	for (int v = 0; v < voices.size(); v++) {
 		auto & voice = voices[v];
 
 		for (int i = 0; i < BLOCK_SIZE; i++) {
-			auto sample_index = util::round(voice.current_sample);
+			if (voice.current_sample >= sample_length) {
+				// Voice is done playing, remove
+				voices.erase(voices.begin() + v);
+				v--;
 
-			if (sample_index >= 0) {
-				if (sample_index < samples.size()) {
-					outputs[0].get_sample(i) += voice.velocity * samples[sample_index];
-				} else {
-					// Voice is done playing, remove
-					voices.erase(voices.begin() + v);
-					v--;
-
-					break;
-				}
+				break;
 			}
+
+			outputs[0].get_sample(i) += voice.velocity * util::sample_linear(samples.data(), samples.size(), voice.current_sample);
 
 			voice.current_sample += voice.step;
 		}

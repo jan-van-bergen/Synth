@@ -13,19 +13,21 @@ void FlangerComponent::update(Synth const & synth) {
 
 		lfo_phase += rate * SAMPLE_RATE_INV;
 
-		auto location_left  = float(history_offset) - lfo_left  * SAMPLE_RATE;
-		auto location_right = float(history_offset) - lfo_right * SAMPLE_RATE;
+		auto index_left  = float(history_offset) - lfo_left  * SAMPLE_RATE;
+		auto index_right = float(history_offset) - lfo_right * SAMPLE_RATE;
 
-		// @TODO: LINEAR INTERPLATION
+		auto delayed_left  = util::sample_linear(history_left,  HISTORY_SIZE, index_left);
+		auto delayed_right = util::sample_linear(history_right, HISTORY_SIZE, index_right);
 
-		auto index_left  = util::wrap(util::round(location_left),  HISTORY_SIZE);
-		auto index_right = util::wrap(util::round(location_right), HISTORY_SIZE);
-
-		auto delayed_sample = Sample(history[index_left].left, history[index_right].right);
+		auto delayed_sample = Sample(delayed_left, delayed_right);
 
 		outputs[0].set_sample(i, util::lerp(sample, delayed_sample, drywet));
 		
-		history[history_offset] = sample + delayed_sample * feedback;
+		auto fb = sample + delayed_sample * feedback;
+
+		history_left [history_offset] = fb.left;
+		history_right[history_offset] = fb.right;
+
 		history_offset = util::wrap(history_offset + 1, HISTORY_SIZE);
 	}
 }

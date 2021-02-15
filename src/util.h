@@ -16,7 +16,7 @@ inline constexpr auto TWO_PI = 6.28318530718f;
 
 namespace util {
 	template<typename T>
-	inline T round_up(T value, T target) {
+	inline constexpr T round_up(T value, T target) {
 		auto remainder = value % target;
 
 		if (remainder == 0) {
@@ -26,8 +26,8 @@ namespace util {
 		}
 	}
 
-	template<typename T>
-	inline T lerp(T a, T b, float t) {
+	template<typename T, typename L = T>
+	inline constexpr T lerp(T a, T b, L t) {
 		return a + (b - a) * t;
 	}
 
@@ -37,7 +37,7 @@ namespace util {
 	}
 
 	template<typename T>
-	inline T clamp(T value, T min = static_cast<T>(0), T max = static_cast<T>(1)) {
+	inline constexpr T clamp(T value, T min = static_cast<T>(0), T max = static_cast<T>(1)) {
 		assert(min < max);
 
 		if (value < min) return min;
@@ -47,7 +47,7 @@ namespace util {
 	}
 	
 	template<typename T>
-	inline T wrap(T value, T max) {
+	inline constexpr T wrap(T value, T max) {
 		assert(value >=    -max);
 		assert(value <= 2 * max);
 
@@ -65,12 +65,12 @@ namespace util {
 	}
 
 	template<typename T, int N>
-	constexpr int array_element_count(const T (& array)[N]) {
+	inline constexpr int array_element_count(const T (& array)[N]) {
 		return N;
 	}
 
 	template<typename T, int N, typename Function>
-	constexpr std::array<T, N> generate_lookup_table(Function function) {
+	inline constexpr std::array<T, N> generate_lookup_table(Function function) {
 		std::array<T, N> lut;
 
 		for (int i = 0; i < N; i++) lut[i] = function(i);
@@ -91,6 +91,27 @@ namespace util {
 
 	inline constexpr bool is_power_of_two(int x) {
 		return x > 0 && (x & (x - 1)) == 0;
+	}
+	
+	int round(float f);
+
+	template<typename T>
+	inline T sample_linear(T array[], int length, float index, bool wrap = true) {
+		auto weight = index - std::floor(index);
+		
+		auto index_a = util::round(index - 0.5f);
+		auto index_b = index_a + 1;
+
+		if (wrap) {
+			index_a = util::wrap(index_a, length);
+			index_b = util::wrap(index_b, length);
+		} else if (index < 0.0f) {
+			return array[0];
+		} else if (index >= float(length) - 1.0f) {
+			return array[length - 1];
+		}
+
+		return util::lerp(array[index_a], array[index_b], weight);
 	}
 
 	inline float linear_to_db(float x) { return 20.0f * std::log10(x); }
@@ -115,12 +136,10 @@ namespace util {
 
 		return name;
 	}
-
+	
 	std::vector<Sample> load_wav(char const * filename);
 
 	std::vector<char> read_file(char const * filename);
-
-	int round(float f);
 
 	int scancode_to_note(SDL_Scancode scancode);
 	

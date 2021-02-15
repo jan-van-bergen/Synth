@@ -78,11 +78,7 @@ void SpectrumComponent::update(Synth const& synth) {
 	for (int i = 0; i < N; i++) {
 		auto f = util::log_interpolate(1.0f, 0.5f * float(N), t);
 
-		// Linear interpolation
-		auto index_a = util::round(f - 0.5f);
-		auto index_b = std::min(index_a + 1, N - 1);
-
-		auto magnitude = util::lerp(magnitudes[index_a], magnitudes[index_b], f - std::floor(f));
+		auto magnitude = util::sample_linear(magnitudes, N, f);
 
 		// Use Exponential Moving Average to temporally smooth out the Spectrum
 		spectrum[i] = util::lerp(spectrum[i], magnitude, 0.2f);

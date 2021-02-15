@@ -254,8 +254,9 @@ private:
 	static constexpr auto MAX_DELAY_IN_SECONDS = 1;
 	static constexpr auto HISTORY_SIZE = MAX_DELAY_IN_SECONDS * SAMPLE_RATE;
 
-	Sample history[HISTORY_SIZE] = { };
-	int    history_offset = 0;
+	float history_left [HISTORY_SIZE] = { };
+	float history_right[HISTORY_SIZE] = { };
+	int   history_offset = 0;
 
 	float lfo_phase = 0.0f;
 };
