@@ -20,7 +20,7 @@ void DelayComponent::update(Synth const & synth) {
 		sample = sample + feedback * history[offset];
 		history[offset] = sample;
 	
-		offset = (offset + 1) % history.size();
+		offset = util::wrap(offset + 1, int(history.size()));
 
 		outputs[0].set_sample(i, sample);
 	}

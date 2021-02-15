@@ -2,6 +2,8 @@
 #include <thread>
 #include <atomic>
 
+#include "util.h"
+
 template<typename T, int N>
 struct RingBuffer {
 private:
@@ -30,7 +32,7 @@ public:
 	}
 	
 	void advance_read() {
-		read.store((curr_read + 1) % N);
+		read.store(util::wrap(curr_read + 1, N));
 	}
 
 	T & get_write() { 
@@ -42,7 +44,7 @@ public:
 	void advance_write() {
 		using namespace std::chrono_literals;
 
-		auto next_write = (curr_write + 1) % N;
+		auto next_write = util::wrap(curr_write + 1, N);
 		while (next_write == read.load()) std::this_thread::sleep_for(1ms);
 
 		write.store(next_write);
