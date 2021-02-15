@@ -36,13 +36,34 @@ namespace util {
 		return std::pow(a, 1.0f - t) * std::pow(b, t);
 	}
 
-	inline float clamp(float value, float min = 0.0f, float max = 1.0f) {
+	template<typename T>
+	inline T clamp(T value, T min = static_cast<T>(0), T max = static_cast<T>(1)) {
+		assert(min < max);
+
 		if (value < min) return min;
 		if (value > max) return max;
 
 		return value;
 	}
 	
+	template<typename T>
+	inline T wrap(T value, T max) {
+		assert(value >=    -max);
+		assert(value <= 2 * max);
+
+		if (value < 0)    return value + max;
+		if (value >= max) return value - max;
+
+		return value;
+	}
+
+	template<typename T>
+	inline T remap(T value, T old_min, T old_max, T new_min, T new_max) {
+		assert(old_min <= value && value <= old_max);
+
+		return new_min + (value - old_min) / (old_max - old_min) * (new_max - new_min);
+	}
+
 	template<typename T, int N>
 	constexpr int array_element_count(const T (& array)[N]) {
 		return N;

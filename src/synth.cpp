@@ -48,6 +48,7 @@ void Synth::render() {
 			open_file(filename.c_str());
 		}
 	}
+
 	if (ImGui::Begin("Settings")) {
 		ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
 
@@ -175,6 +176,7 @@ void Synth::render_menu() {
 
 			if (ImGui::MenuItem("Filter"))      add_component<FilterComponent>();
 			if (ImGui::MenuItem("Delay"))       add_component<DelayComponent>();
+			if (ImGui::MenuItem("Flanger"))     add_component<FlangerComponent>();
 			if (ImGui::MenuItem("Distortion"))  add_component<DistortionComponent>();
 			if (ImGui::MenuItem("Bit Crusher")) add_component<BitCrusherComponent>();
 			if (ImGui::MenuItem("Compressor"))  add_component<CompressorComponent>();
@@ -513,6 +515,8 @@ Component * try_add_component(Synth & synth, std::string const & name, int id) {
 }
 
 void Synth::open_file(char const * filename) {
+	printf("Opening '%s'\n", filename);
+
 	auto parser = json::Parser(filename);
 
 	components.clear();
@@ -606,6 +610,8 @@ void Synth::open_file(char const * filename) {
 }
 
 void Synth::save_file(char const * filename) const {
+	printf("Saving '%s'\n", filename);
+
 	auto writer = json::Writer(filename);
 
 	writer.object_begin("Settings");

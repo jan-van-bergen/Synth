@@ -234,6 +234,32 @@ struct DelayComponent : Component {
 	void deserialize(json::Object const & object) override;
 };
 
+struct FlangerComponent : Component {
+	Parameter<float> delay    = { "Delay",    0.5f,  std::make_pair(0.001f, 10.0f) };
+	Parameter<float> depth    = { "Depth",    0.5f,  std::make_pair(0.001f, 10.0f) };
+	Parameter<float> rate     = { "Rate",     1.0f,  std::make_pair(0.0f,    5.0f) };
+	Parameter<float> phase    = { "Phase",    0.02f, std::make_pair(0.0f,    1.0f) };
+	Parameter<float> feedback = { "Feedback", 0.2f,  std::make_pair(0.0f,    1.0f) };
+	Parameter<float> drywet   = { "Dry/Wet",  0.7f,  std::make_pair(0.0f,    1.0f) };
+
+	FlangerComponent(int id) : Component(id, "Flanger", { { this, "In" } }, { { this, "out" } }) { }
+	
+	void update(struct Synth const & synth) override;
+	void render(struct Synth const & synth) override;
+	
+	void   serialize(json::Writer & writer) const override;
+	void deserialize(json::Object const & object) override;
+
+private:
+	static constexpr auto MAX_DELAY_IN_SECONDS = 1;
+	static constexpr auto HISTORY_SIZE = MAX_DELAY_IN_SECONDS * SAMPLE_RATE;
+
+	Sample history[HISTORY_SIZE] = { };
+	int    history_offset = 0;
+
+	float lfo_phase = 0.0f;
+};
+
 struct DistortionComponent : Component {
 	Parameter<float> amount = { "Amount", 0.5f, std::make_pair(0.0f, 1.0f) };
 
@@ -336,6 +362,7 @@ using AllComponents = ComponentTypeList<
 	DelayComponent,
 	DistortionComponent,
 	FilterComponent,
+	FlangerComponent,
 	KeyboardComponent,
 	OscillatorComponent,
 	OscilloscopeComponent,

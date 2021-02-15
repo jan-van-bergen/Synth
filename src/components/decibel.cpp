@@ -11,6 +11,7 @@ void DecibelComponent::update(Synth const & synth) {
 	}
 
 	decibels = util::linear_to_db(max_amplitude);
+	if (decibels < -60.0f) decibels = -INFINITY;
 }
 
 void DecibelComponent::render(Synth const & synth) {

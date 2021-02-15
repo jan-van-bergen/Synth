@@ -89,7 +89,7 @@ struct Parameter : Param {
 		}
 
 		if (ImGui::IsItemHovered()) {
-			parameter = util::clamp(parameter + ImGui::GetIO().MouseWheel * scroll_speed, lower, upper);
+			parameter = util::clamp<T>(parameter + ImGui::GetIO().MouseWheel * scroll_speed, lower, upper);
 		}
 
 		// Render default options context menu

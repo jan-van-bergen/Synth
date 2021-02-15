@@ -91,6 +91,9 @@
     <ClCompile Include="src\util.cpp">
       <Filter>util</Filter>
     </ClCompile>
+    <ClCompile Include="src\components\flanger.cpp">
+      <Filter>components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\json.h">

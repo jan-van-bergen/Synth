@@ -1,0 +1,70 @@
+{
+	"Settings": {
+		"tempo": 130,
+		"master_volume": 1.000000
+	},
+	"SpeakerComponent": {
+		"id": 0,
+		"pos_x": 1372.000000,
+		"pos_y": 348.000000,
+		"size_x": 100.000000,
+		"size_y": 100.000000
+	},
+	"KeyboardComponent": {
+		"id": 1,
+		"pos_x": 60.000000,
+		"pos_y": 60.000000,
+		"size_x": 100.000000,
+		"size_y": 100.000000
+	},
+	"OscillatorComponent": {
+		"id": 2,
+		"pos_x": 220.000000,
+		"pos_y": 76.000000,
+		"size_x": 155.000000,
+		"size_y": 341.000000,
+		"waveform": 2,
+		"invert": 0,
+		"phase": 0.000000,
+		"transpose": 0,
+		"detune": 0.000000,
+		"portamento": 0.000000,
+		"attack": 0.558000,
+		"hold": 0.500000,
+		"decay": 1.000000,
+		"sustain": 0.674000,
+		"release": 3.907000
+	},
+	"FlangerComponent": {
+		"id": 3,
+		"pos_x": 502.000000,
+		"pos_y": 168.000000,
+		"size_x": 174.000000,
+		"size_y": 184.000000,
+		"depth": 6.768000,
+		"rate": 1.212000,
+		"feedback": 0.717000,
+		"drywet": 0.737000
+	},
+	"Connection": {
+		"component_out": 3,
+		"component_in": 0,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 1,
+		"component_in": 2,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 2,
+		"component_in": 3,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	}
+}
