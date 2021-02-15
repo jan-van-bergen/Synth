@@ -33,7 +33,9 @@ void SamplerComponent::update(Synth const & synth) {
 				break;
 			}
 
-			outputs[0].get_sample(i) += voice.velocity * util::sample_linear(samples.data(), samples.size(), voice.current_sample);
+			if (voice.current_sample >= 0.0f) {
+				outputs[0].get_sample(i) += voice.velocity * util::sample_linear(samples.data(), samples.size(), voice.current_sample);
+			}
 
 			voice.current_sample += voice.step;
 		}
