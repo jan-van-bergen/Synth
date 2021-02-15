@@ -295,6 +295,8 @@ void Synth::render_connections() {
 
 		auto const & io = ImGui::GetIO();
 
+		auto point_prev = spline_start;
+
 		for (int s = 0; s <= NUM_STEPS; s++) {
 			auto t = float(s) / float(NUM_STEPS);
 
@@ -310,9 +312,21 @@ void Synth::render_connections() {
 
 			draw_list->PathLineTo(point);
 
-			auto diff = ImVec2(point.x - io.MousePos.x, point.y - io.MousePos.y);
+			// Calculate distance of mouse cursor to line segment
+			auto pa = ImVec2(io.MousePos.x - point_prev.x, io.MousePos.y - point_prev.y);
+			auto ba = ImVec2(point.x       - point_prev.x, point.y       - point_prev.y);
 
-			if (diff.x * diff.x + diff.y * diff.y < THICKNESS * THICKNESS) intersects = true;
+			auto h = util::clamp(
+				(pa.x * ba.x + pa.y * ba.y) /
+				(ba.x * ba.x + ba.y * ba.y)
+			);
+
+			auto v = ImVec2(pa.x - ba.x * h, pa.y - ba.y * h);
+
+			auto dist_squared = v.x*v.x + v.y*v.y;
+			if (dist_squared < THICKNESS * THICKNESS) intersects = true;
+
+			point_prev = point;
 		}
 
 		draw_list->PathStroke(colour, false, THICKNESS);

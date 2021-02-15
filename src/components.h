@@ -1,11 +1,8 @@
 #pragma once
 #include <string>
 #include <vector>
-#include <optional>
-#include <type_traits>
 
 #include <memory>
-#include <unordered_map>
 
 #include <SDL2/SDL.h>
 #include <ImGui/imgui.h>
