@@ -83,7 +83,11 @@ struct Synth {
 	}
 
 private:
-	using Connection = std::pair<ConnectorOut *, ConnectorIn *>;
+	struct Connection {
+		ConnectorOut * out;
+		ConnectorIn  * in;
+		float        * weight;
+	};
 
 	std::vector<Connection> connections;
 	std::optional<Connection> selected_connection;

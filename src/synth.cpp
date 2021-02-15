@@ -126,13 +126,12 @@ void Synth::render() {
 				input.pos[0] = pos.x;
 				input.pos[1] = pos.y + 0.5f * CONNECTOR_SIZE;
 
-				for (auto const & [other, weight] : input.others) connections.push_back({ other, &input });
+				for (auto & [other, weight] : input.others) connections.emplace_back(other, &input, &weight);
 			}
+
 			for (auto & output : component->outputs) {
 				output.pos[0] = pos.x;
 				output.pos[1] = pos.y + 0.5f * CONNECTOR_SIZE;
-
-				for (auto other : output.others) connections.push_back({ &output, other });
 			}
 		}
 	}
@@ -183,17 +182,17 @@ void Synth::render() {
 
 	// Draw Hermite Splite between Connectors
 	for (auto const & connection : connections) {
-		auto spline_start = ImVec2(connection.first ->pos[0], connection.first ->pos[1]);
-		auto spline_end   = ImVec2(connection.second->pos[0], connection.second->pos[1]);
+		auto spline_start = ImVec2(connection.out->pos[0], connection.out->pos[1]);
+		auto spline_end   = ImVec2(connection.in ->pos[0], connection.in ->pos[1]);
 
 		auto selected = selected_connection.has_value() &&
-			selected_connection.value().first  == connection.first &&
-			selected_connection.value().second == connection.second;
+			selected_connection.value().out == connection.out &&
+			selected_connection.value().in  == connection.in;
 
 		ImColor colour;
 		if (selected) {
 			colour = CONNECTION_COLOUR_SELECTED;
-		} else if (connection.first->is_midi) {
+		} else if (connection.in->is_midi) {
 			colour = CONNECTION_COLOUR_MIDI;	
 		} else {
 			colour = CONNECTION_COLOUR_AUDIO;
@@ -205,15 +204,6 @@ void Synth::render() {
 			selected_connection = connection;
 		}
 		
-		float * connection_weight = nullptr;
-
-		for (auto & [other, weight] : connection.second->others) {
-			if (other == connection.first) {
-				connection_weight = &weight;
-				break;
-			}
-		}
-
 		auto pos = ImVec2(
 			spline_start.x + 0.5f * (spline_end.x - spline_start.x), 
 			spline_start.y + 0.5f * (spline_end.y - spline_start.y)
@@ -230,7 +220,7 @@ void Synth::render() {
 		ImGui::SetNextWindowSize(ImVec2(64, 16));
 		
 		ImGui::Begin(label, nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoScrollbar);
-		ImGui::SliderFloat("", connection_weight, 0.0f, 1.0f, "%.1f");
+		ImGui::SliderFloat("", connection.weight, 0.0f, 1.0f, "%.1f");
 		ImGui::End();
 	}
 
@@ -252,7 +242,7 @@ void Synth::render() {
 
 	if (ImGui::IsKeyPressed(SDL_SCANCODE_DELETE)) {
 		if (selected_connection.has_value()) {
-			disconnect(*selected_connection.value().first, *selected_connection.value().second);
+			disconnect(*selected_connection.value().out, *selected_connection.value().in);
 
 			selected_connection = { };
 		}
@@ -427,7 +417,9 @@ void Synth::render_connector_in(ConnectorIn & in) {
 	ImGui::SameLine();
 	ImGui::Text(label);
 
-//	for (auto other : in.others) assert(std::find(other->others.begin(), other->others.end(), &in) != other->others.end());
+	for (auto & [other, weight] : in.others) {
+		connections.emplace_back(other, &in, &weight);
+	}
 
 	in.pos[0] = pos.x;
 	in.pos[1] = pos.y + 0.5f * CONNECTOR_SIZE;
@@ -463,12 +455,6 @@ void Synth::render_connector_out(ConnectorOut & out) {
 				dragging = nullptr;
 			}
 		}
-	}
-
-	for (auto other : out.others) {
-//		assert(std::find(other->others.begin(), other->others.end(), &out) != other->others.end());
-
-		connections.push_back({ &out, other });
 	}
 
 	out.pos[0] = pos.x + 8.0f;
@@ -603,8 +589,8 @@ void Synth::save_file(char const * filename) const {
 	for (auto const & connection : connections) {
 		float * connection_weight = nullptr;
 
-		for (auto & [other, weight] : connection.second->others) {
-			if (other == connection.first) {
+		for (auto & [other, weight] : connection.in->others) {
+			if (other == connection.out) {
 				connection_weight = &weight;
 				break;
 			}
@@ -613,12 +599,12 @@ void Synth::save_file(char const * filename) const {
 		assert(connection_weight);
 
 		// Unique IDs that identify the Components
-		auto component_out = connection.first ->component->id;
-		auto component_in  = connection.second->component->id;
+		auto component_out = connection.out->component->id;
+		auto component_in  = connection.in ->component->id;
 
 		// Unique offsets that identify the Connectors
-		auto offset_out = int(connection.first  - connection.first ->component->outputs.data());
-		auto offset_in  = int(connection.second - connection.second->component->inputs .data());
+		auto offset_out = int(connection.out - connection.out->component->outputs.data());
+		auto offset_in  = int(connection.in  - connection.in ->component->inputs .data());
 
 		writer.object_begin("Connection");
 		writer.write("component_out", component_out);

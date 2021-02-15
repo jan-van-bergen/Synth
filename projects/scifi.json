@@ -1,0 +1,223 @@
+{
+	"Settings": {
+		"tempo": 174,
+		"master_volume": 1.000000
+	},
+	"SpeakerComponent": {
+		"id": 0,
+		"pos_x": 1372.000000,
+		"pos_y": 348.000000
+	},
+	"PianoRollComponent": {
+		"id": 1,
+		"pos_x": 28.000000,
+		"pos_y": 37.000000,
+		"filename": "midi/scifi_arp.mid"
+	},
+	"OscillatorComponent": {
+		"id": 2,
+		"pos_x": 438.000000,
+		"pos_y": 40.000000,
+		"waveform": 4,
+		"invert": 0,
+		"phase": 0.000000,
+		"transpose": -12,
+		"detune": 0.000000,
+		"portamento": 0.100000,
+		"attack": 0.100000,
+		"hold": 0.500000,
+		"decay": 1.000000,
+		"sustain": 0.186000,
+		"release": 1.600000
+	},
+	"OscillatorComponent": {
+		"id": 3,
+		"pos_x": 599.000000,
+		"pos_y": 43.000000,
+		"waveform": 5,
+		"invert": 0,
+		"phase": 0.200000,
+		"transpose": -12,
+		"detune": 9.302000,
+		"portamento": 0.000000,
+		"attack": 0.100000,
+		"hold": 0.500000,
+		"decay": 1.000000,
+		"sustain": 0.523000,
+		"release": 1.116000
+	},
+	"FilterComponent": {
+		"id": 4,
+		"pos_x": 924.000000,
+		"pos_y": 54.000000,
+		"filter_type": 0,
+		"cutoff": 632.455994,
+		"resonance": 0.244000
+	},
+	"BitCrusherComponent": {
+		"id": 5,
+		"pos_x": 1187.000000,
+		"pos_y": 57.000000,
+		"gain": 1.000000,
+		"bits": 16,
+		"rate": 4
+	},
+	"PianoRollComponent": {
+		"id": 6,
+		"pos_x": 20.000000,
+		"pos_y": 164.000000,
+		"filename": "midi/scifi_lead.mid"
+	},
+	"OscillatorComponent": {
+		"id": 7,
+		"pos_x": 441.000000,
+		"pos_y": 405.000000,
+		"waveform": 2,
+		"invert": 0,
+		"phase": 0.300000,
+		"transpose": -24,
+		"detune": 0.000000,
+		"portamento": 0.600000,
+		"attack": 0.186000,
+		"hold": 0.500000,
+		"decay": 1.000000,
+		"sustain": 0.400000,
+		"release": 2.977000
+	},
+	"DelayComponent": {
+		"id": 8,
+		"pos_x": 1138.000000,
+		"pos_y": 240.000000,
+		"steps": 4,
+		"feedback": 0.260000
+	},
+	"FilterComponent": {
+		"id": 9,
+		"pos_x": 809.000000,
+		"pos_y": 520.000000,
+		"filter_type": 2,
+		"cutoff": 1738.017944,
+		"resonance": 0.610000
+	},
+	"OscillatorComponent": {
+		"id": 10,
+		"pos_x": 239.000000,
+		"pos_y": 419.000000,
+		"waveform": 2,
+		"invert": 0,
+		"phase": 0.000000,
+		"transpose": -24,
+		"detune": 2.000000,
+		"portamento": 0.600000,
+		"attack": 0.700000,
+		"hold": 0.500000,
+		"decay": 1.000000,
+		"sustain": 0.416000,
+		"release": 4.279000
+	},
+	"DelayComponent": {
+		"id": 11,
+		"pos_x": 1092.000000,
+		"pos_y": 495.000000,
+		"steps": 4,
+		"feedback": 0.610000
+	},
+	"Connection": {
+		"component_out": 5,
+		"component_in": 0,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 0.600000
+	},
+	"Connection": {
+		"component_out": 8,
+		"component_in": 0,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 0.700000
+	},
+	"Connection": {
+		"component_out": 11,
+		"component_in": 0,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 1,
+		"component_in": 2,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 1,
+		"component_in": 3,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 2,
+		"component_in": 4,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 3,
+		"component_in": 4,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 0.700000
+	},
+	"Connection": {
+		"component_out": 4,
+		"component_in": 5,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 6,
+		"component_in": 7,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 4,
+		"component_in": 8,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 7,
+		"component_in": 9,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 10,
+		"component_in": 9,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 0.600000
+	},
+	"Connection": {
+		"component_out": 6,
+		"component_in": 10,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 9,
+		"component_in": 11,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	}
+}
