@@ -37,7 +37,7 @@ namespace midi {
 
 		std::vector<Event> events;
 
-		static Track load(char const * filename);
+		static std::optional<Track> load(char const * filename);
 	};
 
 	void open();

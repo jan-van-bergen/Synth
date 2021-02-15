@@ -25,15 +25,15 @@ void SamplerComponent::update(Synth const & synth) {
 		auto & voice = voices[v];
 
 		for (int i = 0; i < BLOCK_SIZE; i++) {
-			if (voice.current_sample >= sample_length) {
-				// Voice is done playing, remove
-				voices.erase(voices.begin() + v);
-				v--;
-
-				break;
-			}
-
 			if (voice.current_sample >= 0.0f) {
+				if (voice.current_sample >= sample_length) {
+					// Voice is done playing, remove
+					voices.erase(voices.begin() + v);
+					v--;
+
+					break;
+				}
+
 				outputs[0].get_sample(i) += voice.velocity * util::sample_linear(samples.data(), samples.size(), voice.current_sample);
 			}
 

@@ -76,7 +76,15 @@ struct PianoRollComponent : Component {
 	}
 
 	void reload_file() {
-		midi = midi::Track::load(filename);
+		auto track = midi::Track::load(filename);
+
+		if (!track.has_value()) {
+			midi_offset = 0;
+			midi_length = 0;
+			return;
+		}
+
+		midi = std::move(track.value());
 
 		if (midi.events.size() == 0) {
 			midi_length = 0;

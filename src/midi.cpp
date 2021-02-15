@@ -45,9 +45,9 @@ void check_mm(MMRESULT result, int line, char const * file) {
 	__debugbreak();
 }
 
-midi::Track midi::Track::load(char const * filename) {
+std::optional<midi::Track> midi::Track::load(char const * filename) {
 	FILE * file; fopen_s(&file, filename, "rb");
-	if (file == nullptr) abort();
+	if (file == nullptr) return { };
 
 	unsigned char file_header[14]; fread_s(file_header, sizeof(file_header), 1, sizeof(file_header), file);
 	assert(memcmp(file_header, "MThd", 4) == 0);
@@ -146,7 +146,7 @@ midi::Track midi::Track::load(char const * filename) {
 						break;
 					}
 
-					default: abort();
+					default: return { };
 				}
 			}
 		}
