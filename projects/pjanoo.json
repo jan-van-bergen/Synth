@@ -246,27 +246,6 @@
 		"weight": 1.000000
 	},
 	"Connection": {
-		"component_out": 14,
-		"component_in": 0,
-		"offset_out": 0,
-		"offset_in": 0,
-		"weight": 1.000000
-	},
-	"Connection": {
-		"component_out": 14,
-		"component_in": 0,
-		"offset_out": 0,
-		"offset_in": 0,
-		"weight": 1.000000
-	},
-	"Connection": {
-		"component_out": 14,
-		"component_in": 0,
-		"offset_out": 0,
-		"offset_in": 0,
-		"weight": 1.000000
-	},
-	"Connection": {
 		"component_out": 15,
 		"component_in": 0,
 		"offset_out": 0,

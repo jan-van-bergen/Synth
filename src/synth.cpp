@@ -325,6 +325,10 @@ bool Synth::connect(ConnectorOut & out, ConnectorIn & in, float weight) {
 	if (out.component == in.component) return false;
 	if (out.is_midi   != in.is_midi)   return false;
 
+	for (auto other : out.others) {
+		if (other == &in) return false; // These two Connectors are already connected
+	}
+
 	out.others.push_back(&in);
 	in .others.push_back(std::make_pair(&out, weight));
 
