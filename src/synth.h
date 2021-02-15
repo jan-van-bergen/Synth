@@ -23,7 +23,7 @@ struct Synth {
 
 	int time = 0;
 	
-	std::set<NoteEvent, NoteEvent::Compare> mutable note_events; // Note Events, seperate for each channel
+	std::set<NoteEvent, NoteEvent::Compare> note_events; // Note Events, seperate for each channel
 	
 	FileDialog file_dialog;
 	bool just_loaded = false;
@@ -57,11 +57,11 @@ struct Synth {
 	bool    connect(ConnectorOut & out, ConnectorIn & in, float weight = 1.0f);
 	void disconnect(ConnectorOut & out, ConnectorIn & in);
 
-	void note_press(int note, float velocity, int time_offset = 0) const {
+	void note_press(int note, float velocity, int time_offset = 0) {
 		note_events.insert(NoteEvent { true, time + time_offset, note, velocity });
 	}
 
-	void note_release(int note, int time_offset = 0) const {
+	void note_release(int note, int time_offset = 0) {
 		note_events.insert(NoteEvent { false, time + time_offset, note });
 	}
 
@@ -93,9 +93,12 @@ private:
 	std::optional<Connection> selected_connection;
 
 	Connector * dragging = nullptr;
-	bool        drag_handled;
-
+	
 	void reconstruct_update_graph();
+
+	void render_menu();
+	void render_components();
+	void render_connections();
 
 	void render_connector_in (ConnectorIn  & in);
 	void render_connector_out(ConnectorOut & out);

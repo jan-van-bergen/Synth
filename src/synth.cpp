@@ -5,8 +5,6 @@
 
 #include <ImGui/imgui.h>
 
-static constexpr auto CONNECTOR_SIZE = 16.0f;
-
 void Synth::update(Sample buf[BLOCK_SIZE]) {
 	for (auto component = update_list_begin; component < update_list_end; component++) {
 		for (auto & output : (*component)->outputs) {
@@ -36,193 +34,10 @@ void Synth::update(Sample buf[BLOCK_SIZE]) {
 
 void Synth::render() {
 	connections.clear();
-	drag_handled = false;
 	
-	auto show_popup_open = ImGui::IsKeyDown(SDL_SCANCODE_LCTRL) && ImGui::IsKeyPressed(SDL_SCANCODE_O);
-	auto show_popup_save = ImGui::IsKeyDown(SDL_SCANCODE_LCTRL) && ImGui::IsKeyPressed(SDL_SCANCODE_S);
-	
-	// Draw menu bar
-	if (ImGui::BeginMainMenuBar()) {
-		if (ImGui::BeginMenu("File")) {
-			if (ImGui::MenuItem("Open", "Ctrl+O")) show_popup_open = true;
-			if (ImGui::MenuItem("Save", "Ctrl+S")) show_popup_save = true;
-
-			ImGui::EndMenu();
-		}
-		
-		if (ImGui::BeginMenu("Components")) {
-			if (ImGui::MenuItem("Keyboard"))   add_component<KeyboardComponent>();
-			if (ImGui::MenuItem("Sequencer"))  add_component<SequencerComponent>();
-			if (ImGui::MenuItem("Piano Roll")) add_component<PianoRollComponent>();
-
-			ImGui::Separator();
-
-			if (ImGui::MenuItem("Oscillator")) add_component<OscillatorComponent>();
-			if (ImGui::MenuItem("Sampler"))    add_component<SamplerComponent>();
-			
-			ImGui::Separator();
-
-			if (ImGui::MenuItem("Split")) add_component<SplitComponent>();
-			if (ImGui::MenuItem("Pan"))   add_component<PanComponent>();
-			
-			ImGui::Separator();
-
-			if (ImGui::MenuItem("Filter"))      add_component<FilterComponent>();
-			if (ImGui::MenuItem("Delay"))       add_component<DelayComponent>();
-			if (ImGui::MenuItem("Distortion"))  add_component<DistortionComponent>();
-			if (ImGui::MenuItem("Bit Crusher")) add_component<BitCrusherComponent>();
-			if (ImGui::MenuItem("Compressor"))  add_component<CompressorComponent>();
-			
-			ImGui::Separator();
-
-			if (ImGui::MenuItem("Speaker"))       add_component<SpeakerComponent>();
-			if (ImGui::MenuItem("Spectrum"))      add_component<SpectrumComponent>();
-			if (ImGui::MenuItem("Oscilloscope"))  add_component<OscilloscopeComponent>();
-			if (ImGui::MenuItem("Decibel Meter")) add_component<DecibelComponent>();
-			
-			ImGui::EndMenu();
-		}
-
-		ImGui::EndMainMenuBar();
-	}
-
-	char label[128];
-
-	Component * component_to_be_removed = nullptr;
-
-	// Draw Components
-	for (int i = 0; i < components.size(); i++) {
-		auto component = components[i].get();
-
-		sprintf_s(label, "%s##%p", component->name.c_str(), component);
-
-		auto open      = true;
-		auto collapsed = true;
-
-		if (just_loaded) ImGui::SetNextWindowPos(ImVec2(component->pos[0], component->pos[1])); // Move Window to correct position if we just loaded a file
-
-		ImGui::SetNextWindowSizeConstraints(ImVec2(100, 100), ImVec2(INFINITY, INFINITY));
-
-		if (ImGui::Begin(label, &open, ImGuiWindowFlags_NoSavedSettings)) {
-			component->render(*this);
-
-			for (auto & input  : component->inputs)  render_connector_in (input);
-			for (auto & output : component->outputs) render_connector_out(output);
-
-			collapsed = false;
-
-			auto window_pos = ImGui::GetWindowPos();
-			component->pos[0] = window_pos.x;
-			component->pos[1] = window_pos.y;
-		}
-
-		auto pos = ImGui::GetCursorScreenPos();
-		ImGui::End();
-
-		if (!open) {
-			component_to_be_removed = component;
-		} else if (collapsed) { // If the Component's Window is collapsed, still draw its connections
-			for (auto & input : component->inputs) {
-				input.pos[0] = pos.x;
-				input.pos[1] = pos.y + 0.5f * CONNECTOR_SIZE;
-
-				for (auto & [other, weight] : input.others) connections.emplace_back(other, &input, &weight);
-			}
-
-			for (auto & output : component->outputs) {
-				output.pos[0] = pos.x;
-				output.pos[1] = pos.y + 0.5f * CONNECTOR_SIZE;
-			}
-		}
-	}
-
-	auto draw_connection = [](ImVec2 spline_start, ImVec2 spline_end, ImColor colour) {
-		auto draw_list = ImGui::GetBackgroundDrawList();
-
-		const auto t1 = ImVec2(200.0f, 0.0f);
-		const auto t2 = ImVec2(200.0f, 0.0f);
-
-		static constexpr auto NUM_STEPS = 100;
-		static constexpr auto THICKNESS = 3.0f;
-
-		bool intersects = false;
-
-		auto const & io = ImGui::GetIO();
-
-		for (int s = 0; s <= NUM_STEPS; s++) {
-			auto t = float(s) / float(NUM_STEPS);
-
-			auto h1 = +2.0f * t * t * t - 3.0f * t * t + 1.0f;
-			auto h2 = -2.0f * t * t * t + 3.0f * t * t;
-			auto h3 =         t * t * t - 2.0f * t * t + t;
-			auto h4 =         t * t * t -        t * t;
-
-			auto point = ImVec2(
-				h1 * spline_start.x + h2 * spline_end.x + h3 * t1.x + h4 * t2.x, 
-				h1 * spline_start.y + h2 * spline_end.y + h3 * t1.y + h4 * t2.y
-			);
-
-			draw_list->PathLineTo(point);
-
-			auto diff = ImVec2(point.x - io.MousePos.x, point.y - io.MousePos.y);
-
-			if (diff.x * diff.x + diff.y * diff.y < THICKNESS * THICKNESS) intersects = true;
-		}
-
-		draw_list->PathStroke(colour, false, THICKNESS);
-
-		return intersects;
-	};
-
-	auto idx = 0;
-	
-	auto const CONNECTION_COLOUR_SELECTED = ImColor(255, 100, 100);
-	auto const CONNECTION_COLOUR_MIDI     = ImColor(100, 200, 100);
-	auto const CONNECTION_COLOUR_AUDIO    = ImColor(200, 200, 100);
-
-	// Draw Hermite Splite between Connectors
-	for (auto const & connection : connections) {
-		auto spline_start = ImVec2(connection.out->pos[0], connection.out->pos[1]);
-		auto spline_end   = ImVec2(connection.in ->pos[0], connection.in ->pos[1]);
-
-		auto selected = selected_connection.has_value() &&
-			selected_connection.value().out == connection.out &&
-			selected_connection.value().in  == connection.in;
-
-		ImColor colour;
-		if (selected) {
-			colour = CONNECTION_COLOUR_SELECTED;
-		} else if (connection.in->is_midi) {
-			colour = CONNECTION_COLOUR_MIDI;	
-		} else {
-			colour = CONNECTION_COLOUR_AUDIO;
-		}
-
-		auto intersects = draw_connection(spline_start, spline_end, colour);
-
-		if (intersects && ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
-			selected_connection = connection;
-		}
-		
-		auto pos = ImVec2(
-			spline_start.x + 0.5f * (spline_end.x - spline_start.x), 
-			spline_start.y + 0.5f * (spline_end.y - spline_start.y)
-		);
-
-		auto going_left = spline_end.x > spline_start.x;
-		auto going_down = spline_end.y > spline_start.y;
-
-		if (!(going_left ^ going_down)) pos.y -= 32.0f; // Move out of the way of the spline
-
-		sprintf_s(label, "Connection##%i", idx++);
-		
-		ImGui::SetNextWindowPos(pos);
-		ImGui::SetNextWindowSize(ImVec2(64, 16));
-		
-		ImGui::Begin(label, nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoScrollbar);
-		ImGui::SliderFloat("", connection.weight, 0.0f, 1.0f, "%.1f");
-		ImGui::End();
-	}
+	render_menu();
+	render_components();
+	render_connections();
 
 	if (ImGui::Begin("Settings")) {
 		ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
@@ -231,75 +46,6 @@ void Synth::render() {
 		settings.master_volume.render();
 	}
 	ImGui::End();
-
-	auto const & io = ImGui::GetIO();
-
-	if (ImGui::IsMouseReleased(ImGuiMouseButton_Right)) {
-		dragging = nullptr;
-
-		selected_connection = { };
-	}
-
-	if (ImGui::IsKeyPressed(SDL_SCANCODE_DELETE)) {
-		if (selected_connection.has_value()) {
-			disconnect(*selected_connection.value().out, *selected_connection.value().in);
-
-			selected_connection = { };
-		}
-	}
-
-	// If the user is dragging a new connection, draw it
-	if (dragging) {
-		auto spline_start = ImVec2(dragging->pos[0], dragging->pos[1]);
-		auto spline_end   = io.MousePos;
-
-		if (dragging->is_input) std::swap(spline_start, spline_end); // Always draw from out to in
-
-		draw_connection(spline_start, spline_end, dragging->is_midi ? CONNECTION_COLOUR_MIDI : CONNECTION_COLOUR_AUDIO);
-	}
-
-	// If a Component window was closed, do the bookkeeping required to remove it
-	if (component_to_be_removed) {
-		// Disconnect inputs
-		for (auto & input : component_to_be_removed->inputs) {
-			for (auto & [other, weight] : input.others) {
-				disconnect(*other, input);
-			}
-		}
-
-		// Disconnect outputs
-		for (auto & output : component_to_be_removed->outputs) {
-			for (auto & other : output.others) {
-				disconnect(output, *other);
-			}
-		}
-
-		// Remove from Speaker list, if it was in there
-		auto speaker = std::find(speakers.begin(), speakers.end(), component_to_be_removed);
-		if (speaker != speakers.end()) {
-			speakers.erase(speaker);
-		}
-
-		// Remove Component
-		components.erase(std::find_if(components.begin(), components.end(), [component_to_be_removed](auto const & component) { return component.get() == component_to_be_removed; }));
-
-		reconstruct_update_graph();
-	}
-	
-	if (show_popup_open) file_dialog.show(false);
-	if (show_popup_save) file_dialog.show(true);
-
-	just_loaded = false;
-
-	if (file_dialog.render()) {
-		auto filename = file_dialog.selected_path.string();
-
-		if (file_dialog.saving) {
-			save_file(filename.c_str());
-		} else {
-			open_file(filename.c_str());
-		}
-	}
 
 	// Debug tool to terminate infinite notes
 	if (ImGui::IsKeyPressed(SDL_SCANCODE_F5)) {
@@ -388,6 +134,267 @@ void Synth::reconstruct_update_graph() {
 	}
 }
 
+void Synth::render_menu() {
+	auto show_popup_open = ImGui::IsKeyDown(SDL_SCANCODE_LCTRL) && ImGui::IsKeyPressed(SDL_SCANCODE_O);
+	auto show_popup_save = ImGui::IsKeyDown(SDL_SCANCODE_LCTRL) && ImGui::IsKeyPressed(SDL_SCANCODE_S);
+	
+	// Draw menu bar
+	if (ImGui::BeginMainMenuBar()) {
+		if (ImGui::BeginMenu("File")) {
+			if (ImGui::MenuItem("Open", "Ctrl+O")) show_popup_open = true;
+			if (ImGui::MenuItem("Save", "Ctrl+S")) show_popup_save = true;
+
+			ImGui::EndMenu();
+		}
+		
+		if (ImGui::BeginMenu("Components")) {
+			if (ImGui::MenuItem("Keyboard"))   add_component<KeyboardComponent>();
+			if (ImGui::MenuItem("Sequencer"))  add_component<SequencerComponent>();
+			if (ImGui::MenuItem("Piano Roll")) add_component<PianoRollComponent>();
+
+			ImGui::Separator();
+
+			if (ImGui::MenuItem("Oscillator")) add_component<OscillatorComponent>();
+			if (ImGui::MenuItem("Sampler"))    add_component<SamplerComponent>();
+			
+			ImGui::Separator();
+
+			if (ImGui::MenuItem("Split")) add_component<SplitComponent>();
+			if (ImGui::MenuItem("Pan"))   add_component<PanComponent>();
+			
+			ImGui::Separator();
+
+			if (ImGui::MenuItem("Filter"))      add_component<FilterComponent>();
+			if (ImGui::MenuItem("Delay"))       add_component<DelayComponent>();
+			if (ImGui::MenuItem("Distortion"))  add_component<DistortionComponent>();
+			if (ImGui::MenuItem("Bit Crusher")) add_component<BitCrusherComponent>();
+			if (ImGui::MenuItem("Compressor"))  add_component<CompressorComponent>();
+			
+			ImGui::Separator();
+
+			if (ImGui::MenuItem("Speaker"))       add_component<SpeakerComponent>();
+			if (ImGui::MenuItem("Spectrum"))      add_component<SpectrumComponent>();
+			if (ImGui::MenuItem("Oscilloscope"))  add_component<OscilloscopeComponent>();
+			if (ImGui::MenuItem("Decibel Meter")) add_component<DecibelComponent>();
+			
+			ImGui::EndMenu();
+		}
+
+		ImGui::EndMainMenuBar();
+	}
+	
+	if (show_popup_open) file_dialog.show(false);
+	if (show_popup_save) file_dialog.show(true);
+
+	if (file_dialog.render()) {
+		auto filename = file_dialog.selected_path.string();
+
+		if (file_dialog.saving) {
+			save_file(filename.c_str());
+		} else {
+			open_file(filename.c_str());
+		}
+	}
+}
+
+void Synth::render_components() {
+	char label[128] = { };
+
+	Component * component_to_be_removed = nullptr;
+
+	// Draw Components
+	for (int i = 0; i < components.size(); i++) {
+		auto component = components[i].get();
+
+		sprintf_s(label, "%s##%p", component->name.c_str(), component);
+
+		auto open      = true;
+		auto collapsed = true;
+
+		if (just_loaded) ImGui::SetNextWindowPos(ImVec2(component->pos[0], component->pos[1])); // Move Window to correct position if we just loaded a file
+
+		ImGui::SetNextWindowSizeConstraints(ImVec2(100, 100), ImVec2(INFINITY, INFINITY));
+
+		if (ImGui::Begin(label, &open, ImGuiWindowFlags_NoSavedSettings)) {
+			component->render(*this);
+
+			for (auto & input  : component->inputs)  render_connector_in (input);
+			for (auto & output : component->outputs) render_connector_out(output);
+
+			collapsed = false;
+
+			auto window_pos = ImGui::GetWindowPos();
+			component->pos[0] = window_pos.x;
+			component->pos[1] = window_pos.y;
+		}
+
+		auto pos = ImGui::GetCursorScreenPos();
+		ImGui::End();
+
+		if (!open) {
+			component_to_be_removed = component;
+		} else if (collapsed) { // If the Component's Window is collapsed, still draw its connections
+			for (auto & input : component->inputs) {
+				input.pos[0] = pos.x;
+				input.pos[1] = pos.y + 0.5f * Connector::RENDER_SIZE;
+
+				for (auto & [other, weight] : input.others) connections.emplace_back(other, &input, &weight);
+			}
+
+			for (auto & output : component->outputs) {
+				output.pos[0] = pos.x;
+				output.pos[1] = pos.y + 0.5f * Connector::RENDER_SIZE;
+			}
+		}
+	}
+	
+	just_loaded = false;
+
+	// If a Component window was closed, do the bookkeeping required to remove it
+	if (component_to_be_removed) {
+		// Disconnect inputs
+		for (auto & input : component_to_be_removed->inputs) {
+			for (auto & [other, weight] : input.others) {
+				disconnect(*other, input);
+			}
+		}
+
+		// Disconnect outputs
+		for (auto & output : component_to_be_removed->outputs) {
+			for (auto & other : output.others) {
+				disconnect(output, *other);
+			}
+		}
+
+		// Remove from Speaker list, if it was in there
+		auto speaker = std::find(speakers.begin(), speakers.end(), component_to_be_removed);
+		if (speaker != speakers.end()) {
+			speakers.erase(speaker);
+		}
+
+		// Remove Component
+		components.erase(std::find_if(components.begin(), components.end(), [component_to_be_removed](auto const & component) { return component.get() == component_to_be_removed; }));
+
+		reconstruct_update_graph();
+	}
+}
+
+void Synth::render_connections() {
+	char label[128] = { };
+
+	auto draw_connection = [](ImVec2 spline_start, ImVec2 spline_end, ImColor colour) {
+		auto draw_list = ImGui::GetBackgroundDrawList();
+
+		const auto t1 = ImVec2(200.0f, 0.0f);
+		const auto t2 = ImVec2(200.0f, 0.0f);
+
+		static constexpr auto NUM_STEPS = 100;
+		static constexpr auto THICKNESS = 3.0f;
+
+		bool intersects = false;
+
+		auto const & io = ImGui::GetIO();
+
+		for (int s = 0; s <= NUM_STEPS; s++) {
+			auto t = float(s) / float(NUM_STEPS);
+
+			auto h1 = +2.0f * t * t * t - 3.0f * t * t + 1.0f;
+			auto h2 = -2.0f * t * t * t + 3.0f * t * t;
+			auto h3 =         t * t * t - 2.0f * t * t + t;
+			auto h4 =         t * t * t -        t * t;
+
+			auto point = ImVec2(
+				h1 * spline_start.x + h2 * spline_end.x + h3 * t1.x + h4 * t2.x, 
+				h1 * spline_start.y + h2 * spline_end.y + h3 * t1.y + h4 * t2.y
+			);
+
+			draw_list->PathLineTo(point);
+
+			auto diff = ImVec2(point.x - io.MousePos.x, point.y - io.MousePos.y);
+
+			if (diff.x * diff.x + diff.y * diff.y < THICKNESS * THICKNESS) intersects = true;
+		}
+
+		draw_list->PathStroke(colour, false, THICKNESS);
+
+		return intersects;
+	};
+
+	auto idx = 0;
+	
+	auto const CONNECTION_COLOUR_SELECTED = ImColor(255, 100, 100);
+	auto const CONNECTION_COLOUR_MIDI     = ImColor(100, 200, 100);
+	auto const CONNECTION_COLOUR_AUDIO    = ImColor(200, 200, 100);
+
+	// Draw Hermite Splite between Connectors
+	for (auto const & connection : connections) {
+		auto spline_start = ImVec2(connection.out->pos[0], connection.out->pos[1]);
+		auto spline_end   = ImVec2(connection.in ->pos[0], connection.in ->pos[1]);
+
+		auto selected = selected_connection.has_value() &&
+			selected_connection.value().out == connection.out &&
+			selected_connection.value().in  == connection.in;
+
+		ImColor colour;
+		if (selected) {
+			colour = CONNECTION_COLOUR_SELECTED;
+		} else if (connection.in->is_midi) {
+			colour = CONNECTION_COLOUR_MIDI;	
+		} else {
+			colour = CONNECTION_COLOUR_AUDIO;
+		}
+
+		auto intersects = draw_connection(spline_start, spline_end, colour);
+
+		if (intersects && ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
+			selected_connection = connection;
+		}
+		
+		auto pos = ImVec2(
+			spline_start.x + 0.5f * (spline_end.x - spline_start.x), 
+			spline_start.y + 0.5f * (spline_end.y - spline_start.y)
+		);
+
+		auto going_left = spline_end.x > spline_start.x;
+		auto going_down = spline_end.y > spline_start.y;
+
+		if (!(going_left ^ going_down)) pos.y -= 32.0f; // Move out of the way of the spline
+
+		sprintf_s(label, "Connection##%i", idx++);
+		
+		ImGui::SetNextWindowPos(pos);
+		ImGui::SetNextWindowSize(ImVec2(64, 16));
+		
+		ImGui::Begin(label, nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoScrollbar);
+		ImGui::SliderFloat("", connection.weight, 0.0f, 1.0f, "%.1f");
+		ImGui::End();
+	}
+	
+	if (ImGui::IsMouseReleased(ImGuiMouseButton_Right)) {
+		dragging = nullptr;
+
+		selected_connection = { };
+	}
+
+	if (ImGui::IsKeyPressed(SDL_SCANCODE_DELETE)) {
+		if (selected_connection.has_value()) {
+			disconnect(*selected_connection.value().out, *selected_connection.value().in);
+
+			selected_connection = { };
+		}
+	}
+
+	// If the user is dragging a new connection, draw it
+	if (dragging) {
+		auto spline_start = ImVec2(dragging->pos[0], dragging->pos[1]);
+		auto spline_end   = ImGui::GetIO().MousePos;
+
+		if (dragging->is_input) std::swap(spline_start, spline_end); // Always draw from output to input
+
+		draw_connection(spline_start, spline_end, dragging->is_midi ? CONNECTION_COLOUR_MIDI : CONNECTION_COLOUR_AUDIO);
+	}
+}
+
 void Synth::render_connector_in(ConnectorIn & in) {
 	auto label = in.name.c_str();
 	
@@ -422,7 +429,7 @@ void Synth::render_connector_in(ConnectorIn & in) {
 	}
 
 	in.pos[0] = pos.x;
-	in.pos[1] = pos.y + 0.5f * CONNECTOR_SIZE;
+	in.pos[1] = pos.y + 0.5f * Connector::RENDER_SIZE;
 }
 
 void Synth::render_connector_out(ConnectorOut & out) {
@@ -458,7 +465,7 @@ void Synth::render_connector_out(ConnectorOut & out) {
 	}
 
 	out.pos[0] = pos.x + 8.0f;
-	out.pos[1] = pos.y + 0.5f * CONNECTOR_SIZE;
+	out.pos[1] = pos.y + 0.5f * Connector::RENDER_SIZE;
 }
 
 template<typename ComponentList>

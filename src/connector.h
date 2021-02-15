@@ -11,6 +11,8 @@
 struct Component;
 
 struct Connector {
+	static constexpr auto RENDER_SIZE = 16.0f;
+
 	bool const is_input;
 	bool const is_midi;
 
