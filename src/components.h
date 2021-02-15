@@ -24,8 +24,9 @@ struct Component {
 	std::vector<ConnectorOut> outputs;
 
 	int const id;
-	float pos[2] = { };
-	
+	float pos [2] = { };
+	float size[2] = { };
+
 	Component(int id,
 		std::string && name,
 		std::vector<ConnectorIn>  && inputs,

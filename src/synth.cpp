@@ -38,7 +38,16 @@ void Synth::render() {
 	render_menu();
 	render_components();
 	render_connections();
+	
+	if (file_dialog.render()) {
+		auto filename = file_dialog.selected_path.string();
 
+		if (file_dialog.saving) {
+			save_file(filename.c_str());
+		} else {
+			open_file(filename.c_str());
+		}
+	}
 	if (ImGui::Begin("Settings")) {
 		ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
 
@@ -182,19 +191,9 @@ void Synth::render_menu() {
 
 		ImGui::EndMainMenuBar();
 	}
-	
+
 	if (show_popup_open) file_dialog.show(false);
 	if (show_popup_save) file_dialog.show(true);
-
-	if (file_dialog.render()) {
-		auto filename = file_dialog.selected_path.string();
-
-		if (file_dialog.saving) {
-			save_file(filename.c_str());
-		} else {
-			open_file(filename.c_str());
-		}
-	}
 }
 
 void Synth::render_components() {
@@ -211,7 +210,13 @@ void Synth::render_components() {
 		auto open      = true;
 		auto collapsed = true;
 
-		if (just_loaded) ImGui::SetNextWindowPos(ImVec2(component->pos[0], component->pos[1])); // Move Window to correct position if we just loaded a file
+		if (just_loaded) { // Move and resize the Window if we just loaded a file
+			ImGui::SetNextWindowPos(ImVec2(component->pos[0], component->pos[1]));
+
+			if (component->size[0] > 0.0f && component->size[1] > 0.0f) {
+				ImGui::SetNextWindowSize(ImVec2(component->size[0], component->size[1]));
+			}
+		}
 
 		ImGui::SetNextWindowSizeConstraints(ImVec2(100, 100), ImVec2(INFINITY, INFINITY));
 
@@ -223,9 +228,13 @@ void Synth::render_components() {
 
 			collapsed = false;
 
-			auto window_pos = ImGui::GetWindowPos();
-			component->pos[0] = window_pos.x;
-			component->pos[1] = window_pos.y;
+			auto window_pos  = ImGui::GetWindowPos();
+			auto window_size = ImGui::GetWindowSize();
+
+			component->pos [0] = window_pos.x;
+			component->pos [1] = window_pos.y;
+			component->size[0] = window_size.x;
+			component->size[1] = window_size.y;
 		}
 
 		auto pos = ImGui::GetCursorScreenPos();
@@ -441,8 +450,6 @@ void Synth::render_connector_in(ConnectorIn & in) {
 		}
 	}
 
-	auto avail = ImGui::GetContentRegionAvail();
-
 	ImGui::SameLine();
 	ImGui::Text(label);
 
@@ -564,8 +571,10 @@ void Synth::open_file(char const * filename) {
 
 				auto id = obj_id->value;
 
-				auto pos_x = obj->find_float("pos_x", 100.0f);
-				auto pos_y = obj->find_float("pos_y", 100.0f);
+				auto pos_x  = obj->find_float("pos_x", 100.0f);
+				auto pos_y  = obj->find_float("pos_y", 100.0f);
+				auto size_x = obj->find_float("size_x");
+				auto size_y = obj->find_float("size_y");
 
 				Component * component = try_add_component<AllComponents>(*this, obj->name, id);
 
@@ -576,8 +585,10 @@ void Synth::open_file(char const * filename) {
 
 				component->deserialize(*obj);
 
-				component->pos[0] = pos_x;
-				component->pos[1] = pos_y;
+				component->pos [0] = pos_x;
+				component->pos [1] = pos_y;
+				component->size[0] = size_x;
+				component->size[1] = size_y;
 
 				assert(!components_by_id.contains(id));
 				components_by_id[id] = component;
@@ -605,9 +616,11 @@ void Synth::save_file(char const * filename) const {
 	// Serialize Components
 	for (auto const & component : components) {
 		writer.object_begin(util::get_type_name(*component.get()));
-		writer.write("id",    component->id);
-		writer.write("pos_x", component->pos[0]);
-		writer.write("pos_y", component->pos[1]);
+		writer.write("id",     component->id);
+		writer.write("pos_x",  component->pos[0]);
+		writer.write("pos_y",  component->pos[1]);
+		writer.write("size_x", component->size[0]);
+		writer.write("size_y", component->size[1]);
 
 		component->serialize(writer);
 				

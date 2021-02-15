@@ -34,6 +34,6 @@ void BitCrusherComponent::serialize(json::Writer & writer) const {
 
 void BitCrusherComponent::deserialize(json::Object const & object) {
 	gain = object.find_float("gain", gain.default_value);
-	bits = object.find_float("bits", bits.default_value);
-	rate = object.find_float("rate", rate.default_value);
+	bits = object.find_int  ("bits", bits.default_value);
+	rate = object.find_int  ("rate", rate.default_value);
 }
