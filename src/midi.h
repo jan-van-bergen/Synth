@@ -32,8 +32,8 @@ namespace midi {
 	};
 
 	struct Track {
-		int ticks;
-		int tempo;
+		int ticks = 96;
+		int tempo = 130;
 
 		std::vector<Event> events;
 

@@ -304,7 +304,7 @@ struct SpectrumComponent : Component {
 };
 
 struct OscilloscopeComponent : Component {
-	float samples[BLOCK_SIZE];
+	float samples[BLOCK_SIZE] = { };
 
 	OscilloscopeComponent(int id) : Component(id, "Oscilloscope", { { this, "Input" } }, { }) { }
 	
@@ -320,6 +320,8 @@ struct DecibelComponent : Component {
 	void update(struct Synth const & synth) override;
 	void render(struct Synth const & synth) override;
 };
+
+
 
 template<typename T>
 concept IsComponent = std::derived_from<T, Component>;
