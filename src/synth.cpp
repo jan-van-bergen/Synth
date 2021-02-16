@@ -542,8 +542,8 @@ void Synth::open_file(char const * filename) {
 			auto obj = static_cast<json::Object const *>(object.get());
 
 			if (obj->name == "Settings") {
-				settings.tempo         = obj->find_int  ("tempo",         settings.tempo        .default_value);
-				settings.master_volume = obj->find_float("master_volume", settings.master_volume.default_value);
+				settings.tempo        .deserialize(*obj);
+				settings.master_volume.deserialize(*obj);
 			} else if (obj->name == "Connection") {
 				auto id_out     = obj->find_int("component_out", -1);
 				auto id_in      = obj->find_int("component_in",  -1);
@@ -576,11 +576,6 @@ void Synth::open_file(char const * filename) {
 
 				auto id = obj_id->value;
 
-				auto pos_x  = obj->find_float("pos_x", 100.0f);
-				auto pos_y  = obj->find_float("pos_y", 100.0f);
-				auto size_x = obj->find_float("size_x");
-				auto size_y = obj->find_float("size_y");
-
 				Component * component = try_add_component<AllComponents>(*this, obj->name, id);
 
 				if (!component) {
@@ -589,11 +584,6 @@ void Synth::open_file(char const * filename) {
 				}
 
 				component->deserialize(*obj);
-
-				component->pos [0] = pos_x;
-				component->pos [1] = pos_y;
-				component->size[0] = size_x;
-				component->size[1] = size_y;
 
 				assert(!components_by_id.contains(id));
 				components_by_id[id] = component;
@@ -616,19 +606,14 @@ void Synth::save_file(char const * filename) const {
 	auto writer = json::Writer(filename);
 
 	writer.object_begin("Settings");
-	writer.write("tempo",         settings.tempo);
-	writer.write("master_volume", settings.master_volume);
+	settings.tempo        .serialize(writer);
+	settings.master_volume.serialize(writer);
 	writer.object_end();
 
 	// Serialize Components
 	for (auto const & component : components) {
 		writer.object_begin(util::get_type_name(*component.get()));
-		writer.write("id",     component->id);
-		writer.write("pos_x",  component->pos[0]);
-		writer.write("pos_y",  component->pos[1]);
-		writer.write("size_x", component->size[0]);
-		writer.write("size_y", component->size[1]);
-
+		
 		component->serialize(writer);
 				
 		writer.object_end();

@@ -44,11 +44,11 @@ void SequencerComponent::render(Synth const & synth) {
 	}
 }
 
-void SequencerComponent::serialize(json::Writer & writer) const {
+void SequencerComponent::serialize_custom(json::Writer & writer) const {
 	writer.write("pattern", 16, pattern);
 }
 
-void SequencerComponent::deserialize(json::Object const & object) {
+void SequencerComponent::deserialize_custom(json::Object const & object) {
 	memset(pattern, 0, sizeof(pattern));
 	
 	auto array = object.find<json::Array const>("pattern");

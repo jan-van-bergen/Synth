@@ -184,34 +184,10 @@ void OscillatorComponent::render(Synth const & synth) {
 	release.render();
 }
 
-void OscillatorComponent::serialize(json::Writer & writer) const {
+void OscillatorComponent::serialize_custom(json::Writer & writer) const {
 	writer.write("waveform", waveform_index);
-	writer.write("invert",   invert);
-	writer.write("phase",    phase);
-
-	writer.write("transpose",  transpose);
-	writer.write("detune",     detune);
-	writer.write("portamento", portamento);
-
-	writer.write("attack",  attack);
-	writer.write("hold",    hold);
-	writer.write("decay",   decay);
-	writer.write("sustain", sustain);
-	writer.write("release", release);
 }
 
-void OscillatorComponent::deserialize(json::Object const & object) {
+void OscillatorComponent::deserialize_custom(json::Object const & object) {
 	waveform_index = object.find_int  ("waveform", 3);
-	invert         = object.find_int  ("invert",   invert.default_value);
-	phase          = object.find_float("phase",    phase .default_value);
-
-	transpose  = object.find_int  ("transpose",  transpose .default_value);
-	detune     = object.find_float("detune",     detune    .default_value);
-	portamento = object.find_float("portamento", portamento.default_value);
-
-	attack  = object.find_float("attack",  attack .default_value);
-	hold    = object.find_float("hold",    hold   .default_value);
-	decay   = object.find_float("decay",   decay  .default_value);
-	sustain = object.find_float("sustain", sustain.default_value);
-	release = object.find_float("release", release.default_value);
 }

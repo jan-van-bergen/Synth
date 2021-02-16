@@ -33,21 +33,3 @@ void CompressorComponent::render(Synth const & synth) {
 	attack .render();
 	release.render();
 }
-
-void CompressorComponent::serialize(json::Writer & writer) const {
-	writer.write("threshold", threshold);
-	writer.write("ratio",     ratio);
-	writer.write("gain",      gain);
-
-	writer.write("attack",  attack);
-	writer.write("release", release);
-}
-
-void CompressorComponent::deserialize(json::Object const & object) {
-	threshold = object.find_float("threshold", threshold.default_value);
-	ratio     = object.find_float("ratio",     ratio    .default_value);
-	gain      = object.find_float("gain",      gain     .default_value);
-
-	attack  = object.find_float("attack",  attack .default_value);
-	release = object.find_float("release", release.default_value);
-}

@@ -8,17 +8,28 @@
 
 #include "util.h"
 
+#include "json.h"
+
+struct Component;
+
 struct Param {
 	inline static char clipboard[4] = { };
 
 	inline static Param * param_waiting_to_link = nullptr;
 	inline static std::unordered_map<int, std::vector<Param *>> links;
 	
+	char const * serialization_name;
+
 	enum struct Curve { LINEAR, LOGARITHMIC } curve = Curve::LINEAR;
 
 	std::optional<int> linked_controller; // ID of the linked MIDI controller of this param (if any)
 
+	Param(Component * component, char const * serialization_name);
+
 	virtual void set_value(float value) = 0;
+
+	virtual void   serialize(json::Writer & writer) const = 0;
+	virtual void deserialize(json::Object const & object) = 0;
 };
 
 template<typename T>
@@ -37,8 +48,9 @@ struct Parameter : Param {
 
 	std::vector<T> options; // Options available in context menu
 
-	Parameter(std::string const & name, T default_value, std::pair<T, T> const & bounds, std::vector<T> options = { }, Curve curve = Curve::LINEAR) : 
-		name(name), 
+	Parameter(Component * component, char const * serialization_name, std::string display_name, T default_value, std::pair<T, T> bounds, std::vector<T> && options = { }, Curve curve = Curve::LINEAR) : 
+		Param(component, serialization_name),
+		name(display_name), 
 		parameter(default_value), 
 		default_value(default_value),
 		bounds(bounds), 
@@ -56,6 +68,18 @@ struct Parameter : Param {
 			parameter = util::lerp(float(lower), float(upper), value);
 		} else {
 			parameter = util::log_interpolate(float(lower), float(upper), value);
+		}
+	}
+
+	void serialize(json::Writer & writer) const {
+		writer.write(serialization_name, parameter);
+	}
+
+	void deserialize(json::Object const & object) {
+		if constexpr (is_float) {
+			parameter = object.find_float(serialization_name, default_value);
+		} else {
+			parameter = object.find_int(serialization_name, default_value);
 		}
 	}
 

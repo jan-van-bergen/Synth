@@ -38,7 +38,7 @@ namespace util {
 
 	template<typename T>
 	inline constexpr T clamp(T value, T min = static_cast<T>(0), T max = static_cast<T>(1)) {
-		assert(min < max);
+		assert(min <= max);
 
 		if (value < min) return min;
 		if (value > max) return max;

@@ -51,16 +51,13 @@ void SamplerComponent::render(Synth const & synth) {
 	base_note.render(util::note_name);
 }
 
-void SamplerComponent::serialize(json::Writer & writer) const {
+void SamplerComponent::serialize_custom(json::Writer & writer) const {
 	writer.write("filename", filename);
-	writer.write("base_note", base_note);
 }
 
-void SamplerComponent::deserialize(json::Object const & object) {
+void SamplerComponent::deserialize_custom(json::Object const & object) {
 	auto const & found = object.find_string("filename", DEFAULT_FILENAME);
 
 	strcpy_s(filename, found.c_str());
 	samples = util::load_wav(filename);
-
-	base_note = object.find_int("base_note", base_note.default_value);
 }

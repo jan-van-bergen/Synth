@@ -40,17 +40,3 @@ void FlangerComponent::render(Synth const & synth) {
 	feedback.render();
 	drywet  .render();
 }
-
-void FlangerComponent::serialize(json::Writer & writer) const {
-	writer.write("depth",    depth);
-	writer.write("rate",     rate);
-	writer.write("feedback", feedback);
-	writer.write("drywet",   drywet);
-}
-
-void FlangerComponent::deserialize(json::Object const & object) {
-	depth    = object.find_float("depth",    depth   .default_value);
-	rate     = object.find_float("rate",     rate    .default_value);
-	feedback = object.find_float("feedback", feedback.default_value);
-	drywet   = object.find_float("drywet",   drywet  .default_value);
-}

@@ -60,11 +60,11 @@ void PianoRollComponent::render(Synth const & synth) {
 	if (ImGui::Button("Load")) reload_file();
 }
 
-void PianoRollComponent::serialize(json::Writer & writer) const {
+void PianoRollComponent::serialize_custom(json::Writer & writer) const {
 	writer.write("filename", filename);
 }
 
-void PianoRollComponent::deserialize(json::Object const & object) {
+void PianoRollComponent::deserialize_custom(json::Object const & object) {
 	auto name = object.find_string("filename", DEFAULT_FILENAME);
 	strcpy_s(filename, name.c_str());
 

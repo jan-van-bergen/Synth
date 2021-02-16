@@ -45,14 +45,10 @@ void FilterComponent::render(Synth const & synth) {
 	resonance.render();
 }
 
-void FilterComponent::serialize(json::Writer & writer) const {
+void FilterComponent::serialize_custom(json::Writer & writer) const {
 	writer.write("filter_type", filter_type);
-	writer.write("cutoff",      cutoff);
-	writer.write("resonance",   resonance);
 }
 
-void FilterComponent::deserialize(json::Object const & object) {
+void FilterComponent::deserialize_custom(json::Object const & object) {
 	filter_type = object.find_int  ("filter_type", 0);
-	cutoff      = object.find_float("cutoff",      cutoff   .default_value);
-	resonance   = object.find_float("resonance",   resonance.default_value);
 }

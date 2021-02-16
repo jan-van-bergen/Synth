@@ -20,11 +20,3 @@ void PanComponent::update(Synth const & synth) {
 void PanComponent::render(Synth const & synth) {
 	pan.render();
 }
-
-void PanComponent::serialize(json::Writer & writer) const {
-	writer.write("pan", pan);
-}
-
-void PanComponent::deserialize(json::Object const & object) {
-	pan = object.find_float("pan", pan.default_value);
-}

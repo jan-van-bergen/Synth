@@ -77,23 +77,3 @@ void PhaserComponent::render(Synth const & synth) {
 	feedback  .render();
 	drywet    .render();
 }
-
-void PhaserComponent::serialize(json::Writer & writer) const {
-	writer.write("rate",       rate);
-	writer.write("min_depth",  min_depth);
-	writer.write("max_depth",  max_depth);
-	writer.write("phase",      phase);
-	writer.write("num_stages", num_stages);
-	writer.write("feedback",   feedback);
-	writer.write("drywet",     drywet);
-}
-
-void PhaserComponent::deserialize(json::Object const & object) {
-	rate       = object.find_float("rate",       rate      .default_value);
-	min_depth  = object.find_float("min_depth",  min_depth .default_value);
-	max_depth  = object.find_float("max_depth",  max_depth .default_value);
-	phase      = object.find_float("phase",      phase     .default_value);
-	num_stages = object.find_int  ("num_stages", num_stages.default_value);
-	feedback   = object.find_float("feedback",   feedback  .default_value);
-	drywet     = object.find_float("drywet",     drywet    .default_value);
-}

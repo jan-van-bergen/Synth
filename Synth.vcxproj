@@ -203,6 +203,7 @@
     <ClCompile Include="src\json_writer.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\midi.cpp" />
+    <ClCompile Include="src\parameter.cpp" />
     <ClCompile Include="src\synth.cpp" />
     <ClCompile Include="src\util.cpp" />
   </ItemGroup>

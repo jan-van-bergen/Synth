@@ -30,15 +30,3 @@ void DelayComponent::render(Synth const & synth) {
 	steps   .render();
 	feedback.render();
 }
-
-void DelayComponent::serialize(json::Writer & writer) const {
-	writer.write("steps",    steps);
-	writer.write("feedback", feedback);
-}
-
-void DelayComponent::deserialize(json::Object const & object) {
-	steps    = object.find_int  ("steps",    steps   .default_value);
-	feedback = object.find_float("feedback", feedback.default_value);
-						
-	memset(history.data(), 0, history.size() * sizeof(Sample)); // Clear history
-}

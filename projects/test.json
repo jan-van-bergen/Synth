@@ -1,33 +1,48 @@
 {
+	"Settings": {
+		"tempo": 130,
+		"master_volume": 1.000000
+	},
 	"SpeakerComponent": {
 		"id": 0,
 		"pos_x": 950.000000,
-		"pos_y": 207.000000
+		"pos_y": 207.000000,
+		"size_x": 100.000000,
+		"size_y": 100.000000
 	},
 	"OscillatorComponent": {
 		"id": 1,
 		"pos_x": 74.000000,
 		"pos_y": 229.000000,
-		"waveform": 3,
-		"transpose": 0,
-		"detune": 0.000000,
-		"portamento": 0.000000,
-		"attack": 0.100000,
-		"hold": 0.500000,
-		"decay": 1.000000,
-		"sustain": 0.500000,
-		"release": 0.000000
+		"size_x": 155.000000,
+		"size_y": 341.000000,
+		"Invert": 0,
+		"Phase": 0.000000,
+		"Transpose": 3,
+		"Detune": 0.000000,
+		"Portamento": 11.163000,
+		"Attack": 12.837000,
+		"Hold": 6.326000,
+		"Decay": 12.093000,
+		"Sustain": 0.500000,
+		"Release": 0.000000,
+		"waveform": 3
 	},
 	"SamplerComponent": {
 		"id": 2,
 		"pos_x": 512.000000,
 		"pos_y": 70.000000,
+		"size_x": 157.000000,
+		"size_y": 111.000000,
+		"Base Note": 36,
 		"filename": "samples/909_clap.wav"
 	},
 	"SequencerComponent": {
 		"id": 3,
 		"pos_x": 43.000000,
 		"pos_y": 88.000000,
+		"size_x": 392.000000,
+		"size_y": 116.000000,
 		"pattern": [ 1.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000, 1.000000, 0.000000, 1.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000, 1.000000, 0.000000 ]
 	},
 	"Connection": {

@@ -19,11 +19,3 @@ void DistortionComponent::update(Synth const & synth) {
 void DistortionComponent::render(Synth const & synth) {
 	amount.render();
 }
-
-void DistortionComponent::serialize(json::Writer & writer) const {
-	writer.write("amount", amount);
-}
-
-void DistortionComponent::deserialize(json::Object const & object) {
-	amount = object.find_float("amount", amount.default_value);
-}

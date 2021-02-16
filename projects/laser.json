@@ -23,7 +23,6 @@
 		"pos_y": 76.000000,
 		"size_x": 155.000000,
 		"size_y": 341.000000,
-		"waveform": 2,
 		"invert": 0,
 		"phase": 0.000000,
 		"transpose": 0,
@@ -33,7 +32,8 @@
 		"hold": 0.500000,
 		"decay": 1.000000,
 		"sustain": 0.674000,
-		"release": 3.907000
+		"release": 3.907000,
+		"waveform": 2
 	},
 	"FlangerComponent": {
 		"id": 3,
@@ -41,8 +41,10 @@
 		"pos_y": 168.000000,
 		"size_x": 185.000000,
 		"size_y": 209.000000,
+		"delay": 0.661000,
 		"depth": 6.768000,
 		"rate": 1.212000,
+		"phase": 0.160000,
 		"feedback": 0.717000,
 		"drywet": 0.737000
 	},
@@ -52,7 +54,7 @@
 		"pos_y": 169.000000,
 		"size_x": 141.000000,
 		"size_y": 111.000000,
-		"steps": 4,
+		"steps": 3,
 		"feedback": 0.700000
 	},
 	"Connection": {

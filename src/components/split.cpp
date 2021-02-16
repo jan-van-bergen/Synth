@@ -12,11 +12,3 @@ void SplitComponent::update(Synth const & synth) {
 void SplitComponent::render(Synth const & synth) {
 	mix.render();
 }
-
-void SplitComponent::serialize(json::Writer & writer) const {
-	writer.write("mix", mix);
-}
-
-void SplitComponent::deserialize(json::Object const & object) {
-	mix = object.find_float("mix", mix.default_value);
-}
