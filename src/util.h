@@ -96,20 +96,20 @@ namespace util {
 	int round(float f);
 
 	template<typename T>
-	inline T sample_linear(T array[], int length, float index, bool wrap = true) {
-		auto weight = index - std::floor(index);
-		
-		auto index_a = util::round(index - 0.5f);
+	inline T sample_linear(T array[], int length, float x, bool wrap = true) {
+		auto index_a = util::round(x - 0.5f);
 		auto index_b = index_a + 1;
 
 		if (wrap) {
 			index_a = util::wrap(index_a, length);
 			index_b = util::wrap(index_b, length);
-		} else if (index < 0.0f) {
+		} else if (x <= 0.0f) {
 			return array[0];
-		} else if (index >= float(length) - 1.0f) {
+		} else if (x >= float(length) - 1.0f) {
 			return array[length - 1];
 		}
+		
+		auto weight = x - std::floor(x);
 
 		return util::lerp(array[index_a], array[index_b], weight);
 	}

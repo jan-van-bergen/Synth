@@ -16,10 +16,10 @@ void FlangerComponent::update(Synth const & synth) {
 		auto index_left  = float(history_offset) - lfo_left  * SAMPLE_RATE;
 		auto index_right = float(history_offset) - lfo_right * SAMPLE_RATE;
 
-		auto delayed_left  = util::sample_linear(history_left,  HISTORY_SIZE, index_left);
-		auto delayed_right = util::sample_linear(history_right, HISTORY_SIZE, index_right);
-
-		auto delayed_sample = Sample(delayed_left, delayed_right);
+		auto delayed_sample = Sample(
+			util::sample_linear(history_left,  HISTORY_SIZE, index_left),
+			util::sample_linear(history_right, HISTORY_SIZE, index_right)
+		);
 
 		outputs[0].set_sample(i, util::lerp(sample, delayed_sample, drywet));
 		

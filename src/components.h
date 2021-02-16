@@ -269,6 +269,43 @@ private:
 	float lfo_phase = 0.0f;
 };
 
+struct PhaserComponent : Component {
+	Parameter<float> rate       = { "Rate",       1.0f,  std::make_pair(0.0f, 5.0f) };
+	Parameter<float> min_depth  = { "Min Depth",  0.5f,  std::make_pair(20.0f, 20000.0f), { }, Param::Curve::LOGARITHMIC };
+	Parameter<float> max_depth  = { "Max Depth",  0.5f,  std::make_pair(20.0f, 20000.0f), { }, Param::Curve::LOGARITHMIC };
+	Parameter<float> phase      = { "Phase",      0.02f, std::make_pair(0.0f, 1.0f) };
+	Parameter<int>   num_stages = { "Num Stages", 10,    std::make_pair(0, 32) };
+	Parameter<float> feedback   = { "Feedback",   0.2f,  std::make_pair(0.0f, 0.9999f) };
+	Parameter<float> drywet     = { "Dry/Wet",    0.7f,  std::make_pair(0.0f, 1.0f) };
+
+	PhaserComponent(int id) : Component(id, "Phaser", { { this, "In" } }, { { this, "out" } }) { }
+	
+	void update(struct Synth const & synth) override;
+	void render(struct Synth const & synth) override;
+	
+	void   serialize(json::Writer & writer) const override;
+	void deserialize(json::Object const & object) override;
+
+private:
+	struct AllPassFilter {
+		float a, b, c, d, e;
+
+		float x1, x2;
+		float y1, y2;
+
+		void set(float frequency, float Q);
+
+		float process(float sample);
+	};
+
+	AllPassFilter all_pass_left  = { };
+	AllPassFilter all_pass_right = { };
+
+	Sample feedback_sample = { };
+
+	float lfo_phase = 0.0f;
+};
+
 struct DistortionComponent : Component {
 	Parameter<float> amount = { "Amount", 0.5f, std::make_pair(0.0f, 1.0f) };
 
@@ -372,6 +409,7 @@ using AllComponents = ComponentTypeList<
 	DistortionComponent,
 	FilterComponent,
 	FlangerComponent,
+	PhaserComponent,
 	KeyboardComponent,
 	OscillatorComponent,
 	OscilloscopeComponent,

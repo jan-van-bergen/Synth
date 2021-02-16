@@ -1,0 +1,87 @@
+{
+	"Settings": {
+		"tempo": 130,
+		"master_volume": 0.400000
+	},
+	"SpeakerComponent": {
+		"id": 0,
+		"pos_x": 1372.000000,
+		"pos_y": 348.000000,
+		"size_x": 100.000000,
+		"size_y": 100.000000
+	},
+	"KeyboardComponent": {
+		"id": 2,
+		"pos_x": 60.000000,
+		"pos_y": 60.000000,
+		"size_x": 100.000000,
+		"size_y": 100.000000
+	},
+	"OscillatorComponent": {
+		"id": 3,
+		"pos_x": 215.000000,
+		"pos_y": 90.000000,
+		"size_x": 155.000000,
+		"size_y": 341.000000,
+		"waveform": 2,
+		"invert": 0,
+		"phase": 0.000000,
+		"transpose": 0,
+		"detune": 0.000000,
+		"portamento": 0.000000,
+		"attack": 0.100000,
+		"hold": 0.500000,
+		"decay": 1.000000,
+		"sustain": 0.500000,
+		"release": 0.000000
+	},
+	"PhaserComponent": {
+		"id": 4,
+		"pos_x": 476.000000,
+		"pos_y": 87.000000,
+		"size_x": 155.000000,
+		"size_y": 226.000000,
+		"rate": 0.058000,
+		"min_depth": 497.026001,
+		"max_depth": 6496.176758,
+		"phase": 0.070000,
+		"num_stages": 8,
+		"feedback": 0.400000,
+		"drywet": 0.500000
+	},
+	"SpectrumComponent": {
+		"id": 5,
+		"pos_x": 714.000000,
+		"pos_y": 509.000000,
+		"size_x": 690.000000,
+		"size_y": 356.000000
+	},
+	"Connection": {
+		"component_out": 4,
+		"component_in": 0,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 2,
+		"component_in": 3,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 3,
+		"component_in": 4,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 4,
+		"component_in": 5,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	}
+}

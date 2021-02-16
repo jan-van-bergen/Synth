@@ -28,7 +28,7 @@
 		"phase": 0.000000,
 		"transpose": 0,
 		"detune": 0.000000,
-		"portamento": 0.000000,
+		"portamento": 8.000000,
 		"attack": 0.558000,
 		"hold": 0.500000,
 		"decay": 1.000000,
@@ -39,15 +39,24 @@
 		"id": 3,
 		"pos_x": 502.000000,
 		"pos_y": 168.000000,
-		"size_x": 178.000000,
-		"size_y": 207.000000,
+		"size_x": 185.000000,
+		"size_y": 209.000000,
 		"depth": 6.768000,
 		"rate": 1.212000,
 		"feedback": 0.717000,
 		"drywet": 0.737000
 	},
+	"DelayComponent": {
+		"id": 4,
+		"pos_x": 894.000000,
+		"pos_y": 169.000000,
+		"size_x": 141.000000,
+		"size_y": 111.000000,
+		"steps": 4,
+		"feedback": 0.700000
+	},
 	"Connection": {
-		"component_out": 3,
+		"component_out": 4,
 		"component_in": 0,
 		"offset_out": 0,
 		"offset_in": 0,
@@ -63,6 +72,13 @@
 	"Connection": {
 		"component_out": 2,
 		"component_in": 3,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 3,
+		"component_in": 4,
 		"offset_out": 0,
 		"offset_in": 0,
 		"weight": 1.000000

@@ -177,6 +177,7 @@ void Synth::render_menu() {
 			if (ImGui::MenuItem("Filter"))      add_component<FilterComponent>();
 			if (ImGui::MenuItem("Delay"))       add_component<DelayComponent>();
 			if (ImGui::MenuItem("Flanger"))     add_component<FlangerComponent>();
+			if (ImGui::MenuItem("Phaser"))      add_component<PhaserComponent>();
 			if (ImGui::MenuItem("Distortion"))  add_component<DistortionComponent>();
 			if (ImGui::MenuItem("Bit Crusher")) add_component<BitCrusherComponent>();
 			if (ImGui::MenuItem("Compressor"))  add_component<CompressorComponent>();
@@ -636,16 +637,19 @@ void Synth::save_file(char const * filename) const {
 	// Serialize Connections
 	for (auto const & connection : connections) {
 		// Unique IDs that identify the Components
-		auto component_out = connection.out->component->id;
-		auto component_in  = connection.in ->component->id;
+		auto id_out = connection.out->component->id;
+		auto id_in  = connection.in ->component->id;
 
 		// Unique offsets that identify the Connectors
 		auto offset_out = int(connection.out - connection.out->component->outputs.data());
 		auto offset_in  = int(connection.in  - connection.in ->component->inputs .data());
 
+		assert(0 <= offset_out && offset_out < connection.out->component->outputs.size());
+		assert(0 <= offset_in  && offset_in  < connection.in ->component->inputs .size());
+
 		writer.object_begin("Connection");
-		writer.write("component_out", component_out);
-		writer.write("component_in",  component_in);
+		writer.write("component_out", id_out);
+		writer.write("component_in",  id_in);
 		writer.write("offset_out", offset_out);
 		writer.write("offset_in",  offset_in);
 		writer.write("weight", *connection.weight);

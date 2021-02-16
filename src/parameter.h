@@ -61,7 +61,7 @@ struct Parameter : Param {
 
 	using Formatter = void (*)(T value, char * fmt, int len);
 
-	void render(Formatter formatter = nullptr) {
+	bool render(Formatter formatter = nullptr) {
 		auto [lower, upper] = bounds;
 
 		char fmt[128] = { };
@@ -69,19 +69,21 @@ struct Parameter : Param {
 			formatter(parameter, fmt, sizeof(fmt));
 		}
 
+		bool value_changed;
+
 		float scroll_speed;
 
 		// Render slider
 		if constexpr (is_float) {
 			if (!formatter) strcpy_s(fmt, "%.3f");
 
-			ImGui::SliderFloat(name.c_str(), &parameter, lower, upper, fmt, curve == Param::Curve::LINEAR ? 0 : ImGuiSliderFlags_Logarithmic);
+			value_changed = ImGui::SliderFloat(name.c_str(), &parameter, lower, upper, fmt, curve == Param::Curve::LINEAR ? 0 : ImGuiSliderFlags_Logarithmic);
 
 			scroll_speed = ImGui::IsKeyDown(SDL_SCANCODE_LCTRL) ? 0.01f : 0.1f; // Allow for fine scrolling using CONTROL key
 		} else if constexpr (is_int) {
 			if (!formatter) strcpy_s(fmt, "%i");
 
-			ImGui::SliderInt(name.c_str(), &parameter, lower, upper, fmt, curve == Param::Curve::LINEAR ? 0 : ImGuiSliderFlags_Logarithmic);
+			value_changed = ImGui::SliderInt(name.c_str(), &parameter, lower, upper, fmt, curve == Param::Curve::LINEAR ? 0 : ImGuiSliderFlags_Logarithmic);
 
 			scroll_speed = 1.0f;
 		} else {
@@ -156,6 +158,8 @@ struct Parameter : Param {
 		} else if (Param::param_waiting_to_link == this) {
 			Param::param_waiting_to_link = nullptr;
 		}
+
+		return value_changed;
 	}
 
 	operator T() const { return parameter; }
