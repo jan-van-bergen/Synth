@@ -210,7 +210,7 @@ private:
 };
 
 struct SplitComponent : Component {
-	Parameter<float> mix = { this, "mix", "Mix A/B", 0.5f, std::make_pair(0.0f, 1.0f) };
+	Parameter<float> mix = { this, "mix", "Mix A/B", 0.5f, std::make_pair(0.0f, 1.0f), { 0.0f, 0.5f, 1.0f } };
 
 	SplitComponent(int id) : Component(id, "Split", { { this, "In" } }, { { this, "Out A" }, { this, "Out B" } }) { }
 	
@@ -219,7 +219,7 @@ struct SplitComponent : Component {
 };
 
 struct PanComponent : Component {
-	Parameter<float> pan = { this, "pan", "Pan", 0.0f, std::make_pair(-1.0f, 1.0f) };
+	Parameter<float> pan = { this, "pan", "Pan", 0.0f, std::make_pair(-1.0f, 1.0f), { -1.0f, -0.5f, 0.0f, 0.5f, 1.0f } };
 
 	PanComponent(int id) : Component(id, "Pan", { { this, "In" } }, { { this, "Out" } }) { }
 	
@@ -266,7 +266,7 @@ struct FlangerComponent : Component {
 	Parameter<float> delay    = { this, "delay",    "Delay",    0.5f,  std::make_pair(0.001f, 10.0f) };
 	Parameter<float> depth    = { this, "depth",    "Depth",    0.5f,  std::make_pair(0.001f, 10.0f) };
 	Parameter<float> rate     = { this, "rate",     "Rate",     1.0f,  std::make_pair(0.0f,    5.0f) };
-	Parameter<float> phase    = { this, "phase",    "Phase",    0.02f, std::make_pair(0.0f,    1.0f) };
+	Parameter<float> phase    = { this, "phase",    "Phase",    0.02f, std::make_pair(0.0f,    1.0f), { 0.0f, 0.25f, 0.5f, 0.75f, 1.0f } };
 	Parameter<float> feedback = { this, "feedback", "Feedback", 0.2f,  std::make_pair(0.0f,    1.0f) };
 	Parameter<float> drywet   = { this, "drywet",   "Dry/Wet",  0.7f,  std::make_pair(0.0f,    1.0f) };
 
@@ -287,13 +287,13 @@ private:
 };
 
 struct PhaserComponent : Component {
-	Parameter<float> rate       = { this, "rate",       "Rate",       1.0f,  std::make_pair(0.0f, 5.0f) };
-	Parameter<float> min_depth  = { this, "min_depth",  "Min Depth",  0.5f,  std::make_pair(20.0f, 20000.0f), { }, Param::Curve::LOGARITHMIC };
-	Parameter<float> max_depth  = { this, "max_depth",  "Max Depth",  0.5f,  std::make_pair(20.0f, 20000.0f), { }, Param::Curve::LOGARITHMIC };
-	Parameter<float> phase      = { this, "phase",      "Phase",      0.02f, std::make_pair(0.0f, 1.0f) };
-	Parameter<int>   num_stages = { this, "num_stages", "Num Stages", 10,    std::make_pair(0, 32) };
-	Parameter<float> feedback   = { this, "feedback",   "Feedback",   0.2f,  std::make_pair(0.0f, 0.9999f) };
-	Parameter<float> drywet     = { this, "drywet",     "Dry/Wet",    0.7f,  std::make_pair(0.0f, 1.0f) };
+	Parameter<float> rate       = { this, "rate",       "Rate",          1.0f,  std::make_pair(0.0f, 5.0f) };
+	Parameter<float> min_depth  = { this, "min_depth",  "Min Depth",   500.0f,  std::make_pair(20.0f, 20000.0f), { }, Param::Curve::LOGARITHMIC };
+	Parameter<float> max_depth  = { this, "max_depth",  "Max Depth",  1000.0f,  std::make_pair(20.0f, 20000.0f), { }, Param::Curve::LOGARITHMIC };
+	Parameter<float> phase      = { this, "phase",      "Phase",         0.02f, std::make_pair(0.0f, 1.0f) };
+	Parameter<int>   num_stages = { this, "num_stages", "Num Stages",    10,    std::make_pair(0, 32) };
+	Parameter<float> feedback   = { this, "feedback",   "Feedback",      0.2f,  std::make_pair(0.0f, 0.9999f) };
+	Parameter<float> drywet     = { this, "drywet",     "Dry/Wet",       0.7f,  std::make_pair(0.0f, 1.0f) };
 
 	PhaserComponent(int id) : Component(id, "Phaser", { { this, "In" } }, { { this, "out" } }) { }
 	
