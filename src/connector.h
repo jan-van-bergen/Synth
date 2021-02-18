@@ -58,6 +58,7 @@ struct ConnectorOut : Connector {
 	void set_sample(int i, Sample sample) { assert(!is_midi); reinterpret_cast<Sample *>(data)[i] = sample; }
 
 	void add_event(NoteEvent note_event);
+	
 	std::span<NoteEvent const> get_events() const;
 
 private:

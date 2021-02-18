@@ -116,6 +116,25 @@ namespace util {
 
 	inline float linear_to_db(float x) { return 20.0f * std::log10(x); }
 	inline float db_to_linear(float x) { return std::pow(10.0f, x / 20.0f); }
+	
+	template<typename T>
+	int binary_search(std::vector<T> const & vector, T element) {
+		auto begin = 0;
+		auto end   = int(vector.size());
+
+		while (begin < end) {
+			auto mid = (begin + end) / 2;
+
+			if (vector[mid] < element) {
+				begin = mid + 1;
+			} else {
+				end = mid;
+			}
+		}
+
+		assert(begin == end);
+		return begin;
+	}
 
 	template<typename T>
 	inline constexpr char const * get_type_name() {

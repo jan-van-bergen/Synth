@@ -58,11 +58,11 @@ struct Synth {
 	void disconnect(ConnectorOut & out, ConnectorIn & in);
 
 	void note_press(int note, float velocity, int time_offset = 0) {
-		note_events.insert(NoteEvent { true, time + time_offset, note, velocity });
+		note_events.insert(NoteEvent::make_press(time + time_offset, note, velocity));
 	}
 
 	void note_release(int note, int time_offset = 0) {
-		note_events.insert(NoteEvent { false, time + time_offset, note });
+		note_events.insert(NoteEvent::make_release(time + time_offset, note));
 	}
 
 	void control_update(int control, float value) {

@@ -1,6 +1,14 @@
-
 #pragma once
 
+struct Note {
+	int   note;
+	float velocity;
+
+	bool operator<(Note const & other) const {
+		return note < other.note;
+	}
+};
+	
 struct NoteEvent {
 	bool pressed;
 	int  time;
@@ -21,4 +29,15 @@ struct NoteEvent {
 			}
 		}
 	};
+
+	static NoteEvent make_press(int time, int note, float velocity) {
+		return { true, time, note, velocity };
+	}
+
+	static NoteEvent make_release(int time, int note) {
+		return { false, time, note, 0.0f };
+	}
+
+private:
+	NoteEvent(bool pressed, int time, int note, float velocity) : pressed(pressed), time(time), note(note), velocity(velocity) { }
 };
