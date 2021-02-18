@@ -23,7 +23,13 @@ struct FileDialog {
 
 	bool saving = true;
 
-	FileDialog() { change_path("projects"); }
+	FileDialog() { 
+		if (std::filesystem::exists("projects/")) {
+			change_path("projects");
+		} else {
+			change_path(".");
+		}
+	}
 
 	void show(bool saving);
 	bool render();
