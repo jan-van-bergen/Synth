@@ -95,14 +95,17 @@ void PianoRollComponent::render(Synth const & synth) {
 	if (ImGui::Button("Load")) reload_file();
 
 	// Draw keyboard
-	static constexpr auto KEY_WIDTH  = 12.0f;
-	static constexpr auto KEY_HEIGHT = 48.0f;
+	static constexpr auto WHITE_KEY_WIDTH  = 10.0f;
+	static constexpr auto WHITE_KEY_HEIGHT = 48.0f;
+	static constexpr auto WHITE_KEY_SPACE  =  2.0f; // Horizontal space between two white keys
+	static constexpr auto BLACK_KEY_WIDTH  = 0.75f * WHITE_KEY_WIDTH;
+	static constexpr auto BLACK_KEY_HEIGHT = 0.75f * WHITE_KEY_HEIGHT;
 
 	static constexpr auto BASE_NOTE = 36;
 	static_assert(BASE_NOTE % 12 == 0, "BASE_NOTE should be a C!");
 
-	auto const colour_black = ImColor( 50,  50,  50, 255);
 	auto const colour_white = ImColor(250, 250, 250, 255);
+	auto const colour_black = ImColor( 50,  50,  50, 255);
 	auto const colour_red   = ImColor(250, 100, 100, 255);
 
 	int const note_offsets_white[7] = { 0, 2,  4, 5, 7, 9,  11 }; // Offsets within octave of C D E F G A B
@@ -118,7 +121,7 @@ void PianoRollComponent::render(Synth const & synth) {
 	
 	auto draw_list = ImGui::GetWindowDrawList();
 
-	auto num_white_keys = int(avail / KEY_WIDTH);
+	auto num_white_keys = int(avail / WHITE_KEY_WIDTH);
 	
 	// Draw white keys
 	for (int i = 0; i < num_white_keys; i++) {
@@ -132,15 +135,15 @@ void PianoRollComponent::render(Synth const & synth) {
 		}) != notes.end();
 		
 		draw_list->AddRectFilled(
-			ImVec2(x,                    y),
-			ImVec2(x + KEY_WIDTH - 2.0f, y + KEY_HEIGHT), 
+			ImVec2(x,                   y),
+			ImVec2(x + WHITE_KEY_WIDTH, y + WHITE_KEY_HEIGHT), 
 			is_playing ? colour_red : colour_white
 		);
 
-		x += KEY_WIDTH;
+		x += WHITE_KEY_WIDTH + WHITE_KEY_SPACE;
 	}
 	
-	x = window_pos.x + cursor_pos.x + 0.5f * KEY_WIDTH;
+	x = window_pos.x + cursor_pos.x + WHITE_KEY_WIDTH + 0.5f * WHITE_KEY_SPACE - 0.5f * BLACK_KEY_WIDTH;
 	
 	// Draw black keys
 	// We do this separately so that the black keys appear on top of the white keys
@@ -156,13 +159,13 @@ void PianoRollComponent::render(Synth const & synth) {
 			}) != notes.end();
 		
 			draw_list->AddRectFilled(
-				ImVec2(x,                     y),
-				ImVec2(x + 0.75f * KEY_WIDTH, y + 0.75f * KEY_HEIGHT), 
+				ImVec2(x,                   y),
+				ImVec2(x + BLACK_KEY_WIDTH, y + BLACK_KEY_HEIGHT), 
 				is_playing ? colour_red : colour_black
 			);
 		}
 		
-		x += KEY_WIDTH;
+		x += WHITE_KEY_WIDTH + WHITE_KEY_SPACE;
 	}
 
 	ImGui::NewLine();
