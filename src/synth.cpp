@@ -267,14 +267,16 @@ void Synth::render_components() {
 	if (component_to_be_removed) {
 		// Disconnect inputs
 		for (auto & input : component_to_be_removed->inputs) {
-			for (auto & [other, weight] : input.others) {
+			while (!input.others.empty()) {
+				auto & [other, weight] = input.others[0];
 				disconnect(*other, input);
 			}
 		}
 
 		// Disconnect outputs
 		for (auto & output : component_to_be_removed->outputs) {
-			for (auto & other : output.others) {
+			while (!output.others.empty()) {
+				auto & other = output.others[0];
 				disconnect(output, *other);
 			}
 		}
