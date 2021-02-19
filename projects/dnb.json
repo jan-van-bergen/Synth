@@ -24,8 +24,8 @@
 		"pos_y": 77.000000,
 		"size_x": 157.000000,
 		"size_y": 111.000000,
-		"filename": "samples/kick.wav",
-		"base_note": 36
+		"base_note": 36,
+		"filename": "samples/kick.wav"
 	},
 	"SequencerComponent": {
 		"id": 3,
@@ -41,8 +41,8 @@
 		"pos_y": 213.000000,
 		"size_x": 157.000000,
 		"size_y": 111.000000,
-		"filename": "samples/snare.wav",
-		"base_note": 36
+		"base_note": 36,
+		"filename": "samples/snare.wav"
 	},
 	"SequencerComponent": {
 		"id": 5,
@@ -58,8 +58,8 @@
 		"pos_y": 334.000000,
 		"size_x": 157.000000,
 		"size_y": 111.000000,
-		"filename": "samples/909_hat.wav",
-		"base_note": 36
+		"base_note": 36,
+		"filename": "samples/909_hat.wav"
 	},
 	"OscillatorComponent": {
 		"id": 7,
@@ -67,7 +67,6 @@
 		"pos_y": 514.000000,
 		"size_x": 155.000000,
 		"size_y": 341.000000,
-		"waveform": 2,
 		"invert": 0,
 		"phase": 0.000000,
 		"transpose": -12,
@@ -77,7 +76,8 @@
 		"hold": 0.500000,
 		"decay": 1.000000,
 		"sustain": 0.500000,
-		"release": 0.000000
+		"release": 0.000000,
+		"waveform": 2
 	},
 	"OscillatorComponent": {
 		"id": 8,
@@ -85,7 +85,6 @@
 		"pos_y": 514.000000,
 		"size_x": 155.000000,
 		"size_y": 341.000000,
-		"waveform": 2,
 		"invert": 0,
 		"phase": 0.233000,
 		"transpose": -12,
@@ -95,7 +94,8 @@
 		"hold": 0.500000,
 		"decay": 1.000000,
 		"sustain": 0.500000,
-		"release": 0.000000
+		"release": 0.000000,
+		"waveform": 2
 	},
 	"FilterComponent": {
 		"id": 9,
@@ -103,9 +103,9 @@
 		"pos_y": 583.000000,
 		"size_x": 148.000000,
 		"size_y": 134.000000,
-		"filter_type": 0,
 		"cutoff": 4776.160156,
-		"resonance": 0.780000
+		"resonance": 0.780000,
+		"filter_type": 0
 	},
 	"KeyboardComponent": {
 		"id": 11,
@@ -118,10 +118,12 @@
 		"id": 12,
 		"pos_x": 1111.000000,
 		"pos_y": 622.000000,
-		"size_x": 141.000000,
-		"size_y": 180.000000,
+		"size_x": 147.000000,
+		"size_y": 210.000000,
+		"delay": 0.500000,
 		"depth": 1.689000,
 		"rate": 0.260000,
+		"phase": 0.020000,
 		"feedback": 0.532000,
 		"drywet": 0.364000
 	},

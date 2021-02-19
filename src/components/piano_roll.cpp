@@ -93,6 +93,81 @@ void PianoRollComponent::render(Synth const & synth) {
 	ImGui::SameLine();
 	
 	if (ImGui::Button("Load")) reload_file();
+
+	// Draw keyboard
+	static constexpr auto KEY_WIDTH  = 12.0f;
+	static constexpr auto KEY_HEIGHT = 48.0f;
+
+	static constexpr auto BASE_NOTE = 36;
+	static_assert(BASE_NOTE % 12 == 0, "BASE_NOTE should be a C!");
+
+	auto const colour_black = ImColor( 50,  50,  50, 255);
+	auto const colour_white = ImColor(250, 250, 250, 255);
+	auto const colour_red   = ImColor(250, 100, 100, 255);
+
+	int const note_offsets_white[7] = { 0, 2,  4, 5, 7, 9,  11 }; // Offsets within octave of C D E F G A B
+	int const note_offsets_black[7] = { 1, 3, -1, 6, 8, 10, -1 }; // Offsets within octave of C# D# *skip* F# G# A# *skip*
+	
+	auto avail = ImGui::GetContentRegionAvailWidth();
+
+	auto window_pos = ImGui::GetWindowPos();
+	auto cursor_pos = ImGui::GetCursorPos();
+
+	auto x = window_pos.x + cursor_pos.x;
+	auto y = window_pos.y + cursor_pos.y;
+	
+	auto draw_list = ImGui::GetWindowDrawList();
+
+	auto num_white_keys = int(avail / KEY_WIDTH);
+	
+	// Draw white keys
+	for (int i = 0; i < num_white_keys; i++) {
+		auto        octave = i / 7;
+		auto within_octave = i % 7;
+
+		auto note = BASE_NOTE + 12 * octave + note_offsets_white[within_octave];
+
+		auto is_playing = std::find_if(notes.begin(), notes.end(), [n = note](auto note) {
+			return note.note == n;	
+		}) != notes.end();
+		
+		draw_list->AddRectFilled(
+			ImVec2(x,                    y),
+			ImVec2(x + KEY_WIDTH - 2.0f, y + KEY_HEIGHT), 
+			is_playing ? colour_red : colour_white
+		);
+
+		x += KEY_WIDTH;
+	}
+	
+	x = window_pos.x + cursor_pos.x + 0.5f * KEY_WIDTH;
+	
+	// Draw black keys
+	// We do this separately so that the black keys appear on top of the white keys
+	for (int i = 0; i < num_white_keys; i++) {
+		auto        octave = i / 7;
+		auto within_octave = i % 7;
+
+		if (within_octave != 2 && within_octave != 6) { // E and B don't have a black note after them
+			auto note = BASE_NOTE + 12 * octave + note_offsets_black[within_octave];
+
+			auto is_playing = std::find_if(notes.begin(), notes.end(), [n = note](auto note) {
+				return note.note == n;	
+			}) != notes.end();
+		
+			draw_list->AddRectFilled(
+				ImVec2(x,                     y),
+				ImVec2(x + 0.75f * KEY_WIDTH, y + 0.75f * KEY_HEIGHT), 
+				is_playing ? colour_red : colour_black
+			);
+		}
+		
+		x += KEY_WIDTH;
+	}
+
+	ImGui::NewLine();
+	ImGui::NewLine();
+	ImGui::NewLine();
 }
 
 void PianoRollComponent::serialize_custom(json::Writer & writer) const {

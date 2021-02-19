@@ -230,11 +230,11 @@ void midi::close() {
 	if (midi_handle) {
 		// Stop recording
 		CHECK_MM(midiInReset(midi_handle));
+		
+		CHECK_MM(midiInUnprepareHeader(midi_handle, &midi_hdr, sizeof(MIDIHDR)));
 
 		// Close MIDI In device
 		while (midiInClose(midi_handle) == MIDIERR_STILLPLAYING) Sleep(0);
-
-		CHECK_MM(midiInUnprepareHeader(midi_handle, &midi_hdr, sizeof(MIDIHDR)));
 	}
 }
 

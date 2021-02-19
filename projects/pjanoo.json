@@ -14,8 +14,8 @@
 		"id": 1,
 		"pos_x": 32.000000,
 		"pos_y": 59.000000,
-		"size_x": 157.000000,
-		"size_y": 100.000000,
+		"size_x": 295.000000,
+		"size_y": 136.000000,
 		"filename": "midi/pjanoo_synth.mid"
 	},
 	"OscillatorComponent": {
@@ -58,8 +58,8 @@
 		"id": 4,
 		"pos_x": 25.000000,
 		"pos_y": 345.000000,
-		"size_x": 157.000000,
-		"size_y": 100.000000,
+		"size_x": 262.000000,
+		"size_y": 128.000000,
 		"filename": "midi/pjanoo_bass.mid"
 	},
 	"OscillatorComponent": {
@@ -159,8 +159,8 @@
 		"id": 16,
 		"pos_x": 667.000000,
 		"pos_y": 193.000000,
-		"size_x": 157.000000,
-		"size_y": 100.000000,
+		"size_x": 230.000000,
+		"size_y": 122.000000,
 		"filename": "midi/pattern_clap.mid"
 	},
 	"Connection": {

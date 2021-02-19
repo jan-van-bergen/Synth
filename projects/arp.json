@@ -14,8 +14,8 @@
 		"id": 2,
 		"pos_x": 60.000000,
 		"pos_y": 60.000000,
-		"size_x": 192.000000,
-		"size_y": 155.000000,
+		"size_x": 306.000000,
+		"size_y": 125.000000,
 		"filename": "midi/chords7.mid"
 	},
 	"OscillatorComponent": {
