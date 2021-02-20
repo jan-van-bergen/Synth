@@ -10,7 +10,7 @@
 		"size_x": 100.000000,
 		"size_y": 100.000000
 	},
-	"PianoRollComponent": {
+	"MIDIPlayerComponent": {
 		"id": 1,
 		"pos_x": 32.000000,
 		"pos_y": 59.000000,
@@ -54,7 +54,7 @@
 		"release": 0.000000,
 		"waveform": 4
 	},
-	"PianoRollComponent": {
+	"MIDIPlayerComponent": {
 		"id": 4,
 		"pos_x": 25.000000,
 		"pos_y": 345.000000,
@@ -155,7 +155,7 @@
 		"base_note": 48,
 		"filename": "samples/piano.wav"
 	},
-	"PianoRollComponent": {
+	"MIDIPlayerComponent": {
 		"id": 16,
 		"pos_x": 667.000000,
 		"pos_y": 193.000000,

@@ -2,7 +2,7 @@
 
 #include "synth.h"
 
-void PianoRollComponent::reload_file() {
+void MIDIPlayerComponent::reload_file() {
 	// Release currently pressed notes
 	for (auto const & note : notes) {
 		outputs[0].add_event(NoteEvent::make_release(0, note.note));
@@ -29,7 +29,7 @@ void PianoRollComponent::reload_file() {
 	midi_offset = 0;
 }
 
-void PianoRollComponent::update(Synth const & synth) {
+void MIDIPlayerComponent::update(Synth const & synth) {
 	auto midi_ticks_to_samples = [](size_t time, size_t tempo, size_t ticks, size_t bpm) -> size_t {
 		return SAMPLE_RATE * time * 60 / (bpm * ticks);
 	};
@@ -88,7 +88,7 @@ void PianoRollComponent::update(Synth const & synth) {
 	}
 }
 
-void PianoRollComponent::render(Synth const & synth) {
+void MIDIPlayerComponent::render(Synth const & synth) {
 	ImGui::InputText("File", filename, sizeof(filename));
 	ImGui::SameLine();
 	
@@ -173,11 +173,11 @@ void PianoRollComponent::render(Synth const & synth) {
 	ImGui::NewLine();
 }
 
-void PianoRollComponent::serialize_custom(json::Writer & writer) const {
+void MIDIPlayerComponent::serialize_custom(json::Writer & writer) const {
 	writer.write("filename", filename);
 }
 
-void PianoRollComponent::deserialize_custom(json::Object const & object) {
+void MIDIPlayerComponent::deserialize_custom(json::Object const & object) {
 	auto name = object.find_string("filename", DEFAULT_FILENAME);
 	strcpy_s(filename, name.c_str());
 

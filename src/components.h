@@ -90,7 +90,7 @@ struct SequencerComponent : Component {
 	void deserialize_custom(json::Object const & object) override;
 };
 
-struct PianoRollComponent : Component {
+struct MIDIPlayerComponent : Component {
 	static constexpr char const * DEFAULT_FILENAME = "midi/melody_2.mid";
 
 	midi::Track midi;
@@ -99,7 +99,7 @@ struct PianoRollComponent : Component {
 
 	char filename[128];
 
-	PianoRollComponent(int id) : Component(id, "Piano Roll", { }, { { this, "MIDI Out", true } }) {
+	MIDIPlayerComponent(int id) : Component(id, "MIDI Player", { }, { { this, "MIDI Out", true } }) {
 		strcpy_s(filename, DEFAULT_FILENAME);
 		reload_file();
 	}
@@ -451,13 +451,13 @@ using AllComponents = ComponentTypeList<
 	DistortionComponent,
 	FilterComponent,
 	FlangerComponent,
-	PhaserComponent,
 	ImproviserComponent,
 	KeyboardComponent,
 	OscillatorComponent,
 	OscilloscopeComponent,
 	PanComponent,
-	PianoRollComponent,
+	PhaserComponent,
+	MIDIPlayerComponent,
 	SamplerComponent,
 	SequencerComponent,
 	SpeakerComponent,

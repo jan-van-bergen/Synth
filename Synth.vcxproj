@@ -192,7 +192,7 @@
     <ClCompile Include="src\components\oscilloscope.cpp" />
     <ClCompile Include="src\components\pan.cpp" />
     <ClCompile Include="src\components\phaser.cpp" />
-    <ClCompile Include="src\components\piano_roll.cpp" />
+    <ClCompile Include="src\components\midi_player.cpp" />
     <ClCompile Include="src\components\sampler.cpp" />
     <ClCompile Include="src\components\sequencer.cpp" />
     <ClCompile Include="src\components\speaker.cpp" />

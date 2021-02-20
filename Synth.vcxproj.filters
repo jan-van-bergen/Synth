@@ -61,9 +61,6 @@
     <ClCompile Include="src\components\pan.cpp">
       <Filter>components</Filter>
     </ClCompile>
-    <ClCompile Include="src\components\piano_roll.cpp">
-      <Filter>components</Filter>
-    </ClCompile>
     <ClCompile Include="src\components\sampler.cpp">
       <Filter>components</Filter>
     </ClCompile>
@@ -104,6 +101,9 @@
       <Filter>components</Filter>
     </ClCompile>
     <ClCompile Include="src\components\improviser.cpp">
+      <Filter>components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\midi_player.cpp">
       <Filter>components</Filter>
     </ClCompile>
   </ItemGroup>

@@ -10,7 +10,7 @@
 		"size_x": 109.000000,
 		"size_y": 132.000000
 	},
-	"PianoRollComponent": {
+	"MIDIPlayerComponent": {
 		"id": 2,
 		"pos_x": 60.000000,
 		"pos_y": 60.000000,
@@ -59,7 +59,7 @@
 		"pos_y": 34.000000,
 		"size_x": 177.000000,
 		"size_y": 211.000000,
-		"steps": 3.000000
+		"steps": 1.000000
 	},
 	"SamplerComponent": {
 		"id": 8,

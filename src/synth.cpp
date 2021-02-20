@@ -158,11 +158,11 @@ void Synth::render_menu() {
 		}
 		
 		if (ImGui::BeginMenu("Components")) {
-			if (ImGui::MenuItem("Keyboard"))   add_component<KeyboardComponent>();
-			if (ImGui::MenuItem("Sequencer"))  add_component<SequencerComponent>();
-			if (ImGui::MenuItem("Piano Roll")) add_component<PianoRollComponent>();
-			if (ImGui::MenuItem("Improviser")) add_component<ImproviserComponent>();
-			if (ImGui::MenuItem("Arp"))        add_component<ArpComponent>();
+			if (ImGui::MenuItem("Keyboard"))    add_component<KeyboardComponent>();
+			if (ImGui::MenuItem("Sequencer"))   add_component<SequencerComponent>();
+			if (ImGui::MenuItem("MIDI Player")) add_component<MIDIPlayerComponent>();
+			if (ImGui::MenuItem("Improviser"))  add_component<ImproviserComponent>();
+			if (ImGui::MenuItem("Arp"))         add_component<ArpComponent>();
 
 			ImGui::Separator();
 
