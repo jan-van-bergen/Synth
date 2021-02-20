@@ -1,6 +1,6 @@
 {
 	"Settings": {
-		"tempo": 130,
+		"tempo": 128,
 		"master_volume": 0.800000
 	},
 	"SpeakerComponent": {
@@ -39,7 +39,7 @@
 	"OscillatorComponent": {
 		"id": 3,
 		"pos_x": 284.000000,
-		"pos_y": 472.000000,
+		"pos_y": 495.000000,
 		"size_x": 155.000000,
 		"size_y": 341.000000,
 		"invert": 0,
@@ -52,7 +52,7 @@
 		"decay": 1.000000,
 		"sustain": 0.500000,
 		"release": 0.000000,
-		"waveform": 3
+		"waveform": 4
 	},
 	"PianoRollComponent": {
 		"id": 4,
@@ -69,7 +69,7 @@
 		"size_x": 155.000000,
 		"size_y": 341.000000,
 		"invert": 0,
-		"phase": 0.233000,
+		"phase": 0.686000,
 		"transpose": 0,
 		"detune": 16.278999,
 		"portamento": 0.300000,
@@ -108,8 +108,8 @@
 	},
 	"FilterComponent": {
 		"id": 11,
-		"pos_x": 555.000000,
-		"pos_y": 565.000000,
+		"pos_x": 542.000000,
+		"pos_y": 585.000000,
 		"size_x": 148.000000,
 		"size_y": 134.000000,
 		"cutoff": 322.364014,
@@ -118,8 +118,8 @@
 	},
 	"DistortionComponent": {
 		"id": 12,
-		"pos_x": 861.000000,
-		"pos_y": 618.000000,
+		"pos_x": 832.000000,
+		"pos_y": 643.000000,
 		"size_x": 127.000000,
 		"size_y": 100.000000,
 		"amount": 0.294000
@@ -136,8 +136,8 @@
 	},
 	"CompressorComponent": {
 		"id": 14,
-		"pos_x": 1074.000000,
-		"pos_y": 418.000000,
+		"pos_x": 1045.000000,
+		"pos_y": 414.000000,
 		"size_x": 148.000000,
 		"size_y": 180.000000,
 		"threshold": -17.561001,
@@ -159,7 +159,7 @@
 		"id": 16,
 		"pos_x": 667.000000,
 		"pos_y": 193.000000,
-		"size_x": 230.000000,
+		"size_x": 242.000000,
 		"size_y": 122.000000,
 		"filename": "midi/pattern_clap.mid"
 	},
@@ -168,7 +168,7 @@
 		"component_in": 0,
 		"offset_out": 0,
 		"offset_in": 0,
-		"weight": 0.200000
+		"weight": 0.400000
 	},
 	"Connection": {
 		"component_out": 8,
@@ -196,14 +196,14 @@
 		"component_in": 0,
 		"offset_out": 0,
 		"offset_in": 0,
-		"weight": 1.000000
+		"weight": 0.900000
 	},
 	"Connection": {
 		"component_out": 15,
 		"component_in": 0,
 		"offset_out": 0,
 		"offset_in": 0,
-		"weight": 1.000000
+		"weight": 0.800000
 	},
 	"Connection": {
 		"component_out": 1,

@@ -69,8 +69,8 @@ namespace util {
 		return N;
 	}
 
-	template<typename T, int N, typename Function>
-	inline constexpr std::array<T, N> generate_lookup_table(Function function) {
+	template<typename T, int N>
+	inline constexpr std::array<T, N> generate_lookup_table(T (*function)(int)) {
 		std::array<T, N> lut;
 
 		for (int i = 0; i < N; i++) lut[i] = function(i);

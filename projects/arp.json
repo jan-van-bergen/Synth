@@ -5,10 +5,10 @@
 	},
 	"SpeakerComponent": {
 		"id": 0,
-		"pos_x": 1372.000000,
-		"pos_y": 348.000000,
-		"size_x": 100.000000,
-		"size_y": 100.000000
+		"pos_x": 1231.000000,
+		"pos_y": 394.000000,
+		"size_x": 109.000000,
+		"size_y": 132.000000
 	},
 	"PianoRollComponent": {
 		"id": 2,
@@ -26,7 +26,7 @@
 		"size_y": 341.000000,
 		"invert": 0,
 		"phase": 0.000000,
-		"transpose": 0,
+		"transpose": -12,
 		"detune": 0.000000,
 		"portamento": 0.050000,
 		"attack": 0.000000,
@@ -38,8 +38,8 @@
 	},
 	"SamplerComponent": {
 		"id": 5,
-		"pos_x": 706.000000,
-		"pos_y": 578.000000,
+		"pos_x": 672.000000,
+		"pos_y": 590.000000,
 		"size_x": 171.000000,
 		"size_y": 114.000000,
 		"base_note": 36,
@@ -59,7 +59,7 @@
 		"pos_y": 34.000000,
 		"size_x": 177.000000,
 		"size_y": 211.000000,
-		"steps": 1.000000
+		"steps": 3.000000
 	},
 	"SamplerComponent": {
 		"id": 8,
@@ -76,7 +76,7 @@
 		"pos_y": 709.000000,
 		"size_x": 392.000000,
 		"size_y": 116.000000,
-		"pattern": [ 0.000000, 0.660000, 1.000000, 0.520000, 0.000000, 0.560000, 1.000000, 0.640000, 0.000000, 0.640000, 1.000000, 0.600000, 0.000000, 0.660000, 1.000000, 0.480000 ]
+		"pattern": [ 0.000000, 0.660000, 1.000000, 0.520000, 0.180000, 0.560000, 1.000000, 0.640000, 0.000000, 0.640000, 1.000000, 0.600000, 0.280000, 0.660000, 1.000000, 0.480000 ]
 	},
 	"OscillatorComponent": {
 		"id": 10,
@@ -98,8 +98,8 @@
 	},
 	"DistortionComponent": {
 		"id": 12,
-		"pos_x": 959.000000,
-		"pos_y": 556.000000,
+		"pos_x": 952.000000,
+		"pos_y": 582.000000,
 		"size_x": 127.000000,
 		"size_y": 100.000000,
 		"amount": 0.529000
@@ -122,12 +122,19 @@
 		"release": 0.000000,
 		"waveform": 1
 	},
+	"DecibelComponent": {
+		"id": 14,
+		"pos_x": 1396.000000,
+		"pos_y": 87.000000,
+		"size_x": 135.000000,
+		"size_y": 218.000000
+	},
 	"Connection": {
 		"component_out": 4,
 		"component_in": 0,
 		"offset_out": 0,
 		"offset_in": 0,
-		"weight": 0.300000
+		"weight": 0.400000
 	},
 	"Connection": {
 		"component_out": 8,
@@ -155,7 +162,7 @@
 		"component_in": 0,
 		"offset_out": 0,
 		"offset_in": 0,
-		"weight": 0.100000
+		"weight": 0.200000
 	},
 	"Connection": {
 		"component_out": 7,
@@ -202,6 +209,13 @@
 	"Connection": {
 		"component_out": 2,
 		"component_in": 13,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 0,
+		"component_in": 14,
 		"offset_out": 0,
 		"offset_in": 0,
 		"weight": 1.000000

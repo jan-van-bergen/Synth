@@ -1,10 +1,14 @@
 #include "connector.h"
 
+#include "util.h"
+
 Sample ConnectorIn::get_sample(int i) const {
 	Sample sample = 0.0f;
 
-	for (auto const & [other, weight] : others) sample += weight * reinterpret_cast<Sample *>(other->data)[i];
-	
+	for (auto const & [other, weight] : others) {
+		sample += weight * weight * reinterpret_cast<Sample *>(other->data)[i];
+	}
+
 	return sample;
 }
 

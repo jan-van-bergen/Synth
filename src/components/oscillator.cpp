@@ -145,9 +145,9 @@ void OscillatorComponent::update(Synth const & synth) {
 
 void OscillatorComponent::render(Synth const & synth) {
 	if (ImGui::BeginCombo("Waveform", waveform_names[waveform_index])) {
-		for (int j = 0; j < util::array_element_count(waveform_names); j++) {
-			if (ImGui::Selectable(waveform_names[j], waveform_index == j)) {
-				waveform_index = j;
+		for (int i = 0; i < util::array_element_count(waveform_names); i++) {
+			if (ImGui::Selectable(waveform_names[i], waveform_index == i)) {
+				waveform_index = i;
 			}
 		}
 

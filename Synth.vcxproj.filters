@@ -103,6 +103,9 @@
     <ClCompile Include="src\components\arp.cpp">
       <Filter>components</Filter>
     </ClCompile>
+    <ClCompile Include="src\components\improviser.cpp">
+      <Filter>components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\json.h">

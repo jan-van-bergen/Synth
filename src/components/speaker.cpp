@@ -29,13 +29,20 @@ struct WAVHeader {
 };
 
 void SpeakerComponent::update(Synth const & synth) {
-	if (!recording) return;
+	auto start_offset = recorded_samples.size();
 
-	auto start = recorded_samples.size();
-	recorded_samples.resize(start + BLOCK_SIZE);
+	if (recording) {
+		recorded_samples.resize(start_offset + BLOCK_SIZE);
+	}
 
 	for (int i = 0; i < BLOCK_SIZE; i++) {
-		recorded_samples[start + i] = inputs[0].get_sample(i);
+		auto sample = inputs[0].get_sample(i);
+
+		if (recording) {
+			recorded_samples[start_offset + i] = sample;
+		}
+
+		outputs[0].set_sample(i, sample);
 	}
 }
 

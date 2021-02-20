@@ -1,0 +1,93 @@
+{
+	"Settings": {
+		"tempo": 130,
+		"master_volume": 0.800000
+	},
+	"SpeakerComponent": {
+		"id": 0,
+		"pos_x": 1372.000000,
+		"pos_y": 348.000000,
+		"size_x": 118.000000,
+		"size_y": 128.000000
+	},
+	"ImproviserComponent": {
+		"id": 3,
+		"pos_x": 60.000000,
+		"pos_y": 60.000000,
+		"size_x": 156.000000,
+		"size_y": 124.000000,
+		"tonality": 9,
+		"num_notes": 3,
+		"mode": 1
+	},
+	"SamplerComponent": {
+		"id": 4,
+		"pos_x": 554.000000,
+		"pos_y": 181.000000,
+		"size_x": 246.000000,
+		"size_y": 111.000000,
+		"base_note": 36,
+		"filename": "samples/piano.wav"
+	},
+	"OscillatorComponent": {
+		"id": 5,
+		"pos_x": 607.000000,
+		"pos_y": 357.000000,
+		"size_x": 155.000000,
+		"size_y": 341.000000,
+		"invert": 0,
+		"phase": 0.000000,
+		"transpose": 0,
+		"detune": 0.000000,
+		"portamento": 0.100000,
+		"attack": 0.010000,
+		"hold": 0.100000,
+		"decay": 1.000000,
+		"sustain": 0.314000,
+		"release": 1.116000,
+		"waveform": 2
+	},
+	"ArpComponent": {
+		"id": 6,
+		"pos_x": 264.000000,
+		"pos_y": 271.000000,
+		"size_x": 135.000000,
+		"size_y": 172.000000,
+		"steps": 1.000000
+	},
+	"Connection": {
+		"component_out": 4,
+		"component_in": 0,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 5,
+		"component_in": 0,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 0.500000
+	},
+	"Connection": {
+		"component_out": 3,
+		"component_in": 4,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 6,
+		"component_in": 5,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 3,
+		"component_in": 6,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	}
+}

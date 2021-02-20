@@ -116,6 +116,28 @@ private:
 	std::vector<Note> notes;
 };
 
+struct ImproviserComponent : Component {
+	Parameter<int> tonality = { this, "tonality", "Tonality", 0, std::make_pair(0, 11) };
+
+	static constexpr char const * mode_names[] = { "Major", "Minor" };
+	enum struct Mode { MAJOR, MINOR } mode = Mode::MAJOR;
+
+	Parameter<int> num_notes = { this, "num_notes", "Num Notes", 3, std::make_pair(1, 5) };
+
+	ImproviserComponent(int id) : Component(id, "Improviser", { }, { { this, "MIDI Out", true } }) { }
+
+	void update(struct Synth const & synth) override;
+	void render(struct Synth const & synth) override;
+	
+	void   serialize_custom(json::Writer & writer) const override;
+	void deserialize_custom(json::Object const & object) override;
+
+private:
+	std::vector<int> chord;
+	int current_chord = 0;
+	int current_time  = 0;
+};
+
 struct ArpComponent : Component {
 	static constexpr char const * mode_names[] = { "Up", "Down", "Up/Down", "Random" };
 
@@ -366,7 +388,7 @@ struct SpeakerComponent : Component {
 	std::vector<Sample> recorded_samples;
 	bool                recording = false;
 
-	SpeakerComponent(int id) : Component(id, "Speaker", { { this, "Input" } }, { }) { }
+	SpeakerComponent(int id) : Component(id, "Speaker", { { this, "Input" } }, { { this, "Pass" } }) { }
 	
 	void update(struct Synth const & synth) override;
 	void render(struct Synth const & synth) override;
@@ -402,6 +424,14 @@ struct DecibelComponent : Component {
 	
 	void update(struct Synth const & synth) override;
 	void render(struct Synth const & synth) override;
+
+private:
+	static constexpr auto HISTORY_LENGTH_IN_SECONDS = 1.5f;
+	static constexpr auto HISTORY_LENGTH            = int(HISTORY_LENGTH_IN_SECONDS * SAMPLE_RATE / BLOCK_SIZE);
+	std::vector<float> history;
+	int                history_index = 0;
+
+	float previous_height_factor = 0.0f;
 };
 
 
@@ -422,6 +452,7 @@ using AllComponents = ComponentTypeList<
 	FilterComponent,
 	FlangerComponent,
 	PhaserComponent,
+	ImproviserComponent,
 	KeyboardComponent,
 	OscillatorComponent,
 	OscilloscopeComponent,
