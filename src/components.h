@@ -135,7 +135,7 @@ struct ImproviserComponent : Component {
 private:
 	std::vector<int> chord;
 	int current_chord = 0;
-	int current_time  = 0;
+	int current_time  = std::numeric_limits<int>::max();
 };
 
 struct ArpComponent : Component {

@@ -580,7 +580,7 @@ void Synth::open_file(char const * filename) {
 
 				auto id = obj_id->value;
 
-				Component * component = try_add_component<AllComponents>(*this, obj->name, id);
+				auto component = try_add_component<AllComponents>(*this, obj->name, id);
 
 				if (!component) {
 					printf("WARNING: Unsupported Component '%s'!\n", obj->name.c_str());
