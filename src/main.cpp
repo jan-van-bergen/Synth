@@ -11,6 +11,7 @@
 #include <ImGui/imgui.h>
 #include <ImGui/imgui_impl_sdl.h>
 #include <ImGui/imgui_impl_opengl3.h>
+#include <ImGui/implot.h>
 
 #include "util.h"
 #include "ring_buffer.h"
@@ -61,6 +62,7 @@ int main(int argc, char * argv[]) {
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
+	ImPlot::CreateContext();
 
 	// Setup Platform/Renderer bindings
 	ImGui_ImplSDL2_InitForOpenGL(window, context);
@@ -164,6 +166,7 @@ int main(int argc, char * argv[]) {
 	ImGui_ImplSDL2_Shutdown();
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui::DestroyContext();
+	ImPlot::DestroyContext();
 
 	SDL_CloseAudioDevice(device);
 	SDL_GL_DeleteContext(context);

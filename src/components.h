@@ -400,7 +400,7 @@ struct SpectrumComponent : Component {
 
 	static_assert(util::is_power_of_two(N)); // Required for FFT
 
-	float spectrum[N] = { };
+	float magnitudes[N / 2] = { };
 
 	SpectrumComponent(int id) : Component(id, "Spectrum", { { this, "Input" } }, { }) { }
 	

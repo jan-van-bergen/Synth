@@ -106,6 +106,15 @@
     <ClCompile Include="src\components\midi_player.cpp">
       <Filter>components</Filter>
     </ClCompile>
+    <ClCompile Include="include\ImGui\implot_demo.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="include\ImGui\implot_items.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="include\ImGui\implot.cpp">
+      <Filter>ImGui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\json.h">

@@ -3,6 +3,8 @@
 #include <complex>
 #include <array>
 
+#include <ImGui/implot.h>
+
 #include "scope_timer.h"
 
 static float hamming_window(int i) {
@@ -66,28 +68,42 @@ void SpectrumComponent::update(Synth const& synth) {
 		c.left  =  std::sqrt(0.5f + 0.5f * c.left);
 	}
 
-	// Calculate magnitude of fourier coefficients
-	float magnitudes[N] = { };
-
-	for (int i = 0; i < N; i++) {
-		magnitudes[i] = std::sqrt((fourier[i].left * fourier[i].left + fourier[i].right * fourier[i].right) / N);
-	}
-
-	// Plot Spectrum
-	float t = 0.0f;
-	for (int i = 0; i < N; i++) {
-		auto f = util::log_interpolate(1.0f, 0.5f * float(N), t);
-
-		auto magnitude = util::sample_linear(magnitudes, N, f);
-
-		// Use Exponential Moving Average to temporally smooth out the Spectrum
-		spectrum[i] = util::lerp(spectrum[i], magnitude, 0.2f);
-
-		t += 1.0f / N;
+	for (int i = 0; i < N / 2; i++) {
+		auto magnitude = std::sqrt(fourier[i].left * fourier[i].left + fourier[i].right * fourier[i].right) / N;
+		magnitudes[i] = util::lerp(magnitudes[i], magnitude, 0.1f);
 	}
 }
 
 void SpectrumComponent::render(Synth const & synth) {
-	auto avail = ImGui::GetContentRegionAvail();
-	ImGui::PlotLines("", spectrum, N, 0, nullptr, 0.0f, 1.0f, ImVec2(avail.x, avail.y - ImGui::GetTextLineHeightWithSpacing()));
+	static constexpr auto FREQ_BIN_SIZE = SAMPLE_RATE / float(N);
+
+	static constexpr double ticks_x[] = {
+		20.0,   30.0,   40.0,   60.0,   80.0,   100.0,
+		200.0,  300.0,  400.0,  600.0,  800.0,  1000.0,
+		2000.0, 3000.0, 4000.0, 6000.0, 8000.0, 10000.0,
+		20000.0
+	};
+	static constexpr char const * tick_labels[] = {
+		"20",  "30",  "40",  "60",  "80",  "100",	
+		"200", "300", "400", "600", "800", "1000",	
+		"2K",  "3K",  "4K",  "6K",  "8K",  "10K",
+		"20K"
+	};
+	
+	ImPlot::SetNextPlotLimits(FREQ_BIN_SIZE, SAMPLE_RATE / 2, -78.0f, -18.0f, ImGuiCond_Always);
+	ImPlot::SetNextPlotTicksX(ticks_x, util::array_element_count(ticks_x), tick_labels);
+
+	ImPlot::BeginPlot("Spectrum", "Frequency (Hz)", "Magnitude (dB)", ImVec2(-1.0f, 0.0f), 0, ImPlotAxisFlags_LogScale);
+	ImPlot::PushStyleVar(ImPlotStyleVar_FillAlpha, 0.25f);
+
+	// Convert magnitude to dB
+	// Do this once for both plots, instead of using a getter
+	float spectrum[N / 2] = { };
+	for (int i = 0; i < N / 2; i++) spectrum[i] = util::linear_to_db(magnitudes[i]);
+	
+	ImPlot::PlotShaded("", spectrum, N / 2, -INFINITY, FREQ_BIN_SIZE, FREQ_BIN_SIZE);
+	ImPlot::PlotLine  ("", spectrum, N / 2,            FREQ_BIN_SIZE, FREQ_BIN_SIZE);
+
+	ImPlot::PopStyleVar();
+	ImPlot::EndPlot();
 }
