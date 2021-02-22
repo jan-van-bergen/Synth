@@ -208,7 +208,9 @@ private:
 };
 
 struct SamplerComponent : Component {
-	static constexpr char const * DEFAULT_FILENAME = "samples/kick.wav";
+	static constexpr auto DEFAULT_FILENAME = "samples/kick.wav";
+
+	static constexpr auto VISUAL_NUM_SAMPLES = 512;
 
 	std::vector<Sample> samples;
 	
@@ -218,8 +220,10 @@ struct SamplerComponent : Component {
 
 	SamplerComponent(int id) : Component(id, "Sampler", { { this, "MIDI In", true } }, { { this, "Out" } }) {
 		strcpy_s(filename, DEFAULT_FILENAME);
-		samples = util::load_wav(filename);
+		load();
 	}
+
+	void load();
 	
 	void update(struct Synth const & synth) override;
 	void render(struct Synth const & synth) override;
@@ -235,6 +239,11 @@ private:
 		float velocity = 1.0f;
 	};
 	std::vector<Voice> voices;
+
+	struct {
+		std::vector<float> samples;
+		float max_y;
+	} visual;
 };
 
 struct SplitComponent : Component {

@@ -22,8 +22,8 @@
 		"id": 2,
 		"pos_x": 674.000000,
 		"pos_y": 211.000000,
-		"size_x": 242.000000,
-		"size_y": 111.000000,
+		"size_x": 261.000000,
+		"size_y": 142.000000,
 		"base_note": 60,
 		"filename": "samples/piano.wav"
 	},

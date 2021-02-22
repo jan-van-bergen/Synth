@@ -7,8 +7,8 @@
 		"id": 0,
 		"pos_x": 1372.000000,
 		"pos_y": 348.000000,
-		"size_x": 100.000000,
-		"size_y": 100.000000
+		"size_x": 115.000000,
+		"size_y": 123.000000
 	},
 	"MIDIPlayerComponent": {
 		"id": 1,
@@ -66,8 +66,8 @@
 		"id": 8,
 		"pos_x": 533.000000,
 		"pos_y": 527.000000,
-		"size_x": 207.000000,
-		"size_y": 111.000000,
+		"size_x": 233.000000,
+		"size_y": 161.000000,
 		"base_note": 36,
 		"filename": "samples/guitar.wav"
 	},

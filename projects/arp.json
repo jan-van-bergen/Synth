@@ -39,9 +39,9 @@
 	"SamplerComponent": {
 		"id": 5,
 		"pos_x": 672.000000,
-		"pos_y": 590.000000,
-		"size_x": 171.000000,
-		"size_y": 114.000000,
+		"pos_y": 555.000000,
+		"size_x": 268.000000,
+		"size_y": 147.000000,
 		"base_note": 36,
 		"filename": "samples/kick.wav"
 	},
@@ -66,7 +66,7 @@
 		"pos_x": 763.000000,
 		"pos_y": 726.000000,
 		"size_x": 255.000000,
-		"size_y": 111.000000,
+		"size_y": 136.000000,
 		"base_note": 31,
 		"filename": "samples/909_hat.wav"
 	},

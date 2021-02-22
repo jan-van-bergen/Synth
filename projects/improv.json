@@ -23,9 +23,9 @@
 	"SamplerComponent": {
 		"id": 4,
 		"pos_x": 554.000000,
-		"pos_y": 181.000000,
+		"pos_y": 154.000000,
 		"size_x": 246.000000,
-		"size_y": 111.000000,
+		"size_y": 138.000000,
 		"base_note": 36,
 		"filename": "samples/piano.wav"
 	},

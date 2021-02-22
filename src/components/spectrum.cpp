@@ -90,10 +90,16 @@ void SpectrumComponent::render(Synth const & synth) {
 		"20K"
 	};
 	
+	auto avail = ImGui::GetContentRegionAvail();
+	auto space = ImVec2(avail.x, std::max(
+		ImGui::GetTextLineHeightWithSpacing(),
+		avail.y - (inputs.size() + outputs.size()) * ImGui::GetTextLineHeightWithSpacing()
+	));
+
 	ImPlot::SetNextPlotLimits(FREQ_BIN_SIZE, SAMPLE_RATE / 2, -78.0f, -18.0f, ImGuiCond_Always);
 	ImPlot::SetNextPlotTicksX(ticks_x, util::array_element_count(ticks_x), tick_labels);
 
-	ImPlot::BeginPlot("Spectrum", "Frequency (Hz)", "Magnitude (dB)", ImVec2(-1.0f, 0.0f), 0, ImPlotAxisFlags_LogScale);
+	ImPlot::BeginPlot("Spectrum", "Frequency (Hz)", "Magnitude (dB)", space, ImPlotFlags_CanvasOnly, ImPlotAxisFlags_LogScale);
 	ImPlot::PushStyleVar(ImPlotStyleVar_FillAlpha, 0.25f);
 
 	// Convert magnitude to dB

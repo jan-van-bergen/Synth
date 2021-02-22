@@ -94,6 +94,22 @@ namespace util {
 	}
 	
 	int round(float f);
+	
+	template<typename T, int SAMPLE_COUNT = 32>
+	inline float sample_box(float x, float scale, T (* func)(float)) {
+		constexpr float SAMPLE_COUNT_INV = 1.0f / float(SAMPLE_COUNT);
+
+		float sample = 0.5f;
+		float sum    = 0.0f;
+
+		for (int i = 0; i < SAMPLE_COUNT; i++, sample += 1.0f) {
+			float p = (x + sample * SAMPLE_COUNT_INV) * scale;
+
+			sum += func(p);
+		}
+
+		return sum * SAMPLE_COUNT_INV;
+	}
 
 	template<typename T>
 	inline T sample_linear(T array[], int length, float x, bool wrap = true) {
@@ -134,6 +150,22 @@ namespace util {
 
 		assert(begin == end);
 		return begin;
+	}
+
+	inline float sinc(float x) {
+		if (fabsf(x) < 0.0001f) {
+			return 1.0f + x*x*(-1.0f/6.0f + x*x*1.0f/120.0f);
+		} else {
+			return sinf(x) / x;
+		}
+	}
+
+	inline float lanczos(float x, float width = 3.0f) {
+		if (fabsf(x) < width) {
+			return sinc(PI * x) * sinc(PI * x / width);
+		} else {
+			return 0.0f;
+		}
 	}
 
 	template<typename T>
