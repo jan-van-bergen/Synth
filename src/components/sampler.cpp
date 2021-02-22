@@ -16,21 +16,6 @@ void SamplerComponent::load() {
 
 	visual.samples.resize(VISUAL_NUM_SAMPLES);
 
-#if 0
-	// Copy samples
-	for (int j = 0; j < num_samples; j++) samples[j] = 0.5f * (samples[j].left + samples[j].right);
-
-	// Keep downsampling by a factor of 2 (box filter) until the sample is small enough
-	while (num_samples > VISUAL_NUM_SAMPLES) {
-		for (int j = 0; j < num_samples; j += 2) {
-			samples[j / 2] = 0.5f * (samples[j] + samples[j + 1]);
-		}
-
-		num_samples /= 2;
-	}
-
-	samples.resize(num_samples);
-#else
 	static constexpr auto FILTER_WIDTH = 3.0f;
 
 	auto scale = float(samples.size()) / float(VISUAL_NUM_SAMPLES);
@@ -72,7 +57,6 @@ void SamplerComponent::load() {
 	for (int i = 0; i < visual.samples.size(); i++) {
 		visual.max_y = std::max(visual.max_y, std::abs(visual.samples[i]));
 	}
-#endif
 }
 
 void SamplerComponent::update(Synth const & synth) {
@@ -129,14 +113,6 @@ void SamplerComponent::render(Synth const & synth) {
 		avail.y - (inputs.size() + outputs.size()) * ImGui::GetTextLineHeightWithSpacing()
 	));
 
-#if 0
-	auto getter = [](void * data, int index) -> float {
-		auto const & sample = reinterpret_cast<Sample const *>(data)[index];
-		return 0.5f * (sample.left + sample.right);
-	};
-
-	ImGui::PlotLines("Sample", getter, samples.data(), samples.size(), 0, nullptr, FLT_MAX, FLT_MAX, space);
-#else
 	ImPlot::SetNextPlotLimits(0.0, visual.samples.size(), -visual.max_y, visual.max_y, ImGuiCond_Always);
 	
 	ImPlot::PushStyleVar(ImPlotStyleVar_PlotPadding, ImVec2(0.0f, 0.0f));
@@ -149,7 +125,6 @@ void SamplerComponent::render(Synth const & synth) {
 
 	ImPlot::PopStyleVar();
 	ImPlot::PopStyleVar();
-#endif
 }
 
 void SamplerComponent::serialize_custom(json::Writer & writer) const {
