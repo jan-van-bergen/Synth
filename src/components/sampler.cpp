@@ -49,6 +49,44 @@ void SamplerComponent::render(Synth const & synth) {
 	if (ImGui::Button("Load")) samples = util::load_wav(filename);
 
 	base_note.render(util::note_name);
+	
+	auto getter = [](void * data, int index) -> float {
+		auto const & sample = reinterpret_cast<Sample const *>(data)[index];
+		return 0.5f * (sample.left + sample.right);
+	};
+
+	auto avail = ImGui::GetContentRegionAvail();
+	auto space = ImVec2(avail.x, std::max(
+		ImGui::GetTextLineHeightWithSpacing(), 
+		avail.y - 2.0f * ImGui::GetTextLineHeightWithSpacing()
+	));
+	
+	ImGui::PlotLines("Sample", getter, samples.data(), samples.size(), 0, nullptr, FLT_MAX, FLT_MAX, space);
+
+	/*
+	auto avail = ImGui::GetContentRegionAvail();
+	auto space = ImVec2(avail.x, std::max(
+		ImGui::GetTextLineHeightWithSpacing(), 
+		avail.y - 2.0f * ImGui::GetTextLineHeightWithSpacing()
+	));
+	
+	auto num_samples = samples.size();
+	auto downsampled = std::make_unique<float[]>(num_samples);
+
+	for (int i = 0; i < num_samples; i++) {
+		downsampled[i] = samples[i].left;
+	}
+
+	while (num_samples > space.x) {
+		num_samples /= 2;
+
+		for (int i = 0; i < num_samples; i++) {
+			downsampled[i] = 0.5f * (downsampled[2*i] + downsampled[2*i + 1]);
+		}
+	}
+
+	ImGui::PlotLines("Sample", downsampled.get(), num_samples, 0, nullptr, FLT_MAX, FLT_MAX, space);
+	*/
 }
 
 void SamplerComponent::serialize_custom(json::Writer & writer) const {

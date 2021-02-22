@@ -1,0 +1,44 @@
+{
+	"Settings": {
+		"tempo": 130,
+		"master_volume": 1.000000
+	},
+	"SpeakerComponent": {
+		"id": 0,
+		"pos_x": 1372.000000,
+		"pos_y": 348.000000,
+		"size_x": 101.000000,
+		"size_y": 113.000000
+	},
+	"MIDIPlayerComponent": {
+		"id": 1,
+		"pos_x": 60.000000,
+		"pos_y": 60.000000,
+		"size_x": 501.000000,
+		"size_y": 122.000000,
+		"filename": "midi/chopin.mid"
+	},
+	"SamplerComponent": {
+		"id": 2,
+		"pos_x": 674.000000,
+		"pos_y": 211.000000,
+		"size_x": 242.000000,
+		"size_y": 111.000000,
+		"base_note": 60,
+		"filename": "samples/piano.wav"
+	},
+	"Connection": {
+		"component_out": 2,
+		"component_in": 0,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 1,
+		"component_in": 2,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	}
+}
