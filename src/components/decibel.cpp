@@ -14,9 +14,9 @@ void DecibelComponent::update(Synth const & synth) {
 	if (decibels < -60.0f) decibels = -INFINITY;
 
 	if (history.size() < HISTORY_LENGTH) {
-		history.push_back(decibels);
+		history.push_back(max_amplitude);
 	} else {
-		history[history_index] = decibels;
+		history[history_index] = max_amplitude;
 		history_index = util::wrap(history_index + 1, HISTORY_LENGTH);
 	}
 }
@@ -68,7 +68,7 @@ void DecibelComponent::render(Synth const & synth) {
 
 	auto avg = 0.0f;
 	auto min = +INFINITY;
-	auto max = -INFINITY;
+	auto max = 0.0f;
 
 	for (auto db : history) {
 		avg += db;
@@ -79,7 +79,7 @@ void DecibelComponent::render(Synth const & synth) {
 	avg /= float(history.size());
 
 	ImGui::Text("Cur: %.2f dB", decibels);
-	ImGui::Text("Avg: %.2f dB", avg);
-	ImGui::Text("Min: %.2f dB", min);
-	ImGui::Text("Max: %.2f dB", max);
+	ImGui::Text("Avg: %.2f dB", util::linear_to_db(avg));
+	ImGui::Text("Min: %.2f dB", util::linear_to_db(min));
+	ImGui::Text("Max: %.2f dB", util::linear_to_db(max));
 }

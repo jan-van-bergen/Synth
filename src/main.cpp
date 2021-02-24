@@ -34,7 +34,9 @@ static constexpr auto WINDOW_HEIGHT = 900;
 static void sdl_audio_callback(void * user_data, Uint8 * stream, int len) {
 	assert(len == BLOCK_SIZE * sizeof(Sample));
 
-	if (terminated) return;
+	while (!buffers.can_read()) {
+		if (terminated) return;
+	}
 
 	auto buf = buffers.get_read();
 	memcpy(stream, buf, len);

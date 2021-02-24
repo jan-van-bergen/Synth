@@ -37,17 +37,17 @@
 	},
 	"PhaserComponent": {
 		"id": 4,
-		"pos_x": 463.000000,
-		"pos_y": 23.000000,
+		"pos_x": 439.000000,
+		"pos_y": 25.000000,
 		"size_x": 155.000000,
 		"size_y": 226.000000,
-		"rate": 0.872000,
-		"min_depth": 205.427002,
-		"max_depth": 632.455994,
+		"rate": 5.000000,
+		"min_depth": 283.265015,
+		"max_depth": 5532.104004,
 		"phase": 0.070000,
-		"num_stages": 4,
-		"feedback": 0.256000,
-		"drywet": 0.500000
+		"num_stages": 3,
+		"feedback": 0.570000,
+		"drywet": 0.477000
 	},
 	"SpectrumComponent": {
 		"id": 5,

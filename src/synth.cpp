@@ -39,6 +39,36 @@ void Synth::render() {
 	render_components();
 	render_connections();
 	
+	// If a Component window was closed, do the bookkeeping required to remove it
+	if (component_to_be_removed) {
+		// Disconnect inputs
+		for (auto & input : component_to_be_removed->inputs) {
+			while (!input.others.empty()) {
+				auto & [other, weight] = input.others[0];
+				disconnect(*other, input);
+			}
+		}
+
+		// Disconnect outputs
+		for (auto & output : component_to_be_removed->outputs) {
+			while (!output.others.empty()) {
+				auto & other = output.others[0];
+				disconnect(output, *other);
+			}
+		}
+
+		// Remove from Speaker list, if it was in there
+		auto speaker = std::find(speakers.begin(), speakers.end(), component_to_be_removed);
+		if (speaker != speakers.end()) {
+			speakers.erase(speaker);
+		}
+
+		// Remove Component
+		components.erase(std::find_if(components.begin(), components.end(), [rem = component_to_be_removed](auto const & component) { return component.get() == rem; }));
+
+		reconstruct_update_graph();
+	}
+
 	if (file_dialog.render()) {
 		auto filename = file_dialog.selected_path.string();
 
@@ -183,6 +213,7 @@ void Synth::render_menu() {
 			if (ImGui::MenuItem("Distortion"))  add_component<DistortionComponent>();
 			if (ImGui::MenuItem("Bit Crusher")) add_component<BitCrusherComponent>();
 			if (ImGui::MenuItem("Compressor"))  add_component<CompressorComponent>();
+			if (ImGui::MenuItem("Vocoder"))     add_component<VocoderComponent>();
 			
 			ImGui::Separator();
 
@@ -204,7 +235,7 @@ void Synth::render_menu() {
 void Synth::render_components() {
 	char label[128] = { };
 
-	Component * component_to_be_removed = nullptr;
+	component_to_be_removed = nullptr;
 
 	// Draw Components
 	for (int i = 0; i < components.size(); i++) {
@@ -263,36 +294,6 @@ void Synth::render_components() {
 	}
 	
 	just_loaded = false;
-
-	// If a Component window was closed, do the bookkeeping required to remove it
-	if (component_to_be_removed) {
-		// Disconnect inputs
-		for (auto & input : component_to_be_removed->inputs) {
-			while (!input.others.empty()) {
-				auto & [other, weight] = input.others[0];
-				disconnect(*other, input);
-			}
-		}
-
-		// Disconnect outputs
-		for (auto & output : component_to_be_removed->outputs) {
-			while (!output.others.empty()) {
-				auto & other = output.others[0];
-				disconnect(output, *other);
-			}
-		}
-
-		// Remove from Speaker list, if it was in there
-		auto speaker = std::find(speakers.begin(), speakers.end(), component_to_be_removed);
-		if (speaker != speakers.end()) {
-			speakers.erase(speaker);
-		}
-
-		// Remove Component
-		components.erase(std::find_if(components.begin(), components.end(), [component_to_be_removed](auto const & component) { return component.get() == component_to_be_removed; }));
-
-		reconstruct_update_graph();
-	}
 }
 
 void Synth::render_connections() {

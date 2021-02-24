@@ -154,7 +154,11 @@ void OscillatorComponent::render(Synth const & synth) {
 		ImGui::EndCombo();
 	}
 
-	invert.render();
+	auto bool_to_str = [](int value, char * fmt, int len) -> void {
+		strcpy_s(fmt, len, value ? "True" : "False");
+	};
+
+	invert.render(bool_to_str);
 	phase .render();
 
 	transpose.render();
@@ -189,5 +193,5 @@ void OscillatorComponent::serialize_custom(json::Writer & writer) const {
 }
 
 void OscillatorComponent::deserialize_custom(json::Object const & object) {
-	waveform_index = object.find_int  ("waveform", 3);
+	waveform_index = object.find_int("waveform", 3);
 }

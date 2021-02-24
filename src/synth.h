@@ -94,6 +94,8 @@ private:
 
 	Connector * dragging = nullptr;
 	
+	Component * component_to_be_removed = nullptr;
+
 	void reconstruct_update_graph();
 
 	void render_menu();

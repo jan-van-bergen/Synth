@@ -1,0 +1,140 @@
+{
+	"Settings": {
+		"tempo": 130,
+		"master_volume": 1.000000
+	},
+	"SpeakerComponent": {
+		"id": 0,
+		"pos_x": 1426.000000,
+		"pos_y": 537.000000,
+		"size_x": 101.000000,
+		"size_y": 113.000000
+	},
+	"OscillatorComponent": {
+		"id": 2,
+		"pos_x": 489.000000,
+		"pos_y": 385.000000,
+		"size_x": 155.000000,
+		"size_y": 341.000000,
+		"invert": 0,
+		"phase": 0.000000,
+		"transpose": -5,
+		"detune": 0.000000,
+		"portamento": 0.000000,
+		"attack": 0.000000,
+		"hold": 0.500000,
+		"decay": 1.000000,
+		"sustain": 0.895000,
+		"release": 0.000000,
+		"waveform": 2
+	},
+	"SequencerComponent": {
+		"id": 3,
+		"pos_x": 33.000000,
+		"pos_y": 55.000000,
+		"size_x": 392.000000,
+		"size_y": 116.000000,
+		"pattern": [ 1.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000 ]
+	},
+	"SamplerComponent": {
+		"id": 4,
+		"pos_x": 493.000000,
+		"pos_y": 93.000000,
+		"size_x": 322.000000,
+		"size_y": 132.000000,
+		"base_note": 36,
+		"filename": "samples/dance.wav"
+	},
+	"VocoderComponent": {
+		"id": 5,
+		"pos_x": 755.000000,
+		"pos_y": 544.000000,
+		"size_x": 393.000000,
+		"size_y": 203.000000,
+		"num_bands": 51,
+		"width": 6.473000,
+		"decay": 0.129000,
+		"gain": 9.087000
+	},
+	"MIDIPlayerComponent": {
+		"id": 8,
+		"pos_x": 57.000000,
+		"pos_y": 275.000000,
+		"size_x": 343.000000,
+		"size_y": 122.000000,
+		"filename": "midi/carrier.mid"
+	},
+	"FilterComponent": {
+		"id": 9,
+		"pos_x": 1015.000000,
+		"pos_y": 61.000000,
+		"size_x": 148.000000,
+		"size_y": 134.000000,
+		"cutoff": 11090.024414,
+		"resonance": 0.500000,
+		"filter_type": 1
+	},
+	"DecibelComponent": {
+		"id": 10,
+		"pos_x": 1277.000000,
+		"pos_y": 641.000000,
+		"size_x": 135.000000,
+		"size_y": 218.000000
+	},
+	"Connection": {
+		"component_out": 9,
+		"component_in": 0,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 0.600000
+	},
+	"Connection": {
+		"component_out": 5,
+		"component_in": 0,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 8,
+		"component_in": 2,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 3,
+		"component_in": 4,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 4,
+		"component_in": 5,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 2,
+		"component_in": 5,
+		"offset_out": 0,
+		"offset_in": 1,
+		"weight": 0.600000
+	},
+	"Connection": {
+		"component_out": 4,
+		"component_in": 9,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 0,
+		"component_in": 10,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	}
+}

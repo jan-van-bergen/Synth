@@ -3,30 +3,22 @@
 #include "util.h"
 
 void FilterComponent::update(Synth const & synth) {
-	auto g = std::tan(PI * cutoff * SAMPLE_RATE_INV); // Gain
-	auto R = 1.0f - resonance;                        // Damping
-    
-	auto denom_inv = 1.0f / (1.0f + (2.0f * R * g) + g * g);
+	dsp::VAFilterMode mode;
+	switch (filter_type) {
+		case 0: mode = dsp::VAFilterMode::LOW_PASS;  break;
+		case 1: mode = dsp::VAFilterMode::HIGH_PASS; break;
+		case 2: mode = dsp::VAFilterMode::BAND_PASS; break;
+		case 3: mode = dsp::VAFilterMode::OFF;       break;
+
+		default: abort();
+	}
+
+	filter.set(mode, cutoff, resonance);
 
 	for (int i = 0; i < BLOCK_SIZE; i++) {
 		auto sample = inputs[0].get_sample(i);
-
-		auto high_pass = (sample - (2.0f * R + g) * state_1 - state_2) * denom_inv;
-		auto band_pass = high_pass * g + state_1;
-		auto  low_pass = band_pass * g + state_2;
-	
-		state_1 = g * high_pass + band_pass;
-		state_2 = g * band_pass + low_pass;
-
-		if (filter_type == 0) {
-			outputs[0].set_sample(i, low_pass);
-		} else if (filter_type == 1) {
-			outputs[0].set_sample(i, high_pass);
-		} else if (filter_type == 2) {
-			outputs[0].set_sample(i, band_pass);
-		} else {
-			outputs[0].set_sample(i, sample); // Unfiltered
-		}
+		sample = filter.process(sample);
+		outputs[0].set_sample(i, sample);
 	}
 }
 
@@ -50,5 +42,5 @@ void FilterComponent::serialize_custom(json::Writer & writer) const {
 }
 
 void FilterComponent::deserialize_custom(json::Object const & object) {
-	filter_type = object.find_int  ("filter_type", 0);
+	filter_type = object.find_int("filter_type", 0);
 }

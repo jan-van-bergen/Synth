@@ -10,6 +10,8 @@
 #include "sample.h"
 #include "midi.h"
 
+#include "dsp/filter.h"
+
 #include "parameter.h"
 #include "connector.h"
 
@@ -280,8 +282,7 @@ struct FilterComponent : Component {
 	void deserialize_custom(json::Object const & object) override;
 
 private:
-	Sample state_1;
-	Sample state_2;
+	dsp::VAFilter<Sample> filter;
 };
 
 struct DelayComponent : Component {
@@ -338,19 +339,8 @@ struct PhaserComponent : Component {
 	void render(struct Synth const & synth) override;
 	
 private:
-	struct AllPassFilter {
-		float a, b, c, d, e;
-
-		float x1, x2;
-		float y1, y2;
-
-		void set(float frequency, float Q);
-
-		float process(float sample);
-	};
-
-	AllPassFilter all_pass_left  = { };
-	AllPassFilter all_pass_right = { };
+	dsp::BiQuadFilter<float> all_pass_left  = { };
+	dsp::BiQuadFilter<float> all_pass_right = { };
 
 	Sample feedback_sample = { };
 
@@ -391,6 +381,34 @@ struct CompressorComponent : Component {
 
 private:
 	float env = 0.0f;
+};
+
+struct VocoderComponent : Component {
+	struct Band {
+		float freq = 1000.0f;
+
+		dsp::BiQuadFilter<Sample> filters_mod[2];
+		dsp::BiQuadFilter<Sample> filters_car[2];
+
+		float gain = 0.0f;
+	};
+	
+	std::vector<Band> bands;
+
+	Parameter<int> num_bands = { this, "num_bands", "Num Bands", 16, std::make_pair(1, 64) };
+
+	Parameter<float> width = { this, "width", "Q",     5.0f, std::make_pair(0.0f, 10.0f) };
+	Parameter<float> decay = { this, "decay", "Decay", 0.5f, std::make_pair(0.0f,  1.0f) };
+	Parameter<float> gain  = { this, "gain",  "Gain",  0.0f, std::make_pair(0.0f, 30.0f) };
+	
+	VocoderComponent(int id) : Component(id, "Vocoder", { { this, "Modulator" }, { this, "Carrier" } }, { { this, "Out" } }) {
+		calc_bands();
+	}
+
+	void calc_bands();
+
+	void update(struct Synth const & synth) override;
+	void render(struct Synth const & synth) override;
 };
 
 struct SpeakerComponent : Component {
@@ -471,5 +489,6 @@ using AllComponents = ComponentTypeList<
 	SequencerComponent,
 	SpeakerComponent,
 	SpectrumComponent,
-	SplitComponent
+	SplitComponent,
+	VocoderComponent
 >; // TypeList of all Components, used for deserialization. Synth::add_component<T> will only accept T that occur in this TypeList.

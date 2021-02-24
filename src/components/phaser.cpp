@@ -1,38 +1,5 @@
 #include "components.h"
 
-void PhaserComponent::AllPassFilter::set(float frequency, float Q) {
-	auto omega = TWO_PI * frequency * SAMPLE_RATE_INV;
-
-	auto sin_omega = std::sin(omega);
-	auto cos_omega = std::cos(omega);
-
-	auto alpha = sin_omega / (2.0f * Q);
-		
-	auto a0 = 1.0f + alpha;
-	auto a1 = 2.0f * cos_omega;
-	auto a2 = alpha - 1.0f;
-	auto b0 = 1.0f - alpha;
-	auto b1 = -2.0f * cos_omega;
-	auto b2 = 1.0f + alpha;
-
-	a = b0 / a0;
-	b = b1 / a0;
-	c = b2 / a0;
-	d = a1 / a0;
-	e = a2 / a0;
-}
-
-float PhaserComponent::AllPassFilter::process(float sample) {
-	auto result = a*sample + b*x1 + c*x2 + d*y1 + e*y2;
-
-	x2 = x1;
-	x1 = sample;
-	y2 = y1;
-	y1 = result;
-
-	return result;
-}
-
 void PhaserComponent::update(Synth const & synth) {
 	static constexpr auto Q_FACTOR = 0.49f;
 
@@ -48,8 +15,8 @@ void PhaserComponent::update(Synth const & synth) {
 		lfo_phase += rate * SAMPLE_RATE_INV;
 
 		// Set up All Pass Filter
-		all_pass_left .set(lfo_left,  Q_FACTOR);
-		all_pass_right.set(lfo_right, Q_FACTOR);
+		all_pass_left .set(dsp::BiQuadFilterMode::ALL_PASS, lfo_left,  Q_FACTOR);
+		all_pass_right.set(dsp::BiQuadFilterMode::ALL_PASS, lfo_right, Q_FACTOR);
 
 		// Apply feedback
 		auto sample = dry + feedback_sample * feedback;
@@ -59,7 +26,7 @@ void PhaserComponent::update(Synth const & synth) {
 			sample.left  = all_pass_left .process(sample.left);
 			sample.right = all_pass_right.process(sample.right);
 		}
-		
+
 		feedback_sample = sample;
 
 		outputs[0].set_sample(i, util::lerp(dry, sample, drywet));

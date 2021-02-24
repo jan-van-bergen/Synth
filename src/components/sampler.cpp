@@ -119,8 +119,17 @@ void SamplerComponent::render(Synth const & synth) {
 	ImPlot::PushStyleVar(ImPlotStyleVar_FillAlpha,   0.25f);
 
 	ImPlot::BeginPlot("Sample", nullptr, nullptr, space, ImPlotFlags_CanvasOnly, ImPlotAxisFlags_NoDecorations, ImPlotAxisFlags_NoDecorations);
+
 	ImPlot::PlotShaded("", visual.samples.data(), visual.samples.size());
 	ImPlot::PlotLine  ("", visual.samples.data(), visual.samples.size());
+
+	auto ratio = float(visual.samples.size()) / float(samples.size());
+
+	for (auto const & voice : voices) {
+		auto t = voice.current_sample * ratio;
+		ImPlot::PlotVLines("", &t, 1);
+	}
+
 	ImPlot::EndPlot();
 
 	ImPlot::PopStyleVar();
