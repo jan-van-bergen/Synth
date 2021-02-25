@@ -212,6 +212,7 @@ void Synth::render_menu() {
 			if (ImGui::MenuItem("Phaser"))      add_component<PhaserComponent>();
 			if (ImGui::MenuItem("Distortion"))  add_component<DistortionComponent>();
 			if (ImGui::MenuItem("Bit Crusher")) add_component<BitCrusherComponent>();
+			if (ImGui::MenuItem("Equalizer"))   add_component<EqualizerComponent>();
 			if (ImGui::MenuItem("Compressor"))  add_component<CompressorComponent>();
 			if (ImGui::MenuItem("Vocoder"))     add_component<VocoderComponent>();
 			

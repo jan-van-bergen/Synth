@@ -187,6 +187,7 @@
     <ClCompile Include="src\components\decibel.cpp" />
     <ClCompile Include="src\components\delay.cpp" />
     <ClCompile Include="src\components\distortion.cpp" />
+    <ClCompile Include="src\components\equalizer.cpp" />
     <ClCompile Include="src\components\filter.cpp" />
     <ClCompile Include="src\components\flanger.cpp" />
     <ClCompile Include="src\components\improviser.cpp" />

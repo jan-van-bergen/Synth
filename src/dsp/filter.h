@@ -61,7 +61,10 @@ namespace dsp {
 		BAND_PASS,
 		HIGH_PASS,
 		ALL_PASS,
-		PEAK
+		PEAK,
+		NOTCH,
+		LOW_SHELF,
+		HIGH_SHELF
 	};
 
 	// Based on: https://arachnoid.com/BiQuadDesigner/index.html
@@ -81,10 +84,11 @@ namespace dsp {
 			auto sin_omega = std::sin(omega);
 			auto cos_omega = std::cos(omega);
 
-			auto alpha = sin_omega / (2.0f * std::max(Q, 0.001f));
-			
 			auto gain = util::db_to_linear(0.5f * gain_db);
-
+			
+			auto alpha = sin_omega / (2.0f * std::max(Q, 0.001f));
+			auto beta  = std::sqrt(2.0f * gain);
+			
 			auto a0 = 1.0f;
 
 			switch (mode) {
@@ -131,6 +135,33 @@ namespace dsp {
 					a0 =  1.0f + (alpha / gain);
 					a1 = -2.0f * cos_omega;
 					a2 =  1.0f - (alpha / gain);
+					break;
+				}
+				case BiQuadFilterMode::NOTCH: {
+					b0 =  1.0f;
+					b1 = -2.0f * cos_omega;
+					b2 =  1.0f;
+					a0 =  1.0f + alpha;
+					a1 = -2.0f * cos_omega;
+					a2 =  1.0f - alpha;
+					break;
+				}
+				case BiQuadFilterMode::LOW_SHELF: {
+					b0 =         gain * ((gain + 1.0f) - (gain - 1.0f) * cos_omega + beta * sin_omega);
+					b1 =  2.0f * gain * ((gain - 1.0f) - (gain + 1.0f) * cos_omega);
+					b2 =         gain * ((gain + 1.0f) - (gain - 1.0f) * cos_omega - beta * sin_omega);
+					a0 =                 (gain + 1.0f) + (gain - 1.0f) * cos_omega + beta * sin_omega;
+					a1 = -2.0f        * ((gain - 1.0f) + (gain + 1.0f) * cos_omega);
+					a2 =                 (gain + 1.0f) + (gain - 1.0f) * cos_omega - beta * sin_omega;
+					break;
+				}
+				case BiQuadFilterMode::HIGH_SHELF: {
+					b0 =         gain * ((gain + 1.0f) + (gain - 1.0f) * cos_omega + beta * sin_omega);
+					b1 = -2.0f * gain * ((gain - 1.0f) + (gain + 1.0f) * cos_omega);
+					b2 =         gain * ((gain + 1.0f) + (gain - 1.0f) * cos_omega - beta * sin_omega);
+					a0 =                 (gain + 1.0f) - (gain - 1.0f) * cos_omega + beta * sin_omega;
+					a1 =  2.0f        * ((gain - 1.0f) - (gain + 1.0f) * cos_omega);
+					a2 =                 (gain + 1.0f) - (gain - 1.0f) * cos_omega - beta * sin_omega;
 					break;
 				}
 
