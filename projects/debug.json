@@ -5,8 +5,8 @@
 	},
 	"SpeakerComponent": {
 		"id": 0,
-		"pos_x": 1372.000000,
-		"pos_y": 348.000000,
+		"pos_x": 346.000000,
+		"pos_y": 576.000000,
 		"size_x": 101.000000,
 		"size_y": 113.000000
 	},
@@ -18,9 +18,9 @@
 		"size_y": 100.000000
 	},
 	"OscillatorComponent": {
-		"id": 3,
-		"pos_x": 202.000000,
-		"pos_y": 84.000000,
+		"id": 2,
+		"pos_x": 177.000000,
+		"pos_y": 69.000000,
 		"size_x": 155.000000,
 		"size_y": 341.000000,
 		"invert": 0,
@@ -35,22 +35,28 @@
 		"release": 0.000000,
 		"waveform": 2
 	},
-	"PhaserComponent": {
+	"FlangerComponent": {
+		"id": 3,
+		"pos_x": 420.000000,
+		"pos_y": 194.000000,
+		"size_x": 141.000000,
+		"size_y": 203.000000,
+		"delay": 0.261000,
+		"depth": 2.338000,
+		"rate": 0.519000,
+		"phase": 0.545000,
+		"feedback": 0.844000,
+		"drywet": 1.000000
+	},
+	"VectorscopeComponent": {
 		"id": 4,
-		"pos_x": 686.000000,
-		"pos_y": 235.000000,
-		"size_x": 155.000000,
-		"size_y": 226.000000,
-		"rate": 1.000000,
-		"min_depth": 500.000000,
-		"max_depth": 1000.000000,
-		"phase": 0.020000,
-		"num_stages": 10,
-		"feedback": 0.200000,
-		"drywet": 0.700000
+		"pos_x": 707.000000,
+		"pos_y": 94.000000,
+		"size_x": 721.000000,
+		"size_y": 670.000000
 	},
 	"Connection": {
-		"component_out": 4,
+		"component_out": 3,
 		"component_in": 0,
 		"offset_out": 0,
 		"offset_in": 0,
@@ -58,13 +64,20 @@
 	},
 	"Connection": {
 		"component_out": 1,
+		"component_in": 2,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 2,
 		"component_in": 3,
 		"offset_out": 0,
 		"offset_in": 0,
 		"weight": 1.000000
 	},
 	"Connection": {
-		"component_out": 3,
+		"component_out": 0,
 		"component_in": 4,
 		"offset_out": 0,
 		"offset_in": 0,

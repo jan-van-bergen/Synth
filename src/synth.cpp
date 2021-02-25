@@ -222,6 +222,7 @@ void Synth::render_menu() {
 			if (ImGui::MenuItem("Spectrum"))      add_component<SpectrumComponent>();
 			if (ImGui::MenuItem("Oscilloscope"))  add_component<OscilloscopeComponent>();
 			if (ImGui::MenuItem("Decibel Meter")) add_component<DecibelComponent>();
+			if (ImGui::MenuItem("Vectorscope"))   add_component<VectorscopeComponent>();
 			
 			ImGui::EndMenu();
 		}

@@ -500,7 +500,17 @@ private:
 	float previous_height_factor = 0.0f;
 };
 
+struct VectorscopeComponent : Component {
+	static constexpr auto NUM_SAMPLES = 2 * 1024;
 
+	Sample samples[NUM_SAMPLES] = { };
+	int    sample_offset = 0;
+
+	VectorscopeComponent(int id) : Component(id, "Vectorscope", { { this, "Input" } }, { }) { }
+
+	void update(struct Synth const & synth) override;
+	void render(struct Synth const & synth) override;
+};
 
 template<typename T>
 concept IsComponent = std::derived_from<T, Component>;
@@ -530,5 +540,6 @@ using AllComponents = ComponentTypeList<
 	SpeakerComponent,
 	SpectrumComponent,
 	SplitComponent,
+	VectorscopeComponent,
 	VocoderComponent
 >; // TypeList of all Components, used for deserialization. Synth::add_component<T> will only accept T that occur in this TypeList.

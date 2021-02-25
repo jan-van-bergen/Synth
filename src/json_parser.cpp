@@ -29,7 +29,7 @@ void skip_space(char const *& cur, char const * end) {
 
 template<typename T>
 static T parse_num(char const *& cur, char const * end) {
-	T result;
+	T result = { };
 	auto [p, e] = std::from_chars(cur, end, result);
 
 	cur = p;
