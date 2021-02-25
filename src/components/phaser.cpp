@@ -36,11 +36,11 @@ void PhaserComponent::update(Synth const & synth) {
 void PhaserComponent::render(Synth const & synth) {
 	static constexpr auto EPSILON = 0.0001f;
 
-	rate.render();
-	if (min_depth.render() && max_depth < min_depth) max_depth = min_depth + EPSILON; 
-	if (max_depth.render() && min_depth > max_depth) min_depth = max_depth - EPSILON;
-	phase     .render();
-	num_stages.render();
-	feedback  .render();
+	rate.render(); ImGui::SameLine();
+	if (min_depth.render() && max_depth < min_depth) max_depth = min_depth + EPSILON; ImGui::SameLine();
+	if (max_depth.render() && min_depth > max_depth) min_depth = max_depth - EPSILON; ImGui::SameLine();
+	phase     .render(); 
+	num_stages.render(); ImGui::SameLine();
+	feedback  .render(); ImGui::SameLine();
 	drywet    .render();
 }

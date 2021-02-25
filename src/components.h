@@ -119,12 +119,12 @@ private:
 };
 
 struct ImproviserComponent : Component {
-	Parameter<int> tonality = { this, "tonality", "Tonality", 0, std::make_pair(0, 11) };
+	Parameter<int> tonality = { this, "tonality", "Ton", "Tonality", 0, std::make_pair(0, 11) };
 
 	static constexpr char const * mode_names[] = { "Major", "Minor" };
 	enum struct Mode { MAJOR, MINOR } mode = Mode::MAJOR;
 
-	Parameter<int> num_notes = { this, "num_notes", "Num Notes", 3, std::make_pair(1, 5) };
+	Parameter<int> num_notes = { this, "num_notes", "Num", "Number of notes in chord", 3, std::make_pair(1, 5) };
 
 	ImproviserComponent(int id) : Component(id, "Improviser", { }, { { this, "MIDI Out", true } }) { }
 
@@ -145,7 +145,7 @@ struct ArpComponent : Component {
 
 	enum struct Mode { UP, DOWN, UPDOWN, RANDOM } mode = Mode::UP;
 
-	Parameter<float> steps = { this, "steps", "Steps", 1.0f, std::make_pair(0.25f, 16.0f), { 0.25f, 0.5f, 1.0f, 2.0f, 3.0f, 4.0f, 8.0f, 16.0f } };
+	Parameter<float> steps = { this, "steps", "Stp", "Length in Steps", 1.0f, std::make_pair(0.25f, 16.0f), { 0.25f, 0.5f, 1.0f, 2.0f, 3.0f, 4.0f, 8.0f, 16.0f } };
 
 	ArpComponent(int id) : Component(id, "Arp", { { this, "MIDI In", true } }, { { this, "MIDI Out", true } }) { }
 	
@@ -166,8 +166,8 @@ struct OscillatorComponent : Component {
 
 	int waveform_index = 2;
 	
-	Parameter<int>   invert = { this, "invert", "Invert", 0, std::make_pair(0, 1), { } };
-	Parameter<float> phase  = { this, "phase",  "Phase",  0, std::make_pair(0.0f, 1.0f), { 0.0f, 0.25f, 0.5f, 0.75f, 1.0f } };
+	Parameter<int>   invert = { this, "invert", "Inv", "Invert Waveform", 0, std::make_pair(0, 1), { } };
+	Parameter<float> phase  = { this, "phase",  "Phs", "Phase Offset",    0, std::make_pair(0.0f, 1.0f), { 0.0f, 0.25f, 0.5f, 0.75f, 1.0f } };
 
 	struct Voice {
 		int   note;
@@ -185,17 +185,17 @@ struct OscillatorComponent : Component {
 
 	std::vector<Voice> voices;
 
-	Parameter<int>   transpose = { this, "transpose", "Transpose", 0, std::make_pair(-24, 24), { -24, -12, 0, 12, 24 } };
-	Parameter<float> detune    = { this, "detune",    "Detune", 0.0f, std::make_pair(-100.0f, 100.0f), { 0.0f } };
+	Parameter<int>   transpose = { this, "transpose", "Tps", "Transpose (notes)", 0, std::make_pair(-24, 24), { -24, -12, 0, 12, 24 } };
+	Parameter<float> detune    = { this, "detune",    "Dtn", "Detune (cents)", 0.0f, std::make_pair(-100.0f, 100.0f), { 0.0f } };
 
-	Parameter<float> portamento = { this, "portamento", "Portamento",  0.0f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } };
+	Parameter<float> portamento = { this, "portamento", "Por",  "Portamento", 0.0f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } };
 
 	// Envelope
-	Parameter<float> attack  = { this, "attack",  "Attack",  0.1f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } };
-	Parameter<float> hold	 = { this, "hold",    "Hold",    0.5f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } };
-	Parameter<float> decay 	 = { this, "decay",   "Decay",   1.0f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } };
-	Parameter<float> sustain = { this, "sustain", "Sustain", 0.5f, std::make_pair(0.0f, 1.0f) };
-	Parameter<float> release = { this, "release", "Release", 0.0f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } };
+	Parameter<float> attack  = { this, "attack",  "Att",  "Attack",  0.1f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } };
+	Parameter<float> hold	 = { this, "hold",    "Hold", "Hold",    0.5f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } };
+	Parameter<float> decay 	 = { this, "decay",   "Dec",  "Decay",   1.0f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } };
+	Parameter<float> sustain = { this, "sustain", "Sus",  "Sustain", 0.5f, std::make_pair(0.0f, 1.0f) };
+	Parameter<float> release = { this, "release", "Rel",  "Release", 0.0f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } };
 
 	OscillatorComponent(int id) : Component(id, "Oscillator", { { this, "MIDI In", true } }, { { this, "Out" } }) { }
 
@@ -218,7 +218,7 @@ struct SamplerComponent : Component {
 	
 	char filename[128];
 
-	Parameter<int> base_note = { this, "base_note", "Base Note", 36, std::make_pair(0, 127), { 0, 12, 24, 36, 48, 60, 72, 84, 96, 108, 120 } };
+	Parameter<int> base_note = { this, "base_note", "Note", "Base Note", 36, std::make_pair(0, 127), { 0, 12, 24, 36, 48, 60, 72, 84, 96, 108, 120 } };
 
 	SamplerComponent(int id) : Component(id, "Sampler", { { this, "MIDI In", true } }, { { this, "Out" } }) {
 		strcpy_s(filename, DEFAULT_FILENAME);
@@ -249,7 +249,7 @@ private:
 };
 
 struct SplitComponent : Component {
-	Parameter<float> mix = { this, "mix", "Mix A/B", 0.5f, std::make_pair(0.0f, 1.0f), { 0.0f, 0.5f, 1.0f } };
+	Parameter<float> mix = { this, "mix", "A/B", "Mix A/B", 0.5f, std::make_pair(0.0f, 1.0f), { 0.0f, 0.5f, 1.0f } };
 
 	SplitComponent(int id) : Component(id, "Split", { { this, "In" } }, { { this, "Out A" }, { this, "Out B" } }) { }
 	
@@ -258,7 +258,7 @@ struct SplitComponent : Component {
 };
 
 struct PanComponent : Component {
-	Parameter<float> pan = { this, "pan", "Pan", 0.0f, std::make_pair(-1.0f, 1.0f), { -1.0f, -0.5f, 0.0f, 0.5f, 1.0f } };
+	Parameter<float> pan = { this, "pan", "Pan", "Pan", 0.0f, std::make_pair(-1.0f, 1.0f), { -1.0f, -0.5f, 0.0f, 0.5f, 1.0f } };
 
 	PanComponent(int id) : Component(id, "Pan", { { this, "In" } }, { { this, "Out" } }) { }
 	
@@ -270,8 +270,8 @@ struct FilterComponent : Component {
 	static constexpr char const * filter_names[] = { "Low Pass", "High Pass", "Band Pass", "None" };
 	int filter_type = 0;
 
-	Parameter<float> cutoff    = { this, "cutoff",    "Cutoff",    1000.0f, std::make_pair(20.0f, 20000.0f), { 50, 100, 200, 400, 800, 1600, 3200, 6400, 12800, 19200 }, Param::Curve::LOGARITHMIC };
-	Parameter<float> resonance = { this, "resonance", "Resonance",    0.5f, std::make_pair(0.0f, 1.0f) };
+	Parameter<float> cutoff    = { this, "cutoff",    "Freq", "Cutoff Frequency", 1000.0f, std::make_pair(20.0f, 20000.0f), { 50, 100, 200, 400, 800, 1600, 3200, 6400, 12800, 19200 }, Param::Curve::LOGARITHMIC };
+	Parameter<float> resonance = { this, "resonance", "Res",  "Resonance",           0.5f, std::make_pair(0.0f, 1.0f) };
 
 	FilterComponent(int id) : Component(id, "Filter", { { this, "In" } }, { { this, "Out" } }) { }
 	
@@ -286,8 +286,8 @@ private:
 };
 
 struct DelayComponent : Component {
-	Parameter<int>   steps    = { this, "steps",    "Steps", 3, std::make_pair(1, 8) };
-	Parameter<float> feedback = { this, "feedback", "Feedback", 0.7f, std::make_pair(0.0f, 1.0f) };
+	Parameter<int>   steps    = { this, "steps",    "Del", "Delay in Steps",  3,    std::make_pair(1, 8) };
+	Parameter<float> feedback = { this, "feedback", "FB",  "Feedback Amount", 0.7f, std::make_pair(0.0f, 1.0f) };
 
 	std::vector<Sample> history;
 	int offset = 0;
@@ -301,12 +301,12 @@ struct DelayComponent : Component {
 };
 
 struct FlangerComponent : Component {
-	Parameter<float> delay    = { this, "delay",    "Delay",    0.5f,  std::make_pair(0.001f, 10.0f) };
-	Parameter<float> depth    = { this, "depth",    "Depth",    0.5f,  std::make_pair(0.001f, 10.0f) };
-	Parameter<float> rate     = { this, "rate",     "Rate",     1.0f,  std::make_pair(0.0f,    5.0f) };
-	Parameter<float> phase    = { this, "phase",    "Phase",    0.02f, std::make_pair(0.0f,    1.0f), { 0.0f, 0.25f, 0.5f, 0.75f, 1.0f } };
-	Parameter<float> feedback = { this, "feedback", "Feedback", 0.2f,  std::make_pair(0.0f,    1.0f) };
-	Parameter<float> drywet   = { this, "drywet",   "Dry/Wet",  0.7f,  std::make_pair(0.0f,    1.0f) };
+	Parameter<float> delay    = { this, "delay",    "Del",  "Delay",                               0.5f,  std::make_pair(0.001f, 10.0f) };
+	Parameter<float> depth    = { this, "depth",    "Dep",  "Depth",                               0.5f,  std::make_pair(0.001f, 10.0f) };
+	Parameter<float> rate     = { this, "rate",     "Rate", "LFO Frequency",                       1.0f,  std::make_pair(0.0f,    5.0f) };
+	Parameter<float> phase    = { this, "phase",    "Phs",  "Phase Offset between Left and Right", 0.02f, std::make_pair(0.0f,    1.0f), { 0.0f, 0.25f, 0.5f, 0.75f, 1.0f } };
+	Parameter<float> feedback = { this, "feedback", "FB",   "Feedback Amount",                     0.2f,  std::make_pair(0.0f,    1.0f) };
+	Parameter<float> drywet   = { this, "drywet",   "D/W",  "Dry/Wet Ratio",                       0.7f,  std::make_pair(0.0f,    1.0f) };
 
 	FlangerComponent(int id) : Component(id, "Flanger", { { this, "In" } }, { { this, "Out" } }) { }
 	
@@ -325,13 +325,13 @@ private:
 };
 
 struct PhaserComponent : Component {
-	Parameter<float> rate       = { this, "rate",       "Rate",          1.0f,  std::make_pair(0.0f, 5.0f) };
-	Parameter<float> min_depth  = { this, "min_depth",  "Min Depth",   500.0f,  std::make_pair(20.0f, 20000.0f), { }, Param::Curve::LOGARITHMIC };
-	Parameter<float> max_depth  = { this, "max_depth",  "Max Depth",  1000.0f,  std::make_pair(20.0f, 20000.0f), { }, Param::Curve::LOGARITHMIC };
-	Parameter<float> phase      = { this, "phase",      "Phase",         0.02f, std::make_pair(0.0f, 1.0f) };
-	Parameter<int>   num_stages = { this, "num_stages", "Num Stages",    10,    std::make_pair(0, 32) };
-	Parameter<float> feedback   = { this, "feedback",   "Feedback",      0.2f,  std::make_pair(0.0f, 0.9999f) };
-	Parameter<float> drywet     = { this, "drywet",     "Dry/Wet",       0.7f,  std::make_pair(0.0f, 1.0f) };
+	Parameter<float> rate       = { this, "rate",       "Rate", "LFO Frequency",                       1.0f,  std::make_pair(0.0f, 5.0f) };
+	Parameter<float> min_depth  = { this, "min_depth",  "Min",  "Minimum Depth",                     500.0f,  std::make_pair(20.0f, 20000.0f), { }, Param::Curve::LOGARITHMIC };
+	Parameter<float> max_depth  = { this, "max_depth",  "Max",  "Maximum Depth",                    1000.0f,  std::make_pair(20.0f, 20000.0f), { }, Param::Curve::LOGARITHMIC };
+	Parameter<float> phase      = { this, "phase",      "Phs",  "Phase Offset bewteen Left and Right", 0.02f, std::make_pair(0.0f, 1.0f) };
+	Parameter<int>   num_stages = { this, "num_stages", "Num",  "Number of Stages",                    10,    std::make_pair(0, 32) };
+	Parameter<float> feedback   = { this, "feedback",   "FB",   "Feedback Amount",                     0.2f,  std::make_pair(0.0f, 0.9999f) };
+	Parameter<float> drywet     = { this, "drywet",     "D/W",  "Dry/Wet Ratio",                       0.7f,  std::make_pair(0.0f, 1.0f) };
 
 	PhaserComponent(int id) : Component(id, "Phaser", { { this, "In" } }, { { this, "out" } }) { }
 	
@@ -348,7 +348,7 @@ private:
 };
 
 struct DistortionComponent : Component {
-	Parameter<float> amount = { this, "amount", "Amount", 0.5f, std::make_pair(0.0f, 1.0f) };
+	Parameter<float> amount = { this, "amount", "Amt", "Amount", 0.5f, std::make_pair(0.0f, 1.0f) };
 
 	DistortionComponent(int id) : Component(id, "Distortion", { { this, "In" } }, { { this, "Out" } }) { }
 
@@ -357,9 +357,9 @@ struct DistortionComponent : Component {
 };
 
 struct BitCrusherComponent : Component {
-	Parameter<float> gain = { this, "gain", "Gain",             1.0f, std::make_pair(1.0f, 8.0f) };
-	Parameter<int>   bits = { this, "bits", "Bits",             32,   std::make_pair(1, 32) };
-	Parameter<int>   rate = { this, "rate", "Sample Reduction",  1,   std::make_pair(1, 128) };
+	Parameter<float> gain = { this, "gain", "Gain", "Gain (dB)",             0.0f, std::make_pair(0.0f, 9.0f) };
+	Parameter<int>   bits = { this, "bits", "Bits", "Bits",                  32,   std::make_pair(1, 32) };
+	Parameter<int>   rate = { this, "rate", "Rate", "Sample Rate Reduction",  1,   std::make_pair(1, 128) };
 
 	BitCrusherComponent(int id) : Component(id, "Bit Crusher", { { this, "In" } }, { { this, "Out" } }) { }
 
@@ -405,11 +405,11 @@ struct EqualizerComponent : Component {
 };
 
 struct CompressorComponent : Component {
-	Parameter<float> threshold = { this, "threshold", "Threshold", 0.0f, std::make_pair(-60.0f,   0.0f) };
-	Parameter<float> ratio     = { this, "ratio",     "Ratio",     1.0f, std::make_pair(  1.0f,  30.0f) };
-	Parameter<float> gain      = { this, "gain",      "Gain",      0.0f, std::make_pair(-30.0f,  30.0f) };
-	Parameter<float> attack    = { this, "Attack",    "Attack",   15.0f, std::make_pair(  0.0f, 400.0f) };
-	Parameter<float> release   = { this, "Release",   "Release", 200.0f, std::make_pair(  0.0f, 400.0f) };
+	Parameter<float> threshold = { this, "threshold", "Thrs", "Threshold (dB)", 0.0f, std::make_pair(-60.0f,   0.0f) };
+	Parameter<float> ratio     = { this, "ratio",     "Rat",  "Ratio",          1.0f, std::make_pair(  1.0f,  30.0f) };
+	Parameter<float> gain      = { this, "gain",      "Gain", "Gain (dB)",      0.0f, std::make_pair(-30.0f,  30.0f) };
+	Parameter<float> attack    = { this, "Attack",    "Att",  "Attack",        15.0f, std::make_pair(  0.0f, 400.0f) };
+	Parameter<float> release   = { this, "Release",   "Rel",  "Release",      200.0f, std::make_pair(  0.0f, 400.0f) };
 
 	CompressorComponent(int id) : Component(id, "Compressor", { { this, "In" } }, { { this, "Out" } }) { }
 
@@ -432,11 +432,11 @@ struct VocoderComponent : Component {
 	
 	std::vector<Band> bands;
 
-	Parameter<int> num_bands = { this, "num_bands", "Num Bands", 16, std::make_pair(1, 64) };
+	Parameter<int> num_bands = { this, "num_bands", "Bands", "Number of Bands", 16, std::make_pair(1, 64) };
 
-	Parameter<float> width = { this, "width", "Q",     5.0f, std::make_pair(0.0f, 10.0f) };
-	Parameter<float> decay = { this, "decay", "Decay", 0.5f, std::make_pair(0.0f,  1.0f) };
-	Parameter<float> gain  = { this, "gain",  "Gain",  0.0f, std::make_pair(0.0f, 30.0f) };
+	Parameter<float> width = { this, "width", "Q",         "Width", 5.0f, std::make_pair(0.0f, 10.0f) };
+	Parameter<float> decay = { this, "decay", "Dec",       "Decay", 0.5f, std::make_pair(0.0f,  1.0f) };
+	Parameter<float> gain  = { this, "gain",  "Gain (dB)", "Gain",  0.0f, std::make_pair(0.0f, 30.0f) };
 	
 	VocoderComponent(int id) : Component(id, "Vocoder", { { this, "Modulator" }, { this, "Carrier" } }, { { this, "Out" } }) {
 		calc_bands();
@@ -461,10 +461,7 @@ struct SpeakerComponent : Component {
 };
 
 struct SpectrumComponent : Component {
-	static constexpr auto      N = 4 * 1024;
-	static constexpr auto log2_N = util::log2(N);
-
-	static_assert(util::is_power_of_two(N)); // Required for FFT
+	static constexpr auto N = 4 * 1024;
 
 	float magnitudes[N / 2] = { };
 
@@ -494,6 +491,7 @@ struct DecibelComponent : Component {
 private:
 	static constexpr auto HISTORY_LENGTH_IN_SECONDS = 1.5f;
 	static constexpr auto HISTORY_LENGTH            = int(HISTORY_LENGTH_IN_SECONDS * SAMPLE_RATE / BLOCK_SIZE);
+
 	std::vector<float> history;
 	int                history_index = 0;
 

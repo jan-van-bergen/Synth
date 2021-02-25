@@ -53,7 +53,10 @@ void SpeakerComponent::render(Synth const & synth) {
 	
 	if (recording) {
 		ImGui::SameLine();
-		ImGui::Text("Recording...");
+		ImGui::TextUnformatted("Recording...");
+	} else if (recorded_samples.size() > 0) {
+		ImGui::SameLine();
+		ImGui::Text("%is", util::round(recorded_samples.size() * SAMPLE_RATE_INV));
 	}
 
 	if (ImGui::Button("Save")) {

@@ -209,6 +209,7 @@
     <ClCompile Include="src\json.cpp" />
     <ClCompile Include="src\json_parser.cpp" />
     <ClCompile Include="src\json_writer.cpp" />
+    <ClCompile Include="src\knob.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\midi.cpp" />
     <ClCompile Include="src\parameter.cpp" />
@@ -218,9 +219,11 @@
   <ItemGroup>
     <ClInclude Include="src\components.h" />
     <ClInclude Include="src\connector.h" />
+    <ClInclude Include="src\dsp\fft.h" />
     <ClInclude Include="src\dsp\filter.h" />
     <ClInclude Include="src\file_dialog.h" />
     <ClInclude Include="src\json.h" />
+    <ClInclude Include="src\knob.h" />
     <ClInclude Include="src\meta.h" />
     <ClInclude Include="src\midi.h" />
     <ClInclude Include="src\note_event.h" />

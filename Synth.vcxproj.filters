@@ -124,6 +124,9 @@
     <ClCompile Include="src\components\vectorscope.cpp">
       <Filter>components</Filter>
     </ClCompile>
+    <ClCompile Include="src\knob.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\json.h">
@@ -163,6 +166,12 @@
     </ClInclude>
     <ClInclude Include="src\dsp\filter.h">
       <Filter>dsp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\dsp\fft.h">
+      <Filter>dsp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\knob.h">
+      <Filter>util</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

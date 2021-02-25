@@ -5,6 +5,8 @@
 
 #include <ImGui/imgui.h>
 
+#include "knob.h"
+
 void Synth::update(Sample buf[BLOCK_SIZE]) {
 	for (auto component = update_list_begin; component < update_list_end; component++) {
 		for (auto & output : (*component)->outputs) {
@@ -256,7 +258,7 @@ void Synth::render_components() {
 			}
 		}
 
-		ImGui::SetNextWindowSizeConstraints(ImVec2(100, 100), ImVec2(INFINITY, INFINITY));
+		ImGui::SetNextWindowSizeConstraints(ImVec2(64, 64), ImVec2(INFINITY, INFINITY));
 
 		if (ImGui::Begin(label, &open, ImGuiWindowFlags_NoSavedSettings)) {
 			component->render(*this);
@@ -356,7 +358,7 @@ void Synth::render_connections() {
 	auto idx = 0;
 	
 	auto const CONNECTION_COLOUR_SELECTED = ImColor(255, 100, 100);
-	auto const CONNECTION_COLOUR_MIDI     = ImColor(100, 200, 100);
+	auto const CONNECTION_COLOUR_MIDI     = ImColor(100, 150, 100);
 	auto const CONNECTION_COLOUR_AUDIO    = ImColor(200, 200, 100);
 
 	// Draw Hermite Splite between Connectors
@@ -388,24 +390,31 @@ void Synth::render_connections() {
 			spline_start.y + 0.5f * (spline_end.y - spline_start.y)
 		);
 
-		auto going_left = spline_end.x > spline_start.x;
-		auto going_down = spline_end.y > spline_start.y;
+		auto const size_window = ImVec2(44, 44);
+		auto const size_knob   = 32.0f;
 
-		if (!(going_left ^ going_down)) pos.y -= 32.0f; // Move out of the way of the spline
-
+		ImGui::SetNextWindowPos(ImVec2(pos.x - 0.5f * size_window.x, pos.y - 0.5f * size_window.y));
+		ImGui::SetNextWindowSize(size_window);
+		
 		sprintf_s(label, "Connection##%i", idx++);
 		
-		ImGui::SetNextWindowPos(pos);
-		ImGui::SetNextWindowSize(ImVec2(64, 16));
-		
+		auto formatter = [](float value, char * fmt, int len) {
+			strcpy_s(fmt, len, "%.1f");
+		};
+
 		ImGui::Begin(label, nullptr,
 			ImGuiWindowFlags_NoTitleBar |
 			ImGuiWindowFlags_NoMove |
 			ImGuiWindowFlags_NoResize |
 			ImGuiWindowFlags_NoSavedSettings |
-			ImGuiWindowFlags_NoScrollbar
+			ImGuiWindowFlags_NoScrollbar |
+			ImGuiWindowFlags_NoBackground
 		);
-		ImGui::SliderFloat("", connection.weight, 0.0f, 1.0f, "%.1f");
+		ImGui::SetCursorPos(ImVec2(
+			0.5f * (size_window.x - size_knob),
+			0.5f * (size_window.y - size_knob)
+		));
+		ImGui::Knob(label, "", "", connection.weight, 0.0f, 1.0f, false, formatter, size_knob);
 		ImGui::End();
 	}
 	

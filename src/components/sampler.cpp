@@ -106,6 +106,7 @@ void SamplerComponent::render(Synth const & synth) {
 	if (ImGui::Button("Load")) load();
 
 	base_note.render(util::note_name);
+	ImGui::SameLine();
 	
 	auto avail = ImGui::GetContentRegionAvail();
 	auto space = ImVec2(avail.x, std::max(

@@ -26,10 +26,10 @@ void CompressorComponent::update(Synth const & synth) {
 }
 
 void CompressorComponent::render(Synth const & synth) {
-	threshold.render();
-	ratio    .render();
+	threshold.render(); ImGui::SameLine();
+	ratio    .render(); ImGui::SameLine();
 	gain     .render();
 
-	attack .render();
+	attack .render(); ImGui::SameLine();
 	release.render();
 }

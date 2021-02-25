@@ -27,6 +27,6 @@ void DelayComponent::update(Synth const & synth) {
 }
 
 void DelayComponent::render(Synth const & synth) {
-	steps   .render();
+	steps   .render(); ImGui::SameLine();
 	feedback.render();
 }

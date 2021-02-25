@@ -8,6 +8,8 @@
 
 #include "util.h"
 
+#include "knob.h"
+
 #include "json.h"
 
 struct Component;
@@ -34,12 +36,13 @@ struct Param {
 
 template<typename T>
 struct Parameter : Param {
-	inline static constexpr auto is_float = std::is_same<T, float>();
-	inline static constexpr auto is_int   = std::is_same<T, int>();
+	inline static constexpr auto IS_FLOAT = std::is_same<T, float>();
+	inline static constexpr auto IS_INT   = std::is_same<T, int>();
 
-	static_assert(is_float || is_int);
+	static_assert(IS_FLOAT || IS_INT);
 
-	std::string name;
+	std::string name_short;
+	std::string name_full;
 
 	T parameter;
 	T default_value;
@@ -48,9 +51,10 @@ struct Parameter : Param {
 
 	std::vector<T> options; // Options available in context menu
 
-	Parameter(Component * component, char const * serialization_name, std::string display_name, T default_value, std::pair<T, T> bounds, std::vector<T> && options = { }, Curve curve = Curve::LINEAR) : 
+	Parameter(Component * component, char const * serialization_name, std::string name_short, std::string name_full, T default_value, std::pair<T, T> bounds, std::vector<T> && options = { }, Curve curve = Curve::LINEAR) : 
 		Param(component, serialization_name),
-		name(display_name), 
+		name_short(name_short), 
+		name_full(name_full), 
 		parameter(default_value), 
 		default_value(default_value),
 		bounds(bounds), 
@@ -76,17 +80,17 @@ struct Parameter : Param {
 	}
 
 	void deserialize(json::Object const & object) {
-		if constexpr (is_float) {
+		if constexpr (IS_FLOAT) {
 			parameter = object.find_float(serialization_name, default_value);
 		} else {
 			parameter = object.find_int(serialization_name, default_value);
 		}
 	}
 
-	using Formatter = void (*)(T value, char * fmt, int len);
-
-	bool render(Formatter formatter = nullptr) {
+	bool render(util::Formatter<T> formatter = nullptr) {
 		auto [lower, upper] = bounds;
+
+		auto log_scale = curve == Param::Curve::LOGARITHMIC;
 
 		char fmt[128] = { };
 		if (formatter) {
@@ -95,38 +99,26 @@ struct Parameter : Param {
 
 		bool value_changed;
 
-		float scroll_speed;
-
 		// Render slider
-		if constexpr (is_float) {
-			if (!formatter) strcpy_s(fmt, "%.3f");
+		if constexpr (IS_FLOAT) {
+			value_changed = ImGui::Knob(serialization_name, name_short.c_str(), name_full.c_str(), &parameter, lower, upper, log_scale, formatter);
 
-			value_changed = ImGui::SliderFloat(name.c_str(), &parameter, lower, upper, fmt, curve == Param::Curve::LINEAR ? 0 : ImGuiSliderFlags_Logarithmic);
+			if (!formatter) strcpy_s(fmt, "%.2f");
+		} else if constexpr (IS_INT) {
+			value_changed = ImGui::Knob(serialization_name, name_short.c_str(), name_full.c_str(), &parameter, lower, upper, log_scale, formatter);
 
-			scroll_speed =  (upper - lower) * (ImGui::IsKeyDown(SDL_SCANCODE_LCTRL) ? 0.001f : 0.05f); // Allow for fine scrolling using CONTROL key
-		} else if constexpr (is_int) {
 			if (!formatter) strcpy_s(fmt, "%i");
-
-			value_changed = ImGui::SliderInt(name.c_str(), &parameter, lower, upper, fmt, curve == Param::Curve::LINEAR ? 0 : ImGuiSliderFlags_Logarithmic);
-
-			scroll_speed = 1.0f;
 		} else {
 			abort();
-		}
-
-		if (ImGui::IsItemHovered()) {
-			parameter = util::clamp<T>(parameter + ImGui::GetIO().MouseWheel * scroll_speed, lower, upper);
-
-			value_changed |= ImGui::GetIO().MouseWheel != 0.0f;
 		}
 
 		// Render default options context menu
 		if (ImGui::BeginPopupContextItem()) {
 			char label[128] = { };
-
+			
 			auto should_close_popup = false;
 
-			for (auto const & option : options) {			
+			for (auto const & option : options) {	
 				if (formatter) {
 					formatter(option, fmt, sizeof(fmt));
 				}

@@ -33,10 +33,10 @@ void FlangerComponent::update(Synth const & synth) {
 }
 
 void FlangerComponent::render(Synth const & synth) {
-	delay   .render();
-	depth   .render();
+	delay   .render(); ImGui::SameLine();
+	depth   .render(); ImGui::SameLine();
 	rate    .render();
-	phase   .render();
-	feedback.render();
+	phase   .render(); ImGui::SameLine();
+	feedback.render(); ImGui::SameLine();
 	drywet  .render();
 }

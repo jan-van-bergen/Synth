@@ -16,6 +16,9 @@ inline constexpr auto TWO_PI = 6.28318530718f;
 
 namespace util {
 	template<typename T>
+	using Formatter = void (*)(T value, char * fmt, int len);
+
+	template<typename T>
 	inline constexpr T round_up(T value, T target) {
 		auto remainder = value % target;
 

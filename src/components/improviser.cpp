@@ -70,7 +70,8 @@ void ImproviserComponent::update(Synth const & synth) {
 }
 
 void ImproviserComponent::render(Synth const & synth) {
-	tonality.render();
+	tonality.render(); ImGui::SameLine();
+	num_notes.render();
 
 	auto mode_index = int(mode);
 
@@ -85,8 +86,6 @@ void ImproviserComponent::render(Synth const & synth) {
 	}
 
 	mode = Mode(mode_index);
-
-	num_notes.render();
 }
 
 void ImproviserComponent::serialize_custom(json::Writer & writer) const {

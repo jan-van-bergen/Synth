@@ -33,7 +33,7 @@ void FilterComponent::render(Synth const & synth) {
 		ImGui::EndCombo();
 	}
 
-	cutoff   .render();
+	cutoff   .render(); ImGui::SameLine();
 	resonance.render();
 }
 

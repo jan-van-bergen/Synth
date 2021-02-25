@@ -66,7 +66,7 @@ bool FileDialog::render() {
 		ImGui::SetNextItemWidth(avail.x);
 		ImGui::InputText("", selected, sizeof(selected));
 
-		if (ImGui::Button(saving ? "Save" : "Open")) confirmed = true;
+		if (ImGui::Button(saving ? "Save" : "Open") || ImGui::IsKeyPressed(SDL_SCANCODE_RETURN)) confirmed = true;
 
 		ImGui::SameLine();
 		if (ImGui::Button("Cancel")) ImGui::CloseCurrentPopup();
@@ -89,7 +89,7 @@ bool FileDialog::render() {
 			if (ImGui::BeginPopupModal("Overwrite")) {
 				ImGui::Text("File '%s' already exists. Do you want to overwrite?", selected);
 
-				if (ImGui::Button("Yes")) {
+				if (ImGui::Button("Yes") || ImGui::IsKeyPressed(SDL_SCANCODE_RETURN)) {
 					ImGui::CloseCurrentPopup();
 					confirmed = true;
 				}

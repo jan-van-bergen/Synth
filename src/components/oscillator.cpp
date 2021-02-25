@@ -144,6 +144,8 @@ void OscillatorComponent::update(Synth const & synth) {
 }
 
 void OscillatorComponent::render(Synth const & synth) {
+	ImGui::PushItemWidth(-64.0f);
+
 	if (ImGui::BeginCombo("Waveform", waveform_names[waveform_index])) {
 		for (int i = 0; i < util::array_element_count(waveform_names); i++) {
 			if (ImGui::Selectable(waveform_names[i], waveform_index == i)) {
@@ -158,34 +160,20 @@ void OscillatorComponent::render(Synth const & synth) {
 		strcpy_s(fmt, len, value ? "True" : "False");
 	};
 
-	invert.render(bool_to_str);
-	phase .render();
+	invert.render(bool_to_str); ImGui::SameLine();
+	phase .render();            ImGui::SameLine();
 
-	transpose.render();
-	detune   .render();
-
+	transpose .render(); ImGui::SameLine();
+	detune    .render(); ImGui::SameLine();
 	portamento.render();
 
-	float a = attack;
-	float h = hold;
-	float d = decay;
-	float s = sustain;
-
-	static constexpr auto NUM_VALUES = 100;
-
-	float plot_values[NUM_VALUES] = { };
-
-	for (int i = 0; i < NUM_VALUES; i++) {
-		plot_values[i] = envelope(16.0f * float(i) / NUM_VALUES, attack, hold, decay, sustain);
-	}
-
-	ImGui::PlotLines("Envelope", plot_values, NUM_VALUES, 0, nullptr, 0.0f, 1.0f);
-	
-	attack .render();
-	hold   .render();
-	decay  .render();
-	sustain.render();
+	attack .render(); ImGui::SameLine();
+	hold   .render(); ImGui::SameLine();
+	decay  .render(); ImGui::SameLine();
+	sustain.render(); ImGui::SameLine();
 	release.render();
+
+	ImGui::PopItemWidth();
 }
 
 void OscillatorComponent::serialize_custom(json::Writer & writer) const {

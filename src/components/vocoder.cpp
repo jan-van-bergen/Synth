@@ -47,15 +47,11 @@ void VocoderComponent::update(Synth const & synth) {
 
 			auto mod_gain = std::max(std::abs(mod.left), std::abs(mod.right));
 
-#if 1
 			if (band.gain < mod_gain) {
 				band.gain = mod_gain; // Gain increases instantaneously
 			} else {
 				band.gain = util::lerp(band.gain, mod_gain, decay_factor); // Gain decreases slowly (low passed)
 			}
-#else
-			band.gain = util::lerp(band.gain, mod_gain, decay_factor);
-#endif
 
 			sample += band.gain * car;
 		}
@@ -68,9 +64,10 @@ void VocoderComponent::render(Synth const & synth) {
 	if (num_bands.render()) {
 		calc_bands();
 	}
+	ImGui::SameLine();
 
 	width.render();
-	decay.render();
+	decay.render(); ImGui::SameLine();
 	gain .render();
 }
 
