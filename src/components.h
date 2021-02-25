@@ -424,8 +424,8 @@ struct VocoderComponent : Component {
 	struct Band {
 		float freq = 1000.0f;
 
-		dsp::BiQuadFilter<Sample> filters_mod[2];
-		dsp::BiQuadFilter<Sample> filters_car[2];
+		dsp::BiQuadFilter<Sample> filter_mod;
+		dsp::BiQuadFilter<Sample> filter_car;
 
 		float gain = 0.0f;
 	};
@@ -446,6 +446,8 @@ struct VocoderComponent : Component {
 
 	void update(struct Synth const & synth) override;
 	void render(struct Synth const & synth) override;
+
+	void deserialize_custom(json::Object const & object) override;
 };
 
 struct SpeakerComponent : Component {

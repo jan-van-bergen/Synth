@@ -103,7 +103,7 @@ struct Parameter : Param {
 
 			value_changed = ImGui::SliderFloat(name.c_str(), &parameter, lower, upper, fmt, curve == Param::Curve::LINEAR ? 0 : ImGuiSliderFlags_Logarithmic);
 
-			scroll_speed = ImGui::IsKeyDown(SDL_SCANCODE_LCTRL) ? 0.01f : 0.1f; // Allow for fine scrolling using CONTROL key
+			scroll_speed =  (upper - lower) * (ImGui::IsKeyDown(SDL_SCANCODE_LCTRL) ? 0.001f : 0.05f); // Allow for fine scrolling using CONTROL key
 		} else if constexpr (is_int) {
 			if (!formatter) strcpy_s(fmt, "%i");
 

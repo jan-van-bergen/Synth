@@ -65,17 +65,17 @@ void EqualizerComponent::render(Synth const & synth) {
 
 			auto response = 0.0f;
 
-			for (int i = 0; i < NUM_BANDS; i++) {
-				auto const & band = reinterpret_cast<Band const *>(data)[i];
+			for (int b = 0; b < NUM_BANDS; b++) {
+				auto const & band = reinterpret_cast<Band const *>(data)[b];
 
 				auto b0 = band.filter.b0, b1 = band.filter.b1, b2 = band.filter.b2, a1 = band.filter.a1, a2 = band.filter.a2;
 
 				// Single precision is sufficient, using the trick described here: https://dsp.stackexchange.com/a/16911
-				auto b = 0.5f * (b0   + b1 + b2);
-				auto a = 0.5f * (1.0f + a1 + a2);
+				auto b012 = 0.5f * (b0   + b1 + b2);
+				auto a012 = 0.5f * (1.0f + a1 + a2);
 
-				auto numerator   = b*b - phi * (4.0f*b0*b2*(1.0f - phi) + b1*(b0   + b2));
-				auto denominator = a*a - phi * (4.0f   *a2*(1.0f - phi) + a1*(1.0f + a2));
+				auto numerator   = b012*b012 - phi * (4.0f*b0*b2*(1.0f - phi) + b1*(b0   + b2));
+				auto denominator = a012*a012 - phi * (4.0f   *a2*(1.0f - phi) + a1*(1.0f + a2));
 
 				response += 10.0f * (std::log10(numerator) - std::log10(denominator));
 			}
@@ -87,17 +87,17 @@ void EqualizerComponent::render(Synth const & synth) {
 
 		char label[32] = { };
 
-		for (int i = 0; i < NUM_BANDS; i++) {
-			auto & band = bands[i];
+		for (int b = 0; b < NUM_BANDS; b++) {
+			auto & band = bands[b];
 
 			auto f = double(band.freq);
 			auto g = double(band.gain);
 
-			sprintf_s(label, "#%i", i);
+			sprintf_s(label, "#%i", b);
 			ImPlot::DragPoint(label, &f, &g);
 			
 			char popup_label[32] = { };
-			sprintf_s(popup_label, "Popup #%i", i);
+			sprintf_s(popup_label, "Popup #%i", b);
 
 			if (ImGui::IsItemHovered()) {
 				band.Q = util::clamp(band.Q - 0.1f * ImGui::GetIO().MouseWheel, 0.0f, Band::MAX_Q);

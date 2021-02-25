@@ -3,8 +3,8 @@
 void VocoderComponent::calc_bands() {
 	bands.resize(num_bands);
 	
-	static constexpr auto FREQ_START =    20.0f;
-	static constexpr auto FREQ_END   = 20000.0f;
+	static constexpr auto FREQ_START =   50.0f;
+	static constexpr auto FREQ_END   = 7000.0f;
 
 	auto scale = std::pow(FREQ_END / FREQ_START, 1.0f / float(num_bands));
 
@@ -14,10 +14,10 @@ void VocoderComponent::calc_bands() {
 		band.freq = freq;
 		freq *= scale;
 
-		band.filters_mod[0].reset_state();
-		band.filters_mod[1].reset_state();
-		band.filters_car[0].reset_state();
-		band.filters_car[1].reset_state();
+		band.filter_mod.reset_state();
+		band.filter_mod.reset_state();
+		band.filter_car.reset_state();
+		band.filter_car.reset_state();
 	}
 }
 
@@ -25,10 +25,10 @@ void VocoderComponent::update(Synth const & synth) {
 	for (int b = 0; b < bands.size(); b++) {
 		auto & band = bands[b];
 
-		band.filters_mod[0].set(dsp::BiQuadFilterMode::BAND_PASS, band.freq, width);
-		band.filters_mod[1].set(dsp::BiQuadFilterMode::BAND_PASS, band.freq, width);
-		band.filters_car[0].set(dsp::BiQuadFilterMode::BAND_PASS, band.freq, width);
-		band.filters_car[1].set(dsp::BiQuadFilterMode::BAND_PASS, band.freq, width);
+		band.filter_mod.set(dsp::BiQuadFilterMode::BAND_PASS, band.freq, width);
+		band.filter_mod.set(dsp::BiQuadFilterMode::BAND_PASS, band.freq, width);
+		band.filter_car.set(dsp::BiQuadFilterMode::BAND_PASS, band.freq, width);
+		band.filter_car.set(dsp::BiQuadFilterMode::BAND_PASS, band.freq, width);
 	}
 
 	auto decay_factor = util::log_interpolate(0.01f, 0.00001f, decay);
@@ -42,13 +42,8 @@ void VocoderComponent::update(Synth const & synth) {
 		Sample sample = { };
 
 		for (auto & band : bands) {
-			auto mod = band.filters_mod[0].process(modulator);
-			auto car = band.filters_car[0].process(carrier);
-
-#if 0
-			mod = band.filters_mod[1].process(mod);
-			car = band.filters_car[1].process(car);
-#endif
+			auto mod = band.filter_mod.process(modulator);
+			auto car = band.filter_car.process(carrier);
 
 			auto mod_gain = std::max(std::abs(mod.left), std::abs(mod.right));
 
@@ -77,4 +72,8 @@ void VocoderComponent::render(Synth const & synth) {
 	width.render();
 	decay.render();
 	gain .render();
+}
+
+void VocoderComponent::deserialize_custom(json::Object const & object) {
+	calc_bands();
 }
