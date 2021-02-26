@@ -30,7 +30,7 @@ void VectorscopeComponent::render(Synth const & synth) {
 	covariance /= NUM_SAMPLES - 1.0f;
 
 	float correlation;
-	if (std::abs(variance.left) < 0.0001f && std::abs(variance.right) < 0.0001f) {
+	if (std::abs(variance.left) < 0.0001f || std::abs(variance.right) < 0.0001f) {
 		correlation = 0.0f;
 	} else {
 		correlation = covariance / std::sqrt(variance.left * variance.right);
@@ -46,14 +46,13 @@ void VectorscopeComponent::render(Synth const & synth) {
 
 	ImPlot::SetNextPlotLimits(-1.0, 1.0, -1.0, 1.0, ImGuiCond_Always);
 	
-	ImPlot::BeginPlot("Vectorscope", "Left", "Right", space, ImPlotFlags_CanvasOnly);
-	
-	auto getter = [](void * data, int index) -> ImPlotPoint {
-		auto const & sample = reinterpret_cast<Sample const *>(data)[index];
-		return { sample.left, sample.right };
-	};
+	if (ImPlot::BeginPlot("Vectorscope", "Left", "Right", space, ImPlotFlags_CanvasOnly)) {
+		auto getter = [](void * data, int index) -> ImPlotPoint {
+			auto const & sample = reinterpret_cast<Sample const *>(data)[index];
+			return { sample.left, sample.right };
+		};
+		ImPlot::PlotScatterG("", getter, samples, NUM_SAMPLES);
 
-	ImPlot::PlotScatterG("", getter, samples, NUM_SAMPLES);
-
-	ImPlot::EndPlot();
+		ImPlot::EndPlot();
+	}
 }

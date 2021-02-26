@@ -53,17 +53,18 @@ void SpectrumComponent::render(Synth const & synth) {
 	ImPlot::SetNextPlotLimits(FREQ_BIN_SIZE, SAMPLE_RATE / 2, -78.0f, -18.0f, ImGuiCond_Always);
 	ImPlot::SetNextPlotTicksX(ticks_x, util::array_element_count(ticks_x), tick_labels);
 
-	ImPlot::BeginPlot("Spectrum", "Frequency (Hz)", "Magnitude (dB)", space, ImPlotFlags_CanvasOnly, ImPlotAxisFlags_LogScale);
-	ImPlot::PushStyleVar(ImPlotStyleVar_FillAlpha, 0.25f);
+	if (ImPlot::BeginPlot("Spectrum", "Frequency (Hz)", "Magnitude (dB)", space, ImPlotFlags_CanvasOnly, ImPlotAxisFlags_LogScale)) {
+		ImPlot::PushStyleVar(ImPlotStyleVar_FillAlpha, 0.25f);
 
-	// Convert magnitude to dB
-	// Do this once for both plots, instead of using a getter
-	float spectrum[N / 2] = { };
-	for (int i = 0; i < N / 2; i++) spectrum[i] = util::linear_to_db(magnitudes[i]);
+		// Convert magnitude to dB
+		// Do this once for both plots, instead of using a getter
+		float spectrum[N / 2] = { };
+		for (int i = 0; i < N / 2; i++) spectrum[i] = util::linear_to_db(magnitudes[i]);
 	
-	ImPlot::PlotShaded("", spectrum, N / 2, -INFINITY, FREQ_BIN_SIZE, FREQ_BIN_SIZE);
-	ImPlot::PlotLine  ("", spectrum, N / 2,            FREQ_BIN_SIZE, FREQ_BIN_SIZE);
+		ImPlot::PlotShaded("", spectrum, N / 2, -INFINITY, FREQ_BIN_SIZE, FREQ_BIN_SIZE);
+		ImPlot::PlotLine  ("", spectrum, N / 2,            FREQ_BIN_SIZE, FREQ_BIN_SIZE);
 
-	ImPlot::PopStyleVar();
-	ImPlot::EndPlot();
+		ImPlot::PopStyleVar();
+		ImPlot::EndPlot();
+	}
 }

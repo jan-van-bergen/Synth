@@ -44,16 +44,16 @@ bool knob(char const * label, char const * name_display, char const * name_full,
 		ImGuiID id;
 		float original_mouse_y;
 		float original_percentage;
-	} static selected = { };
+	} static dragging = { };
 
 	if (ImGui::IsMouseReleased(ImGuiMouseButton_Left)) {
-		selected.id = 0;
+		dragging.id = 0;
 	}
 
 	if (is_hovered && ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
-		selected.id = id;
-		selected.original_mouse_y = ImGui::GetMousePos().y;
-		selected.original_percentage = percent;
+		dragging.id = id;
+		dragging.original_mouse_y = ImGui::GetMousePos().y;
+		dragging.original_percentage = percent;
 	}
 	
 	auto value_changed = false;
@@ -64,9 +64,9 @@ bool knob(char const * label, char const * name_display, char const * name_full,
 		value_changed = true;
 	}
 
-	if (id == selected.id) {
-		auto diff = selected.original_mouse_y - ImGui::GetMousePos().y;
-		percent = selected.original_percentage + drag_speed * diff;
+	if (id == dragging.id) {
+		auto diff = dragging.original_mouse_y - ImGui::GetMousePos().y;
+		percent = dragging.original_percentage + drag_speed * diff;
 
 		is_hovered    = true;
 		value_changed = true;

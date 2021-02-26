@@ -33,7 +33,7 @@
 		"hold": 0.500000,
 		"decay": 1.000000,
 		"sustain": 0.314000,
-		"release": 3.163000,
+		"release": 2.043000,
 		"waveform": 2
 	},
 	"SequencerComponent": {
@@ -61,19 +61,32 @@
 		"size_y": 121.000000,
 		"amount": 0.782000
 	},
-	"Connection": {
-		"component_out": 4,
-		"component_in": 0,
-		"offset_out": 0,
-		"offset_in": 0,
-		"weight": 0.500000
+	"FlangerComponent": {
+		"id": 8,
+		"pos_x": 1185.000000,
+		"pos_y": 91.000000,
+		"size_x": 176.000000,
+		"size_y": 169.000000,
+		"delay": 0.500000,
+		"depth": 1.199930,
+		"rate": 4.100000,
+		"phase": 0.090000,
+		"feedback": 0.250000,
+		"drywet": 0.350000
 	},
 	"Connection": {
 		"component_out": 5,
 		"component_in": 0,
 		"offset_out": 0,
 		"offset_in": 0,
-		"weight": 0.600000
+		"weight": 0.550000
+	},
+	"Connection": {
+		"component_out": 8,
+		"component_in": 0,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 0.500000
 	},
 	"Connection": {
 		"component_out": 1,
@@ -92,6 +105,13 @@
 	"Connection": {
 		"component_out": 7,
 		"component_in": 5,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 4,
+		"component_in": 8,
 		"offset_out": 0,
 		"offset_in": 0,
 		"weight": 1.000000

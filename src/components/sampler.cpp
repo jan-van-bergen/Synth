@@ -119,19 +119,19 @@ void SamplerComponent::render(Synth const & synth) {
 	ImPlot::PushStyleVar(ImPlotStyleVar_PlotPadding, ImVec2(0.0f, 0.0f));
 	ImPlot::PushStyleVar(ImPlotStyleVar_FillAlpha,   0.25f);
 
-	ImPlot::BeginPlot("Sample", nullptr, nullptr, space, ImPlotFlags_CanvasOnly, ImPlotAxisFlags_NoDecorations, ImPlotAxisFlags_NoDecorations);
+	if (ImPlot::BeginPlot("Sample", nullptr, nullptr, space, ImPlotFlags_CanvasOnly, ImPlotAxisFlags_NoDecorations, ImPlotAxisFlags_NoDecorations)) {
+		ImPlot::PlotShaded("", visual.samples.data(), visual.samples.size());
+		ImPlot::PlotLine  ("", visual.samples.data(), visual.samples.size());
 
-	ImPlot::PlotShaded("", visual.samples.data(), visual.samples.size());
-	ImPlot::PlotLine  ("", visual.samples.data(), visual.samples.size());
+		auto ratio = float(visual.samples.size()) / float(samples.size());
 
-	auto ratio = float(visual.samples.size()) / float(samples.size());
+		for (auto const & voice : voices) {
+			auto t = voice.current_sample * ratio;
+			ImPlot::PlotVLines("", &t, 1);
+		}
 
-	for (auto const & voice : voices) {
-		auto t = voice.current_sample * ratio;
-		ImPlot::PlotVLines("", &t, 1);
+		ImPlot::EndPlot();
 	}
-
-	ImPlot::EndPlot();
 
 	ImPlot::PopStyleVar();
 	ImPlot::PopStyleVar();
