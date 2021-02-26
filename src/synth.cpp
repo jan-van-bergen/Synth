@@ -408,7 +408,8 @@ void Synth::render_connections() {
 			ImGuiWindowFlags_NoResize |
 			ImGuiWindowFlags_NoSavedSettings |
 			ImGuiWindowFlags_NoScrollbar |
-			ImGuiWindowFlags_NoBackground
+			ImGuiWindowFlags_NoBackground |
+			ImGuiWindowFlags_NoFocusOnAppearing
 		);
 		ImGui::SetCursorPos(ImVec2(
 			0.5f * (size_window.x - size_knob),

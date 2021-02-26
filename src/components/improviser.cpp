@@ -70,7 +70,12 @@ void ImproviserComponent::update(Synth const & synth) {
 }
 
 void ImproviserComponent::render(Synth const & synth) {
-	tonality.render(); ImGui::SameLine();
+	auto fmt_tonality = [](int tonality, char * fmt, int len) {
+		static constexpr char const * names[12] = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
+		strcpy_s(fmt, len, names[tonality]);
+	};
+
+	tonality .render(fmt_tonality); ImGui::SameLine();
 	num_notes.render();
 
 	auto mode_index = int(mode);
