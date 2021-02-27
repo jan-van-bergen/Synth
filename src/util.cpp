@@ -1,10 +1,39 @@
 #include "util.h"
 
 #include <cassert>
+#include <ctime>
+#include <bit>
 
 #include <immintrin.h>
 
 #include <SDL2/SDL.h>
+
+static unsigned wang_hash(unsigned seed) {
+    seed = (seed ^ 61) ^ (seed >> 16);
+    seed *= 9;
+    seed = seed ^ (seed >> 4);
+    seed *= 0x27d4eb2d;
+    seed = seed ^ (seed >> 15);
+
+    return seed;
+}
+
+unsigned util::seed() {
+	return wang_hash(std::time(nullptr));
+}
+
+unsigned util::rand(unsigned & seed) {
+	seed ^= (seed << 13);
+	seed ^= (seed >> 17);
+	seed ^= (seed << 5);
+
+	return seed;
+}
+
+float util::randf(unsigned & seed) {
+	static constexpr auto ONE_OVER_MAX_UINT = std::bit_cast<float>(0x2f800004u);
+	return rand(seed) * ONE_OVER_MAX_UINT;
+}
 
 std::vector<Sample> util::load_wav(char const * filename) {
 	Uint32        wav_length;

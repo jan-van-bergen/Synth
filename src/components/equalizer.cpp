@@ -86,18 +86,21 @@ void EqualizerComponent::render(Synth const & synth) {
 		ImPlot::PlotLineG("", getter, bands, N);
 
 		char label[32] = { };
+		char popup_label[32] = { };
 
 		for (int b = 0; b < NUM_BANDS; b++) {
 			auto & band = bands[b];
 
+			sprintf_s(label, "#%i", b);
+			sprintf_s(popup_label, "Popup #%i", b);
+			
 			auto f = double(band.freq);
 			auto g = double(band.gain);
 
-			sprintf_s(label, "#%i", b);
 			ImPlot::DragPoint(label, &f, &g);
 			
-			char popup_label[32] = { };
-			sprintf_s(popup_label, "Popup #%i", b);
+			band.freq = f;
+			band.gain = g;
 
 			if (ImGui::IsItemHovered()) {
 				band.Q = util::clamp(band.Q - 0.1f * ImGui::GetIO().MouseWheel, 0.0f, Band::MAX_Q);
@@ -126,9 +129,6 @@ void EqualizerComponent::render(Synth const & synth) {
 			}
 
 			ImPlot::PlotText(label, f, g, false, ImVec2(0, -12));
-
-			band.freq = f;
-			band.gain = g;
 		}
 
 		ImPlot::EndPlot();

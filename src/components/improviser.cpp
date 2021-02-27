@@ -48,7 +48,7 @@ void ImproviserComponent::update(Synth const & synth) {
 			}
 			chord.clear();
 
-			auto u = rand() / float(RAND_MAX);
+			auto u = util::randf(seed);
 
 			auto next_chord = 0;
 			while (next_chord < 7 && transfer[current_chord * 7 + next_chord] < u) next_chord++;

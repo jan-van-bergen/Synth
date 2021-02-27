@@ -135,6 +135,8 @@ struct ImproviserComponent : Component {
 	void deserialize_custom(json::Object const & object) override;
 
 private:
+	unsigned seed = util::seed();
+
 	std::vector<int> chord;
 	int current_chord = 0;
 	int current_time  = std::numeric_limits<int>::max();
@@ -153,6 +155,8 @@ struct ArpComponent : Component {
 	void render(struct Synth const & synth) override;
 
 private:
+	unsigned seed = util::seed();
+
 	std::vector<Note> notes;
 
 	int   current_note = 0;
@@ -206,6 +210,8 @@ struct OscillatorComponent : Component {
 	void deserialize_custom(json::Object const & object) override;
 
 private:
+	unsigned seed = util::seed();
+
 	float portamento_frequency = 0.0f;
 };
 

@@ -163,14 +163,14 @@
 		"id": 14,
 		"pos_x": 1083.000000,
 		"pos_y": 615.000000,
-		"size_x": 141.000000,
+		"size_x": 181.000000,
 		"size_y": 174.000000,
 		"delay": 0.500000,
-		"depth": 5.069997,
-		"rate": 0.519000,
-		"phase": 0.020000,
-		"feedback": 0.545000,
-		"drywet": 0.247000
+		"depth": 1.770327,
+		"rate": 1.269000,
+		"phase": 0.050000,
+		"feedback": 0.575000,
+		"drywet": 0.627000
 	},
 	"DistortionComponent": {
 		"id": 15,
@@ -178,7 +178,7 @@
 		"pos_y": 605.000000,
 		"size_x": 65.000000,
 		"size_y": 120.000000,
-		"amount": 0.780000
+		"amount": 0.500000
 	},
 	"Connection": {
 		"component_out": 8,
@@ -199,7 +199,7 @@
 		"component_in": 0,
 		"offset_out": 0,
 		"offset_in": 0,
-		"weight": 0.710000
+		"weight": 0.680000
 	},
 	"Connection": {
 		"component_out": 1,

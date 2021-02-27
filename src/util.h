@@ -191,6 +191,10 @@ namespace util {
 		return name;
 	}
 	
+	unsigned seed();
+	unsigned rand (unsigned & seed);
+	float    randf(unsigned & seed);
+
 	std::vector<Sample> load_wav(char const * filename);
 
 	std::vector<char> read_file(char const * filename);

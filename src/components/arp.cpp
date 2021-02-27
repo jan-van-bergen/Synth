@@ -80,7 +80,7 @@ void ArpComponent::update(Synth const & synth) {
 
 					break;
 				}
-				case Mode::RANDOM: going_up = rand() & 1; break;
+				case Mode::RANDOM: going_up = util::rand(seed) & 1; break;
 
 				default: abort();
 			}

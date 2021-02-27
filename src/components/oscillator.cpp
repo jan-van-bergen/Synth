@@ -20,8 +20,8 @@ static Sample generate_saw(float phase) {
 	return 2.0f * (phase - std::floor(phase + 0.5f));
 }
 
-static Sample generate_noise() {
-	return (rand() / float(RAND_MAX)) * 2.0f - 1.0f;
+static Sample generate_noise(unsigned & seed) {
+	return util::randf(seed) * 2.0f - 1.0f;
 }
 
 static float envelope(float t, float attack, float hold, float decay, float sustain) {
@@ -109,7 +109,7 @@ void OscillatorComponent::update(Synth const & synth) {
 				case 3: outputs[0].get_sample(i) += sign * amplitude * generate_square  (phase + voice.phase); break;
 				case 4: outputs[0].get_sample(i) += sign * amplitude * generate_square  (phase + voice.phase, 0.25f);  break;
 				case 5: outputs[0].get_sample(i) += sign * amplitude * generate_square  (phase + voice.phase, 0.125f); break;
-				case 6: outputs[0].get_sample(i) += sign * amplitude * generate_noise(); break;
+				case 6: outputs[0].get_sample(i) += sign * amplitude * generate_noise(seed); break;
 
 				default: abort();
 			}
