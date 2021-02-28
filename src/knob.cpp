@@ -1,7 +1,7 @@
 #include "knob.h"
 
 template<typename T>
-bool knob(char const * label, char const * name_display, char const * name_full, T * value, T min, T max, bool log_scale, util::Formatter<T> formatter, float size) {
+bool knob(char const * label, char const * name_display, char const * name_full, T * value, T min, T max, bool log_scale, char const * fmt, float size) {
 	static constexpr auto IS_FLOAT = std::is_same<T, float>();
 	static constexpr auto IS_INT   = std::is_same<T, int>();
 
@@ -10,21 +10,12 @@ bool knob(char const * label, char const * name_display, char const * name_full,
 	float scroll_speed;
 	float drag_speed;
 	
-	char fmt[128] = { };
-	if (formatter) {
-		formatter(*value, fmt, sizeof(fmt));
-	}
-
 	if constexpr (IS_FLOAT) {
 		scroll_speed = ImGui::IsKeyDown(SDL_SCANCODE_LCTRL) ? 0.001f : 0.01f; // Allow for fine scrolling using CONTROL key
 		drag_speed   = scroll_speed;
-
-		if (!formatter) strcpy_s(fmt, "%.2f");
 	} else {
 		scroll_speed = 1.0f / (max - min);
 		drag_speed   = 0.01f;
-		
-		if (!formatter) strcpy_s(fmt, "%i");
 	}
 	
 	auto window = ImGui::GetWindowPos();
@@ -142,10 +133,10 @@ bool knob(char const * label, char const * name_display, char const * name_full,
 	return value_changed;
 }
 
-bool ImGui::Knob(char const * label, char const * name_display, char const * name_full, float * value, float min, float max, bool log_scale, util::Formatter<float> formatter, float size) {
-	return knob(label, name_display, name_full, value, min, max, log_scale, formatter, size);
+bool ImGui::Knob(char const * label, char const * name_display, char const * name_full, float * value, float min, float max, bool log_scale, char const * fmt, float size) {
+	return knob(label, name_display, name_full, value, min, max, log_scale, fmt, size);
 }
 
-bool ImGui::Knob(char const * label, char const * name_display, char const * name_full, int * value, int min, int max, bool log_scale, util::Formatter<int> formatter, float size) {
-	return knob(label, name_display, name_full, value, min, max, log_scale, formatter, size);
+bool ImGui::Knob(char const * label, char const * name_display, char const * name_full, int * value, int min, int max, bool log_scale, char const * fmt, float size) {
+	return knob(label, name_display, name_full, value, min, max, log_scale, fmt, size);
 }

@@ -96,23 +96,17 @@ int main(int argc, char * argv[]) {
 			ImGui_ImplSDL2_ProcessEvent(&event);
 			
 			switch (event.type) {
+				case SDL_KEYUP:
 				case SDL_KEYDOWN: {
-					if (event.key.repeat) continue;
+					if (event.key.repeat || ImGui::GetIO().WantCaptureKeyboard) continue;
 
 					auto note = util::scancode_to_note(event.key.keysym.scancode);
 					if (note != -1) {
-						synth.note_press(note, 0.8f);
-					}
-
-					break;
-				}
-
-				case SDL_KEYUP: {
-					if (event.key.repeat) continue;
-
-					auto note = util::scancode_to_note(event.key.keysym.scancode);
-					if (note != -1) {
-						synth.note_release(note);
+						if (event.type == SDL_KEYDOWN) {
+							synth.note_press(note, 0.8f);
+						} else {
+							synth.note_release(note);
+						}
 					}
 
 					break;

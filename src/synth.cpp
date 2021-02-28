@@ -398,10 +398,6 @@ void Synth::render_connections() {
 		
 		sprintf_s(label, "Connection##%i", idx++);
 		
-		auto formatter = [](float value, char * fmt, int len) {
-			strcpy_s(fmt, len, "%.1f");
-		};
-
 		ImGui::Begin(label, nullptr,
 			ImGuiWindowFlags_NoTitleBar |
 			ImGuiWindowFlags_NoMove |
@@ -415,7 +411,7 @@ void Synth::render_connections() {
 			0.5f * (size_window.x - size_knob),
 			0.5f * (size_window.y - size_knob)
 		));
-		ImGui::Knob(label, "", "", connection.weight, 0.0f, 1.0f, false, formatter, size_knob);
+		ImGui::Knob(label, "", "", connection.weight, 0.0f, 1.0f, false, "%.1f", size_knob);
 		ImGui::End();
 	}
 	

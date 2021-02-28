@@ -101,7 +101,7 @@ struct Parameter : Param {
 			}
 		}
 
-		auto value_changed = ImGui::Knob(serialization_name, name_short.c_str(), name_full.c_str(), &parameter, lower, upper, curve == Param::Curve::LOGARITHMIC, formatter);
+		auto value_changed = ImGui::Knob(serialization_name, name_short.c_str(), name_full.c_str(), &parameter, lower, upper, curve == Param::Curve::LOGARITHMIC, fmt);
 
 		// Render default options context menu
 		if (ImGui::BeginPopupContextItem()) {
