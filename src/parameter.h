@@ -90,27 +90,18 @@ struct Parameter : Param {
 	bool render(util::Formatter<T> formatter = nullptr) {
 		auto [lower, upper] = bounds;
 
-		auto log_scale = curve == Param::Curve::LOGARITHMIC;
-
 		char fmt[128] = { };
 		if (formatter) {
 			formatter(parameter, fmt, sizeof(fmt));
-		}
-
-		bool value_changed;
-
-		// Render slider
-		if constexpr (IS_FLOAT) {
-			value_changed = ImGui::Knob(serialization_name, name_short.c_str(), name_full.c_str(), &parameter, lower, upper, log_scale, formatter);
-
-			if (!formatter) strcpy_s(fmt, "%.2f");
-		} else if constexpr (IS_INT) {
-			value_changed = ImGui::Knob(serialization_name, name_short.c_str(), name_full.c_str(), &parameter, lower, upper, log_scale, formatter);
-
-			if (!formatter) strcpy_s(fmt, "%i");
 		} else {
-			abort();
+			if constexpr (IS_FLOAT) {
+				strcpy_s(fmt, "%.2f");
+			} else {
+				strcpy_s(fmt, "%i");
+			}
 		}
+
+		auto value_changed = ImGui::Knob(serialization_name, name_short.c_str(), name_full.c_str(), &parameter, lower, upper, curve == Param::Curve::LOGARITHMIC, formatter);
 
 		// Render default options context menu
 		if (ImGui::BeginPopupContextItem()) {

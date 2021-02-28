@@ -18,6 +18,8 @@ void FileDialog::show(bool saving) {
 }
 
 bool FileDialog::render() {
+	auto confirmed = false;
+
 	if (ImGui::BeginPopupModal(title.c_str())) {
 		if (ImGui::Button("^")) {
 			change_path(std::filesystem::path(path).parent_path().string());
@@ -44,8 +46,6 @@ bool FileDialog::render() {
 
 		ImGui::Separator();
 		
-		auto confirmed = false;
-
 		// Display files
 		for (auto const & file : files) {
 			sprintf_s(label, "[F] %s", file.display.c_str());
@@ -110,8 +110,9 @@ bool FileDialog::render() {
 
 		ImGui::EndPopup();
 
-		return confirmed;
 	}
+
+	return confirmed;
 }
 
 void FileDialog::change_path(std::filesystem::path const & new_path) {
