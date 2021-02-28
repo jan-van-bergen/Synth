@@ -30,10 +30,10 @@ void ImproviserComponent::update(Synth const & synth) {
 		return cumulative / row_sum;
 	});
 
-	constexpr int const MAJOR_SCALE[7] = { 0, 2, 4, 5, 7, 9, 11 };
-	constexpr int const MINOR_SCALE[7] = { 0, 2, 3, 5, 7, 8, 10 };
+	constexpr int MAJOR_SCALE[7] = { 0, 2, 4, 5, 7, 9, 11 };
+	constexpr int MINOR_SCALE[7] = { 0, 2, 3, 5, 7, 8, 10 };
 
-	constexpr auto BASE_NOTE = 36;
+	constexpr auto BASE_NOTE = util::note<util::NoteName::C, 3>();
 	constexpr auto VELOCITY  = 0.5f;
 
 	auto const scale = mode == Mode::MAJOR ? MAJOR_SCALE : MINOR_SCALE;

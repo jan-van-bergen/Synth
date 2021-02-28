@@ -91,6 +91,7 @@ int main(int argc, char * argv[]) {
 	auto window_is_open = true;
 
 	while (window_is_open) {
+		// Poll SDL events
 		SDL_Event event;
 		while (SDL_PollEvent(&event)) {
 			ImGui_ImplSDL2_ProcessEvent(&event);
@@ -118,6 +119,7 @@ int main(int argc, char * argv[]) {
 			}
 		}
 
+		// Poll MIDI events
 		while (true) {
 			auto midi_event = midi::get_event();
 			if (!midi_event.has_value()) break;

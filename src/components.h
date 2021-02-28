@@ -224,7 +224,7 @@ struct SamplerComponent : Component {
 	
 	char filename[128];
 
-	Parameter<int> base_note = { this, "base_note", "Note", "Base Note", 36, std::make_pair(0, 127), { 0, 12, 24, 36, 48, 60, 72, 84, 96, 108, 120 } };
+	Parameter<int> base_note = { this, "base_note", "Note", "Base Note", util::note<util::NoteName::C, 3>(), std::make_pair(0, 127), { 0, 12, 24, 36, 48, 60, 72, 84, 96, 108, 120 } };
 
 	SamplerComponent(int id) : Component(id, "Sampler", { { this, "MIDI In", true } }, { { this, "Out" } }) {
 		strcpy_s(filename, DEFAULT_FILENAME);

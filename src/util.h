@@ -201,6 +201,26 @@ namespace util {
 
 	int scancode_to_note(SDL_Scancode scancode);
 	
+	enum struct NoteName {
+		C       = 0,
+		C_SHARP = 1,
+		D       = 2,
+		D_SHARP = 3,
+		E       = 4,
+		F       = 5,
+		F_SHARP = 6,
+		G       = 7,
+		G_SHARP = 8,
+		A       = 9,
+		A_SHARP = 10,
+		B       = 11
+	};
+	
+	template<NoteName Note, int Octave>
+	constexpr int note() {
+		return Octave * 12 + int(Note);
+	}
+
 	float note_freq(int note);
 
 	void note_name(int note, char str[], int len);

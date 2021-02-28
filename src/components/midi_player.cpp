@@ -101,7 +101,7 @@ void MIDIPlayerComponent::render(Synth const & synth) {
 	static constexpr auto BLACK_KEY_WIDTH  = 0.75f * WHITE_KEY_WIDTH;
 	static constexpr auto BLACK_KEY_HEIGHT = 0.75f * WHITE_KEY_HEIGHT;
 
-	static constexpr auto BASE_NOTE = 36;
+	static constexpr auto BASE_NOTE = util::note<util::NoteName::C, 3>();
 	static_assert(BASE_NOTE % 12 == 0, "BASE_NOTE should be a C!");
 
 	auto const colour_white = ImColor(250, 250, 250, 255);
