@@ -272,6 +272,29 @@ private:
 	std::vector<Voice> voices;
 };
 
+struct AdditiveSynthComponent : Component {
+	static constexpr auto NUM_HARMONICS = 32;
+
+	float harmonics[NUM_HARMONICS] = { 1.0f };
+
+	AdditiveSynthComponent(int id) : Component(id, "Additive Synth", { { this, "MIDI In", true } }, { { this, "Out" } }) { }
+
+	void update(struct Synth const & synth) override;
+	void render(struct Synth const & synth) override;
+
+	void   serialize_custom(json::Writer & writer) const override;
+	void deserialize_custom(json::Object const & object) override;
+
+private:
+	struct Voice {
+		int   note;
+		float velocity;
+
+		float sample = 0.0f;
+	};
+	std::vector<Voice> voices;
+};
+
 struct SamplerComponent : Component {
 	static constexpr auto DEFAULT_FILENAME = "samples/kick.wav";
 
@@ -580,6 +603,7 @@ template<IsComponent ... Ts>
 using ComponentTypeList = meta::TypeList<Ts ...>;
 
 using AllComponents = ComponentTypeList<
+	AdditiveSynthComponent,
 	ArpComponent,
 	BitCrusherComponent,
 	CompressorComponent,

@@ -181,6 +181,7 @@
     <ClCompile Include="include\ImGui\implot.cpp" />
     <ClCompile Include="include\ImGui\implot_demo.cpp" />
     <ClCompile Include="include\ImGui\implot_items.cpp" />
+    <ClCompile Include="src\components\additive_synth.cpp" />
     <ClCompile Include="src\components\arp.cpp" />
     <ClCompile Include="src\components\bitcrusher.cpp" />
     <ClCompile Include="src\components\compressor.cpp" />
