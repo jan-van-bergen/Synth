@@ -199,6 +199,7 @@ void Synth::render_menu() {
 			ImGui::Separator();
 
 			if (ImGui::MenuItem("Oscillator")) add_component<OscillatorComponent>();
+			if (ImGui::MenuItem("FM"))         add_component<FMComponent>();
 			if (ImGui::MenuItem("Sampler"))    add_component<SamplerComponent>();
 			
 			ImGui::Separator();

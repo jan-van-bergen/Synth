@@ -15,7 +15,8 @@ void SequencerComponent::update(Synth const & synth) {
 
 		if (hit) {
 			if (pattern[step] > EPSILON) {
-				outputs[0].add_event(NoteEvent::make_press(synth.time + i, 36, pattern[step]));
+				outputs[0].add_event(NoteEvent::make_release(synth.time + i, util::note<util::NoteName::C, 3>()));
+				outputs[0].add_event(NoteEvent::make_press  (synth.time + i, util::note<util::NoteName::C, 3>(), pattern[step]));
 			}
 
 			current_step = step;

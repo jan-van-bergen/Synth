@@ -39,7 +39,7 @@ void SpectrumComponent::render(Synth const & synth) {
 	};
 	static constexpr char const * tick_labels[] = {
 		"20",  "30",  "40",  "60",  "80",  "100",	
-		"200", "300", "400", "600", "800", "1000",	
+		"200", "300", "400", "600", "800", "1K",	
 		"2K",  "3K",  "4K",  "6K",  "8K",  "10K",
 		"20K"
 	};

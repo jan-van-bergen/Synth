@@ -35,6 +35,24 @@ float util::randf(unsigned & seed) {
 	return rand(seed) * ONE_OVER_MAX_UINT;
 }
 
+float util::envelope(float t, float attack, float hold, float decay, float sustain) {
+	if (t < attack) {
+		return t / attack;
+	}
+	t -= attack;
+
+	if (t < hold) {
+		return 1.0f;
+	}
+	t -= hold;
+
+	if (t < decay) {
+		return util::lerp(1.0f, sustain, t / decay);
+	}
+
+	return sustain;
+};
+
 std::vector<Sample> util::load_wav(char const * filename) {
 	Uint32        wav_length;
 	Uint8       * wav_buffer;

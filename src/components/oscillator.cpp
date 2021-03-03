@@ -24,24 +24,6 @@ static Sample generate_noise(unsigned & seed) {
 	return util::randf(seed) * 2.0f - 1.0f;
 }
 
-static float envelope(float t, float attack, float hold, float decay, float sustain) {
-	if (t < attack) {
-		return t / attack;
-	}
-	t -= attack;
-
-	if (t < hold) {
-		return 1.0f;
-	}
-	t -= hold;
-
-	if (t < decay) {
-		return util::lerp(1.0f, sustain, t / decay);
-	}
-
-	return sustain;
-};
-
 void OscillatorComponent::update(Synth const & synth) {
 	auto steps_per_second = 4.0f / 60.0f * float(synth.settings.tempo);
 
@@ -78,17 +60,17 @@ void OscillatorComponent::update(Synth const & synth) {
 		for (int i = 0; i < BLOCK_SIZE; i++) {
 			if (synth.time + i < voice.start_time) continue;
 
-			auto t     = voice.sample * SAMPLE_RATE_INV;
-			auto steps = t * steps_per_second;
+			auto time_in_seconds = voice.sample * SAMPLE_RATE_INV;
+			auto time_in_steps   = time_in_seconds * steps_per_second;
 
 			// Apply envelope
-			auto amplitude = voice.velocity * envelope(steps, attack, hold, decay, sustain);
+			auto amplitude = voice.velocity * util::envelope(time_in_steps, attack, hold, decay, sustain);
 			
 			auto released = voice.release_time < float(synth.time + i - voice.start_time) * SAMPLE_RATE_INV * steps_per_second;
 
 			// Fade after release
 			if (released) {
-				auto steps_since_release = steps - voice.release_time;
+				auto steps_since_release = time_in_steps - voice.release_time;
 
 				if (steps_since_release < release) {
 					amplitude = util::lerp(amplitude, 0.0f, steps_since_release / release);
@@ -117,8 +99,8 @@ void OscillatorComponent::update(Synth const & synth) {
 			float frequency;
 
 			// Apply portamento
-			if (steps < portamento) {
-				frequency = util::lerp(portamento_frequency, note_frequency, steps / portamento);
+			if (time_in_steps < portamento) {
+				frequency = util::lerp(portamento_frequency, note_frequency, time_in_steps / portamento);
 			} else {
 				frequency = note_frequency;
 			}

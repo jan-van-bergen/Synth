@@ -79,8 +79,12 @@ int main(int argc, char * argv[]) {
 
 	auto device = SDL_OpenAudioDevice(nullptr, 0, &audio_spec, nullptr, 0);
 
-	auto time_inv_freq = 1.0 / double(SDL_GetPerformanceFrequency());
-	auto time_start    = double(SDL_GetPerformanceCounter());
+	struct {
+		double now   = 0.0;
+		double last  = 0.0;
+		double freq  = 1.0 / SDL_GetPerformanceFrequency();
+		double delta = 0.0;
+	} time;
 
 	SDL_PauseAudioDevice(device, false);
 
@@ -89,6 +93,8 @@ int main(int argc, char * argv[]) {
 	Synth synth;
 
 	auto window_is_open = true;
+
+	time.last = SDL_GetPerformanceCounter();
 
 	while (window_is_open) {
 		// Poll SDL events
@@ -99,12 +105,14 @@ int main(int argc, char * argv[]) {
 			switch (event.type) {
 				case SDL_KEYUP:
 				case SDL_KEYDOWN: {
-					if (event.key.repeat || ImGui::GetIO().WantCaptureKeyboard) continue;
+					if (event.key.repeat) continue;
 
 					auto note = util::scancode_to_note(event.key.keysym.scancode);
 					if (note != -1) {
 						if (event.type == SDL_KEYDOWN) {
-							synth.note_press(note, 0.8f);
+							if (!ImGui::GetIO().WantTextInput) {
+								synth.note_press(note, 0.8f);
+							}
 						} else {
 							synth.note_release(note);
 						}
@@ -143,6 +151,10 @@ int main(int argc, char * argv[]) {
 
 		buffers.advance_write();
 		
+		time.now = SDL_GetPerformanceCounter();
+		time.delta = (time.now - time.last) * time.freq;
+		time.last = time.now;
+
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		ImGui_ImplOpenGL3_NewFrame();

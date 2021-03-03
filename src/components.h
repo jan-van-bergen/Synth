@@ -173,6 +173,18 @@ struct OscillatorComponent : Component {
 	Parameter<int>   invert = { this, "invert", "Inv", "Invert Waveform", 0, std::make_pair(0, 1), { } };
 	Parameter<float> phase  = { this, "phase",  "Phs", "Phase Offset",    0, std::make_pair(0.0f, 1.0f), { 0.0f, 0.25f, 0.5f, 0.75f, 1.0f } };
 
+	Parameter<int>   transpose = { this, "transpose", "Tps", "Transpose (notes)", 0, std::make_pair(-24, 24), { -24, -12, 0, 12, 24 } };
+	Parameter<float> detune    = { this, "detune",    "Dtn", "Detune (cents)", 0.0f, std::make_pair(-100.0f, 100.0f), { 0.0f } };
+
+	Parameter<float> portamento = { this, "portamento", "Por",  "Portamento", 0.0f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } };
+
+	// Envelope
+	Parameter<float> attack  = { this, "attack",  "Att",  "Attack",  0.1f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } };
+	Parameter<float> hold	 = { this, "hold",    "Hold", "Hold",    0.5f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } };
+	Parameter<float> decay 	 = { this, "decay",   "Dec",  "Decay",   1.0f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } };
+	Parameter<float> sustain = { this, "sustain", "Sus",  "Sustain", 0.5f, std::make_pair(0.0f, 1.0f) };
+	Parameter<float> release = { this, "release", "Rel",  "Release", 0.0f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } };
+	
 	struct Voice {
 		int   note;
 		float velocity;
@@ -186,20 +198,7 @@ struct OscillatorComponent : Component {
 
 		Voice(int note, float velocity, int start_time) : note(note), velocity(velocity), start_time(start_time) { } 
 	};
-
 	std::vector<Voice> voices;
-
-	Parameter<int>   transpose = { this, "transpose", "Tps", "Transpose (notes)", 0, std::make_pair(-24, 24), { -24, -12, 0, 12, 24 } };
-	Parameter<float> detune    = { this, "detune",    "Dtn", "Detune (cents)", 0.0f, std::make_pair(-100.0f, 100.0f), { 0.0f } };
-
-	Parameter<float> portamento = { this, "portamento", "Por",  "Portamento", 0.0f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } };
-
-	// Envelope
-	Parameter<float> attack  = { this, "attack",  "Att",  "Attack",  0.1f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } };
-	Parameter<float> hold	 = { this, "hold",    "Hold", "Hold",    0.5f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } };
-	Parameter<float> decay 	 = { this, "decay",   "Dec",  "Decay",   1.0f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } };
-	Parameter<float> sustain = { this, "sustain", "Sus",  "Sustain", 0.5f, std::make_pair(0.0f, 1.0f) };
-	Parameter<float> release = { this, "release", "Rel",  "Release", 0.0f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } };
 
 	OscillatorComponent(int id) : Component(id, "Oscillator", { { this, "MIDI In", true } }, { { this, "Out" } }) { }
 
@@ -213,6 +212,64 @@ private:
 	unsigned seed = util::seed();
 
 	float portamento_frequency = 0.0f;
+};
+
+struct FMComponent : Component {
+	static constexpr auto NUM_OPERATORS = 4;
+
+	float weights[NUM_OPERATORS][NUM_OPERATORS] = { };
+	float outs[NUM_OPERATORS] = { 1.0f };
+
+	Parameter<float> ratios[NUM_OPERATORS] = {
+		{ this, "ratio_0", "Rat", "Ratio", 1.0f, std::make_pair(0.25f, 16.0f), { 0.25f, 0.5f, 0.75f, 1.0f, 1.5f, 2.0f, 3.0f, 4.0f, 6.0f, 8.0f, 12.0f, 16.0f } },
+		{ this, "ratio_1", "Rat", "Ratio", 2.0f, std::make_pair(0.25f, 16.0f), { 0.25f, 0.5f, 0.75f, 1.0f, 1.5f, 2.0f, 3.0f, 4.0f, 6.0f, 8.0f, 12.0f, 16.0f } },
+		{ this, "ratio_2", "Rat", "Ratio", 4.0f, std::make_pair(0.25f, 16.0f), { 0.25f, 0.5f, 0.75f, 1.0f, 1.5f, 2.0f, 3.0f, 4.0f, 6.0f, 8.0f, 12.0f, 16.0f } },
+		{ this, "ratio_3", "Rat", "Ratio", 8.0f, std::make_pair(0.25f, 16.0f), { 0.25f, 0.5f, 0.75f, 1.0f, 1.5f, 2.0f, 3.0f, 4.0f, 6.0f, 8.0f, 12.0f, 16.0f } }
+	};
+	
+	Parameter<float> attacks[NUM_OPERATORS] = {
+		{ this, "attack_0", "Att", "Attack", 0.1f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } },
+		{ this, "attack_1", "Att", "Attack", 0.1f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } },
+		{ this, "attack_2", "Att", "Attack", 0.1f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } },
+		{ this, "attack_3", "Att", "Attack", 0.1f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } }
+	};
+	Parameter<float> holds[NUM_OPERATORS] = {
+		{ this, "hold_0", "Hold", "Hold", 0.5f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } },
+		{ this, "hold_1", "Hold", "Hold", 0.5f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } },
+		{ this, "hold_2", "Hold", "Hold", 0.5f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } },
+		{ this, "hold_3", "Hold", "Hold", 0.5f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } }
+	};
+	Parameter<float> decays[NUM_OPERATORS] = {
+		{ this, "decays_0", "Dec", "Decay", 1.0f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } },
+		{ this, "decays_1", "Dec", "Decay", 1.0f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } },
+		{ this, "decays_2", "Dec", "Decay", 1.0f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } },
+		{ this, "decays_3", "Dec", "Decay", 1.0f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } }
+	};
+	Parameter<float> sustains[NUM_OPERATORS] = {
+		{ this, "sustain_0", "Sus", "Sustain", 1.0f, std::make_pair(0.0f, 1.0f) },
+		{ this, "sustain_1", "Sus", "Sustain", 1.0f, std::make_pair(0.0f, 1.0f) },
+		{ this, "sustain_2", "Sus", "Sustain", 1.0f, std::make_pair(0.0f, 1.0f) },
+		{ this, "sustain_3", "Sus", "Sustain", 1.0f, std::make_pair(0.0f, 1.0f) }
+	};
+
+	FMComponent(int id) : Component(id, "FM", { { this, "MIDI In", true } }, { { this, "Out" } }) { }
+
+	void update(struct Synth const & synth) override;
+	void render(struct Synth const & synth) override;
+	
+	void   serialize_custom(json::Writer & writer) const override;
+	void deserialize_custom(json::Object const & object) override;
+
+private:
+	struct Voice {
+		int   note;
+		float velocity;
+
+		float sample = 0.0f;
+
+		float operator_values[NUM_OPERATORS] = { };
+	};
+	std::vector<Voice> voices;
 };
 
 struct SamplerComponent : Component {
@@ -532,6 +589,7 @@ using AllComponents = ComponentTypeList<
 	EqualizerComponent,
 	FilterComponent,
 	FlangerComponent,
+	FMComponent,
 	ImproviserComponent,
 	KeyboardComponent,
 	OscillatorComponent,

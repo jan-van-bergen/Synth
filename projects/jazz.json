@@ -1,0 +1,106 @@
+{
+	"Settings": {
+		"tempo": 200,
+		"master_volume": 0.120000
+	},
+	"SpeakerComponent": {
+		"id": 0,
+		"pos_x": 235.000000,
+		"pos_y": 670.000000,
+		"size_x": 101.000000,
+		"size_y": 113.000000
+	},
+	"KeyboardComponent": {
+		"id": 1,
+		"pos_x": 17.000000,
+		"pos_y": 93.000000,
+		"size_x": 114.000000,
+		"size_y": 64.000000
+	},
+	"FMComponent": {
+		"id": 2,
+		"pos_x": 73.000000,
+		"pos_y": 367.000000,
+		"size_x": 290.000000,
+		"size_y": 206.000000,
+		"ratio_0": 1.000000,
+		"ratio_1": 8.000000,
+		"ratio_2": 3.000000,
+		"ratio_3": 2.000000,
+		"attack_0": 0.160000,
+		"attack_1": 0.064000,
+		"attack_2": 1.000000,
+		"attack_3": 16.000000,
+		"hold_0": 0.000000,
+		"hold_1": 0.000000,
+		"hold_2": 2.000000,
+		"hold_3": 0.500000,
+		"decays_0": 2.000000,
+		"decays_1": 1.968000,
+		"decays_2": 1.000000,
+		"decays_3": 16.000000,
+		"sustain_0": 0.880000,
+		"sustain_1": 0.000000,
+		"sustain_2": 1.000000,
+		"sustain_3": 0.290000,
+		"weights": [ 0.700000, 0.000000, 0.000000, 0.000000, 1.100000, 0.460000, 1.760000, 0.000000, 0.020000, 0.180000, 0.000000, 0.000000, 0.180000, 0.000000, 2.000000, 0.660000 ],
+		"outs": [ 1.000000, 0.000000, 0.220000, 0.000000 ]
+	},
+	"OscilloscopeComponent": {
+		"id": 3,
+		"pos_x": 470.000000,
+		"pos_y": 466.000000,
+		"size_x": 927.000000,
+		"size_y": 386.000000
+	},
+	"SpectrumComponent": {
+		"id": 4,
+		"pos_x": 462.000000,
+		"pos_y": 33.000000,
+		"size_x": 940.000000,
+		"size_y": 416.000000
+	},
+	"MIDIPlayerComponent": {
+		"id": 5,
+		"pos_x": 155.000000,
+		"pos_y": 52.000000,
+		"size_x": 278.000000,
+		"size_y": 122.000000,
+		"filename": "midi/jazz.mid"
+	},
+	"Connection": {
+		"component_out": 2,
+		"component_in": 0,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 0.910000
+	},
+	"Connection": {
+		"component_out": 1,
+		"component_in": 2,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 5,
+		"component_in": 2,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 0,
+		"component_in": 3,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 0,
+		"component_in": 4,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	}
+}

@@ -170,6 +170,8 @@ namespace util {
 			return 0.0f;
 		}
 	}
+	
+	float envelope(float t, float attack, float hold, float decay, float sustain);
 
 	template<typename T>
 	inline constexpr char const * get_type_name() {

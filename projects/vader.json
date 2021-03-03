@@ -1,0 +1,64 @@
+{
+	"Settings": {
+		"tempo": 110,
+		"master_volume": 1.000000
+	},
+	"SpeakerComponent": {
+		"id": 0,
+		"pos_x": 1372.000000,
+		"pos_y": 348.000000,
+		"size_x": 101.000000,
+		"size_y": 113.000000
+	},
+	"MIDIPlayerComponent": {
+		"id": 1,
+		"pos_x": 60.000000,
+		"pos_y": 60.000000,
+		"size_x": 501.000000,
+		"size_y": 122.000000,
+		"filename": "midi/vader.mid"
+	},
+	"FMComponent": {
+		"id": 3,
+		"pos_x": 668.000000,
+		"pos_y": 93.000000,
+		"size_x": 288.000000,
+		"size_y": 204.000000,
+		"ratio_0": 0.250000,
+		"ratio_1": 0.250000,
+		"ratio_2": 0.500000,
+		"ratio_3": 2.000000,
+		"attack_0": 0.420000,
+		"attack_1": 0.100000,
+		"attack_2": 0.800000,
+		"attack_3": 0.100000,
+		"hold_0": 0.500000,
+		"hold_1": 0.000000,
+		"hold_2": 0.000000,
+		"hold_3": 0.500000,
+		"decays_0": 1.000000,
+		"decays_1": 1.000000,
+		"decays_2": 1.000000,
+		"decays_3": 1.000000,
+		"sustain_0": 0.090000,
+		"sustain_1": 0.160000,
+		"sustain_2": 0.000000,
+		"sustain_3": 0.430000,
+		"weights": [ 0.680000, 0.000000, 0.640000, 0.000000, 0.640000, 2.000000, 0.000000, 0.000000, 0.520000, 0.120000, 1.220000, 0.000000, 0.000000, 0.000000, 0.840000, 2.000000 ],
+		"outs": [ 1.000000, 0.000000, 0.340000, 0.000000 ]
+	},
+	"Connection": {
+		"component_out": 3,
+		"component_in": 0,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 0.570000
+	},
+	"Connection": {
+		"component_out": 1,
+		"component_in": 3,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	}
+}
