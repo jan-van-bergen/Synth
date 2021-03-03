@@ -110,7 +110,9 @@ int main(int argc, char * argv[]) {
 					auto note = util::scancode_to_note(event.key.keysym.scancode);
 					if (note != -1) {
 						if (event.type == SDL_KEYDOWN) {
-							if (!ImGui::GetIO().WantTextInput) {
+							auto ignore_press = ImGui::GetIO().WantTextInput || ImGui::IsKeyDown(SDL_SCANCODE_LCTRL);
+
+							if (!ignore_press) {
 								synth.note_press(note, 0.8f);
 							}
 						} else {
