@@ -2,7 +2,12 @@
 
 #include "synth.h"
 
-void MIDIPlayerComponent::reload_file() {
+void MIDIPlayerComponent::load(char const * file) {
+	filename = file;
+	
+	auto idx = filename.find_last_of("/\\");
+	filename_display = filename.c_str() + (idx == std::string::npos ? 0 : idx + 1);
+
 	// Release currently pressed notes
 	for (auto const & note : notes) {
 		outputs[0].add_event(NoteEvent::make_release(0, note.note));
@@ -10,7 +15,7 @@ void MIDIPlayerComponent::reload_file() {
 
 	notes.clear();
 
-	auto track = midi::Track::load(filename);
+	auto track = midi::Track::load(file);
 
 	if (!track.has_value()) {
 		midi_offset = 0;
@@ -89,10 +94,12 @@ void MIDIPlayerComponent::update(Synth const & synth) {
 }
 
 void MIDIPlayerComponent::render(Synth const & synth) {
-	ImGui::InputText("File", filename, sizeof(filename));
+	ImGui::Text("%s", filename_display);
 	ImGui::SameLine();
 	
-	if (ImGui::Button("Load")) reload_file();
+	if (ImGui::Button("Load")) {
+		synth.file_dialog.show(FileDialog::Type::OPEN, "Open MIDI File", "midi", [this](char const * path) { load(path); });
+	}
 
 	// Draw keyboard
 	static constexpr auto WHITE_KEY_WIDTH  = 10.0f;
@@ -174,12 +181,10 @@ void MIDIPlayerComponent::render(Synth const & synth) {
 }
 
 void MIDIPlayerComponent::serialize_custom(json::Writer & writer) const {
-	writer.write("filename", filename);
+	writer.write("filename", filename.c_str());
 }
 
 void MIDIPlayerComponent::deserialize_custom(json::Object const & object) {
-	auto name = object.find_string("filename", DEFAULT_FILENAME);
-	strcpy_s(filename, name.c_str());
-
-	reload_file();
+	auto file = object.find_string("filename", DEFAULT_FILENAME);
+	load(file.c_str());
 }

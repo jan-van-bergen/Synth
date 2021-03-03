@@ -4,21 +4,22 @@
 
 #include <SDL2/SDL_scancode.h>
 
-void FileDialog::show(bool saving) {
-	this->saving = saving;
-	if (saving) {
-		title = "Save File###FileDialog";
-	} else {
-		title = "Open File###FileDialog";
-	}
+void FileDialog::show(Type type, std::string const & title, std::string const & default_path, OnFinishedCallBack callback) {
+	this->type  = type;
+	this->title = title + "###FileDialog";
+	this->callback = callback;
 
-	ImGui::OpenPopup(title.c_str());
+	change_path(default_path);
 
-	change_path(path); // Refresh
+	should_open = true;
 }
 
-bool FileDialog::render() {
-	auto confirmed = false;
+void FileDialog::render() {
+	if (should_open) {
+		should_open = false;
+
+		ImGui::OpenPopup(title.c_str());
+	}
 
 	if (ImGui::BeginPopupModal(title.c_str())) {
 		if (ImGui::Button("^")) {
@@ -46,6 +47,8 @@ bool FileDialog::render() {
 
 		ImGui::Separator();
 		
+		auto confirmed = false;
+
 		// Display files
 		for (auto const & file : files) {
 			sprintf_s(label, "[F] %s", file.display.c_str());
@@ -66,12 +69,19 @@ bool FileDialog::render() {
 		ImGui::SetNextItemWidth(avail.x);
 		ImGui::InputText("", selected, sizeof(selected));
 
-		if (ImGui::Button(saving ? "Save" : "Open") || ImGui::IsKeyPressed(SDL_SCANCODE_RETURN)) confirmed = true;
+		char const * button_text;
+		switch (type) {
+			case Type::SAVE: button_text = "Save"; break;
+			case Type::OPEN: button_text = "Open"; break;
+			default: abort();
+		}
+
+		if (ImGui::Button(button_text) || ImGui::IsKeyPressed(SDL_SCANCODE_RETURN)) confirmed = true;
 
 		ImGui::SameLine();
 		if (ImGui::Button("Cancel")) ImGui::CloseCurrentPopup();
 
-		if (saving) {
+		if (type == Type::SAVE) {
 			if (confirmed) {
 				auto has_extension = strchr(selected, '.') != nullptr;
 				if (!has_extension) {
@@ -109,10 +119,9 @@ bool FileDialog::render() {
 		if (confirmed || ImGui::IsKeyPressed(SDL_SCANCODE_ESCAPE)) ImGui::CloseCurrentPopup(); 
 
 		ImGui::EndPopup();
-
+		
+		if (confirmed) callback(selected_path.string().c_str());
 	}
-
-	return confirmed;
 }
 
 void FileDialog::change_path(std::filesystem::path const & new_path) {

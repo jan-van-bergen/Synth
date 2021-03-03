@@ -71,15 +71,7 @@ void Synth::render() {
 		reconstruct_update_graph();
 	}
 
-	if (file_dialog.render()) {
-		auto filename = file_dialog.selected_path.string();
-
-		if (file_dialog.saving) {
-			save_file(filename.c_str());
-		} else {
-			open_file(filename.c_str());
-		}
-	}
+	file_dialog.render();
 
 	if (ImGui::Begin("Settings")) {
 		ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
@@ -234,8 +226,8 @@ void Synth::render_menu() {
 		ImGui::EndMainMenuBar();
 	}
 
-	if (show_popup_open) file_dialog.show(false);
-	if (show_popup_save) file_dialog.show(true);
+	if (show_popup_open) file_dialog.show(FileDialog::Type::OPEN, "Open Project", "projects", [this](char const * path) { open_file(path); });
+	if (show_popup_save) file_dialog.show(FileDialog::Type::SAVE, "Save Project", "projects", [this](char const * path) { save_file(path); });
 }
 
 void Synth::render_components() {

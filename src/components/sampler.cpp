@@ -6,8 +6,13 @@
 
 #include "scope_timer.h"
 
-void SamplerComponent::load() {
-	samples = util::load_wav(filename);
+void SamplerComponent::load(char const * file) {
+	filename = file;
+
+	auto idx = filename.find_last_of("/\\");
+	filename_display = filename.c_str() + (idx == std::string::npos ? 0 : idx + 1);
+
+	samples = util::load_wav(file);
 
 	if (samples.size() == 0) {
 		visual.samples = { 0.0f };
@@ -100,10 +105,12 @@ void SamplerComponent::update(Synth const & synth) {
 }
 
 void SamplerComponent::render(Synth const & synth) {
-	ImGui::InputText("File", filename, sizeof(filename));
+	ImGui::Text("%s", filename_display);
 	ImGui::SameLine();
 	
-	if (ImGui::Button("Load")) load();
+	if (ImGui::Button("Load")) {
+		synth.file_dialog.show(FileDialog::Type::OPEN, "Open WAV File", "samples", [this](char const * path) { load(path); });
+	}
 
 	base_note.render(util::note_name);
 	ImGui::SameLine();
@@ -138,12 +145,10 @@ void SamplerComponent::render(Synth const & synth) {
 }
 
 void SamplerComponent::serialize_custom(json::Writer & writer) const {
-	writer.write("filename", filename);
+	writer.write("filename", filename.c_str());
 }
 
 void SamplerComponent::deserialize_custom(json::Object const & object) {
-	auto const & found = object.find_string("filename", DEFAULT_FILENAME);
-
-	strcpy_s(filename, found.c_str());
-	load();
+	auto file = object.find_string("filename", DEFAULT_FILENAME);
+	load(file.c_str());
 }

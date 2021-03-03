@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <optional>
+#include <functional>
 
 #include <filesystem>
 
@@ -21,7 +22,16 @@ struct FileDialog {
 	std::vector<Entry> directories;
 	std::vector<Entry> files;
 
-	bool saving = true;
+	enum struct Type {
+		SAVE,
+		OPEN
+	} type;
+
+	bool should_open = false;
+
+	using OnFinishedCallBack = std::function<void (char const *)>;
+
+	OnFinishedCallBack callback;
 
 	FileDialog() { 
 		if (std::filesystem::exists("projects/")) {
@@ -31,8 +41,8 @@ struct FileDialog {
 		}
 	}
 
-	void show(bool saving);
-	bool render();
+	void show(Type type, std::string const & title, std::string const & default_path, OnFinishedCallBack callback);
+	void render();
 
 private:
 	void change_path(std::filesystem::path const & new_path);
