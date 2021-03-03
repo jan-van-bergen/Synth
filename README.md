@@ -9,6 +9,7 @@ Modular Synthesizer with MIDI support.
   - Input from MIDI keyboards
 - Synthesis
   - Subtractive
+  - Additive
   - FM
 - Sampler
 - Effects
