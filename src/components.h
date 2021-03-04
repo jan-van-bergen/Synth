@@ -334,6 +334,15 @@ private:
 	} visual;
 };
 
+struct GroupComponent : Component {
+	Parameter<float> gain = { this, "gain", "Gain", "Gain (dB)", 0.f, std::make_pair(-30.0f, 30.0f), { 0.0f } };
+
+	GroupComponent(int id) : Component(id, "Group", { { this, "In" } }, { { this, "Out" } }) { }
+
+	void update(struct Synth const & synth) override;
+	void render(struct Synth const & synth) override;
+};
+
 struct SplitComponent : Component {
 	Parameter<float> mix = { this, "mix", "A/B", "Mix A/B", 0.5f, std::make_pair(0.0f, 1.0f), { 0.0f, 0.5f, 1.0f } };
 
@@ -614,6 +623,7 @@ using AllComponents = ComponentTypeList<
 	FilterComponent,
 	FlangerComponent,
 	FMComponent,
+	GroupComponent,
 	ImproviserComponent,
 	KeyboardComponent,
 	OscillatorComponent,

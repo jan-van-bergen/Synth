@@ -133,6 +133,9 @@
     <ClCompile Include="src\components\additive_synth.cpp">
       <Filter>components</Filter>
     </ClCompile>
+    <ClCompile Include="src\components\group.cpp">
+      <Filter>components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\json.h">

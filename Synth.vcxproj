@@ -192,6 +192,7 @@
     <ClCompile Include="src\components\filter.cpp" />
     <ClCompile Include="src\components\flanger.cpp" />
     <ClCompile Include="src\components\fm.cpp" />
+    <ClCompile Include="src\components\group.cpp" />
     <ClCompile Include="src\components\improviser.cpp" />
     <ClCompile Include="src\components\keyboard.cpp" />
     <ClCompile Include="src\components\oscillator.cpp" />

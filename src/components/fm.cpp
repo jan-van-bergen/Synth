@@ -95,6 +95,6 @@ void FMComponent::serialize_custom(json::Writer & writer) const {
 }
 
 void FMComponent::deserialize_custom(json::Object const & object) {
-	object.find_array("weights", util::array_count(weights), &weights[0][0]);
-	object.find_array("outs",    util::array_count(outs),    outs);
+	object.find_array("weights", NUM_OPERATORS * NUM_OPERATORS, &weights[0][0]);
+	object.find_array("outs",    NUM_OPERATORS, outs);
 }

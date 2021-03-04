@@ -5,8 +5,8 @@
 	},
 	"SpeakerComponent": {
 		"id": 0,
-		"pos_x": 1473.000000,
-		"pos_y": 473.000000,
+		"pos_x": 1472.000000,
+		"pos_y": 314.000000,
 		"size_x": 100.000000,
 		"size_y": 116.000000
 	},
@@ -108,8 +108,8 @@
 	},
 	"FilterComponent": {
 		"id": 11,
-		"pos_x": 949.000000,
-		"pos_y": 732.000000,
+		"pos_x": 806.000000,
+		"pos_y": 747.000000,
 		"size_x": 121.000000,
 		"size_y": 141.000000,
 		"cutoff": 322.364014,
@@ -118,16 +118,16 @@
 	},
 	"DistortionComponent": {
 		"id": 12,
-		"pos_x": 1234.000000,
-		"pos_y": 706.000000,
+		"pos_x": 984.000000,
+		"pos_y": 673.000000,
 		"size_x": 65.000000,
 		"size_y": 121.000000,
 		"amount": 0.294000
 	},
 	"FilterComponent": {
 		"id": 13,
-		"pos_x": 797.000000,
-		"pos_y": 350.000000,
+		"pos_x": 707.000000,
+		"pos_y": 323.000000,
 		"size_x": 126.000000,
 		"size_y": 144.000000,
 		"cutoff": 20000.000000,
@@ -136,10 +136,10 @@
 	},
 	"CompressorComponent": {
 		"id": 14,
-		"pos_x": 1074.000000,
-		"pos_y": 362.000000,
+		"pos_x": 878.000000,
+		"pos_y": 325.000000,
 		"size_x": 177.000000,
-		"size_y": 171.000000,
+		"size_y": 187.000000,
 		"threshold": -17.561001,
 		"ratio": 4.129000,
 		"gain": -10.244000,
@@ -163,12 +163,17 @@
 		"size_y": 122.000000,
 		"filename": "midi/pattern_clap.mid"
 	},
-	"Connection": {
-		"component_out": 3,
-		"component_in": 0,
-		"offset_out": 0,
-		"offset_in": 0,
-		"weight": 0.400000
+	"CompressorComponent": {
+		"id": 17,
+		"pos_x": 1137.000000,
+		"pos_y": 454.000000,
+		"size_x": 176.000000,
+		"size_y": 186.000000,
+		"threshold": 0.000000,
+		"ratio": 1.000000,
+		"gain": 0.000000,
+		"Attack": 15.000000,
+		"Release": 200.000000
 	},
 	"Connection": {
 		"component_out": 8,
@@ -185,25 +190,11 @@
 		"weight": 0.800000
 	},
 	"Connection": {
-		"component_out": 12,
+		"component_out": 17,
 		"component_in": 0,
 		"offset_out": 0,
 		"offset_in": 0,
-		"weight": 0.100000
-	},
-	"Connection": {
-		"component_out": 14,
-		"component_in": 0,
-		"offset_out": 0,
-		"offset_in": 0,
-		"weight": 0.900000
-	},
-	"Connection": {
-		"component_out": 15,
-		"component_in": 0,
-		"offset_out": 0,
-		"offset_in": 0,
-		"weight": 0.800000
+		"weight": 1.000000
 	},
 	"Connection": {
 		"component_out": 1,
@@ -288,5 +279,33 @@
 		"offset_out": 0,
 		"offset_in": 0,
 		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 14,
+		"component_in": 17,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 0.910000
+	},
+	"Connection": {
+		"component_out": 15,
+		"component_in": 17,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 0.820000
+	},
+	"Connection": {
+		"component_out": 3,
+		"component_in": 17,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 0.440000
+	},
+	"Connection": {
+		"component_out": 12,
+		"component_in": 17,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 0.110000
 	}
 }
