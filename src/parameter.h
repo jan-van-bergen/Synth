@@ -15,7 +15,7 @@
 struct Component;
 
 struct Param {
-	inline static char clipboard[4] = { };
+	inline static float clipboard_value = { };
 
 	inline static Param * param_waiting_to_link = nullptr;
 	inline static std::unordered_map<int, std::vector<Param *>> links;
@@ -149,13 +149,18 @@ struct Parameter : Param {
 			ImGui::Separator();
 
 			if (ImGui::Button("Copy")) {
-				memcpy(Param::clipboard, &parameter, 4);
+				clipboard_value = parameter;
 
 				should_close_popup = true;
 			}
 
 			if (ImGui::Button("Paste")) {
-				memcpy(&parameter, Param::clipboard, 4);
+				if constexpr (IS_FLOAT) {
+					parameter = clipboard_value;
+				} else {
+					parameter = util::round(clipboard_value);
+				}
+
 				parameter = util::clamp(parameter, lower, upper);
 
 				should_close_popup = true;

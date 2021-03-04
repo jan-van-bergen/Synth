@@ -81,6 +81,9 @@ struct Synth {
 		// Update all Parameters that are linked to the current Controller
 		for (auto param : linked_params) param->set_value(value);
 	}
+	
+	void open_file(char const * filename);
+	void save_file(char const * filename) const;
 
 private:
 	struct Connection {
@@ -104,7 +107,4 @@ private:
 
 	void render_connector_in (ConnectorIn  & in);
 	void render_connector_out(ConnectorOut & out);
-
-	void open_file(char const * filename);
-	void save_file(char const * filename) const;
 };

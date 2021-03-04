@@ -8,9 +8,12 @@ void CompressorComponent::update(Synth const & synth) {
 	auto coef_release = std::exp(-1000.0f / (release * SAMPLE_RATE));
 
 	for (int i = 0; i < BLOCK_SIZE; i++) {
-		auto sample = inputs[0].get_sample(i);
+		auto sample    = inputs[0].get_sample(i);
+		auto sidechain = inputs[1].get_sample(i);
 
-		auto link    = std::max(std::abs(sample.left), std::abs(sample.right));
+		if (inputs[1].others.size() == 0) sidechain = sample; // If there is no sidechain connected, use the input signal itself
+
+		auto link    = std::max(std::abs(sidechain.left), std::abs(sidechain.right));
 		auto link_db = util::linear_to_db(link);
 
 		auto exceeded_db = std::max(link_db - threshold, 0.0f); // How many dB are we over the threshold?
@@ -20,8 +23,10 @@ void CompressorComponent::update(Synth const & synth) {
 		} else {
 			env = exceeded_db + coef_release * (env - exceeded_db);
 		}
-		
-		outputs[0].set_sample(i, util::db_to_linear(env * (1.0f / ratio - 1.0f) + gain) * sample);
+
+		sample = util::db_to_linear(env * (1.0f / ratio - 1.0f) + gain) * sample;
+
+		outputs[0].set_sample(i, sample);
 	}
 }
 

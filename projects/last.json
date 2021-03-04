@@ -37,8 +37,8 @@
 	},
 	"CompressorComponent": {
 		"id": 3,
-		"pos_x": 751.000000,
-		"pos_y": 183.000000,
+		"pos_x": 798.000000,
+		"pos_y": 184.000000,
 		"size_x": 176.000000,
 		"size_y": 186.000000,
 		"threshold": 0.000000,
@@ -63,6 +63,13 @@
 		"size_y": 140.000000,
 		"base_note": 36,
 		"filename": "samples/kick.wav"
+	},
+	"Connection": {
+		"component_out": 3,
+		"component_in": 0,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
 	},
 	"Connection": {
 		"component_out": 1,

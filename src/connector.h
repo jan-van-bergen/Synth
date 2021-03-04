@@ -22,8 +22,6 @@ struct Connector {
 
 	ImVec2 pos;
 
-	std::vector<Connector *> connected;
-
 	Connector(bool is_input, bool is_midi, Component * component, std::string const & name) : is_input(is_input), is_midi(is_midi), component(component), name(name) { }
 };
 

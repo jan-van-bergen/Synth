@@ -582,7 +582,6 @@ void Synth::open_file(char const * filename) {
 				}
 
 				auto id = obj_id->value;
-
 				auto component = try_add_component<AllComponents>(*this, obj->name, id);
 
 				if (!component) {
