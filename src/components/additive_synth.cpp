@@ -109,19 +109,5 @@ void AdditiveSynthComponent::serialize_custom(json::Writer & writer) const {
 }
 
 void AdditiveSynthComponent::deserialize_custom(json::Object const & object) {
-	auto json_harmonics = object.find<json::Array const>("harmonics");
-	
-	if (!json_harmonics || json_harmonics->values.size() != NUM_HARMONICS) {
-		puts("ERROR: Invalid harmonics!");
-		return;
-	}
-	
-	auto harmonic = harmonics;
-	
-	for (auto const & json_value : json_harmonics->values) {
-		assert(json_value->type == json::JSON::Type::VALUE_FLOAT);
-		auto value = static_cast<json::ValueFloat const *>(json_value.get());
-
-		*(harmonic++) = value->value;
-	}
+	object.find_array("harmonics", NUM_HARMONICS, harmonics);
 }

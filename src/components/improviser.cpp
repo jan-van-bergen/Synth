@@ -81,7 +81,7 @@ void ImproviserComponent::render(Synth const & synth) {
 	auto mode_index = int(mode);
 
 	if (ImGui::BeginCombo("Mode", mode_names[mode_index])) {
-		for (int i = 0; i < util::array_element_count(mode_names); i++) {
+		for (int i = 0; i < util::array_count(mode_names); i++) {
 			if (ImGui::Selectable(mode_names[i], mode_index == i)) {
 				mode_index = i;
 			}

@@ -103,7 +103,7 @@ void ArpComponent::render(Synth const & synth) {
 	auto mode_index = int(mode);
 
 	if (ImGui::BeginCombo("Mode", mode_names[mode_index])) {
-		for (int j = 0; j < util::array_element_count(mode_names); j++) {
+		for (int j = 0; j < util::array_count(mode_names); j++) {
 			if (ImGui::Selectable(mode_names[j], mode_index == j)) {
 				mode_index = j;
 			}

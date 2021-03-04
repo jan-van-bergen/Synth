@@ -49,6 +49,8 @@ namespace json {
 			}
 		}
 
+		bool find_array(char const * key, int length, float array[], float default_value = { }) const;
+
 		int         find_int   (char const * key, int                 default_value = 0)    const;
 		float       find_float (char const * key, float               default_value = 0.0f) const;
 		std::string find_string(char const * key, std::string const & default_value = "")   const;

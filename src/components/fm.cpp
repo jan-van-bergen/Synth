@@ -95,35 +95,6 @@ void FMComponent::serialize_custom(json::Writer & writer) const {
 }
 
 void FMComponent::deserialize_custom(json::Object const & object) {
-	auto json_weights = object.find<json::Array const>("weights");
-
-	if (!json_weights || json_weights->values.size() != NUM_OPERATORS * NUM_OPERATORS) {
-		puts("ERROR: Invalid FM weights!");
-		return;
-	}
-	
-	auto weight = &weights[0][0];
-
-	for (auto const & json_value : json_weights->values) {
-		assert(json_value->type == json::JSON::Type::VALUE_FLOAT);
-		auto value = static_cast<json::ValueFloat const *>(json_value.get());
-
-		*(weight++) = value->value;
-	}
-
-	auto json_outs = object.find<json::Array const>("out");
-	
-	if (!json_outs || json_outs->values.size() != NUM_OPERATORS) {
-		puts("ERROR: Invalid FM out values!");
-		return;
-	}
-	
-	auto out = outs;
-	
-	for (auto const & json_value : json_outs->values) {
-		assert(json_value->type == json::JSON::Type::VALUE_FLOAT);
-		auto value = static_cast<json::ValueFloat const *>(json_value.get());
-
-		*(out++) = value->value;
-	}
+	object.find_array("weights", util::array_count(weights), &weights[0][0]);
+	object.find_array("outs",    util::array_count(outs),    outs);
 }

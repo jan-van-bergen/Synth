@@ -129,7 +129,7 @@ void OscillatorComponent::render(Synth const & synth) {
 	ImGui::PushItemWidth(-64.0f);
 
 	if (ImGui::BeginCombo("Waveform", waveform_names[waveform_index])) {
-		for (int i = 0; i < util::array_element_count(waveform_names); i++) {
+		for (int i = 0; i < util::array_count(waveform_names); i++) {
 			if (ImGui::Selectable(waveform_names[i], waveform_index == i)) {
 				waveform_index = i;
 			}

@@ -46,27 +46,9 @@ void SequencerComponent::render(Synth const & synth) {
 }
 
 void SequencerComponent::serialize_custom(json::Writer & writer) const {
-	writer.write("pattern", 16, pattern);
+	writer.write("pattern", TRACK_SIZE, pattern);
 }
 
 void SequencerComponent::deserialize_custom(json::Object const & object) {
-	memset(pattern, 0, sizeof(pattern));
-	
-	auto array = object.find<json::Array const>("pattern");
-	if (array == nullptr) return;
-
-	auto const & values = array->values;
-	
-	if (values.size() != TRACK_SIZE) {
-		printf("WARNGING: Non-matching track sizes! stored %zu, expected %i\n", values.size(), TRACK_SIZE);
-	}
-
-	auto size = std::min((int)values.size(), TRACK_SIZE);
-
-	for (int i = 0; i < size; i++) {
-		assert(values[i]->type == json::JSON::Type::VALUE_FLOAT);
-		auto value = static_cast<json::ValueFloat const *>(values[i].get());
-
-		pattern[i] = value->value;
-	}
+	object.find_array("pattern", TRACK_SIZE, pattern);
 }

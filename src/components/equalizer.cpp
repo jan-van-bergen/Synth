@@ -52,7 +52,7 @@ void EqualizerComponent::render(Synth const & synth) {
 	));
 
 	ImPlot::SetNextPlotLimits(20.0, 20000.0, -18.0, 18.0, ImGuiCond_Always);
-	ImPlot::SetNextPlotTicksX(ticks_x, util::array_element_count(ticks_x), tick_labels);
+	ImPlot::SetNextPlotTicksX(ticks_x, util::array_count(ticks_x), tick_labels);
 
 	if (ImPlot::BeginPlot("EQ", "Frequency (Hz)", "Magnitude (dB)", space, ImPlotFlags_CanvasOnly, ImPlotAxisFlags_LogScale)) {
 		static constexpr auto N = 4 * 1024;
@@ -112,7 +112,7 @@ void EqualizerComponent::render(Synth const & synth) {
 			
 			if (ImGui::BeginPopup(popup_label)) {
 				if (ImGui::BeginCombo("Mode", Band::mode_names[band.mode])) {
-					for (int j = 0; j < util::array_element_count(Band::mode_names); j++) {
+					for (int j = 0; j < util::array_count(Band::mode_names); j++) {
 						if (ImGui::Selectable(Band::mode_names[j], band.mode == j)) {
 							band.mode = j;
 						}

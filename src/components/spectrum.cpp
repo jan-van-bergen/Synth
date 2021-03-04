@@ -51,7 +51,7 @@ void SpectrumComponent::render(Synth const & synth) {
 	));
 
 	ImPlot::SetNextPlotLimits(FREQ_BIN_SIZE, SAMPLE_RATE / 2, -78.0f, -18.0f, ImGuiCond_Always);
-	ImPlot::SetNextPlotTicksX(ticks_x, util::array_element_count(ticks_x), tick_labels);
+	ImPlot::SetNextPlotTicksX(ticks_x, util::array_count(ticks_x), tick_labels);
 
 	if (ImPlot::BeginPlot("Spectrum", "Frequency (Hz)", "Magnitude (dB)", space, ImPlotFlags_CanvasOnly, ImPlotAxisFlags_LogScale)) {
 		ImPlot::PushStyleVar(ImPlotStyleVar_FillAlpha, 0.25f);
