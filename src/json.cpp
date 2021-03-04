@@ -11,6 +11,8 @@ bool json::Object::find_array(char const * key, int length, float array[], float
 
 		if (found_length != length) {
 			printf("WARNING: The length of JSON array '%s' does not match expected value! Expected %i, got %i\n", key, length, found_length);
+
+			if (found_length > length) found_length = length; // Don't read more than the array buffer allows for
 		}
 	} else {
 		found_length = 0;
