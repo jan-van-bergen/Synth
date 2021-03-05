@@ -165,8 +165,6 @@ struct Parameter : Param {
 				ImGui::InputText("Value", enter_text, sizeof(enter_text));
 
 				if (ImGui::IsKeyPressed(SDL_SCANCODE_RETURN)) {
-					ImGui::CloseCurrentPopup();
-					
 					if constexpr (IS_FLOAT) {
 						parameter = std::atof(enter_text);
 					} else {
@@ -174,7 +172,10 @@ struct Parameter : Param {
 					}
 
 					parameter = util::clamp(parameter, lower, upper);
+				}
 
+				if (ImGui::IsKeyPressed(SDL_SCANCODE_RETURN) || ImGui::IsKeyPressed(SDL_SCANCODE_ESCAPE)) {
+					ImGui::CloseCurrentPopup();
 					should_close_context_menu = true;
 				}
 
