@@ -10,17 +10,18 @@
 		"size_x": 101.000000,
 		"size_y": 113.000000
 	},
-	"KeyboardComponent": {
+	"MIDIPlayerComponent": {
 		"id": 1,
-		"pos_x": 155.000000,
-		"pos_y": 66.000000,
-		"size_x": 92.000000,
-		"size_y": 64.000000
+		"pos_x": 181.000000,
+		"pos_y": 63.000000,
+		"size_x": 580.000000,
+		"size_y": 122.000000,
+		"filename": "C:\Dev\Git\Synth\midi\2channels.mid"
 	},
 	"OscillatorComponent": {
 		"id": 2,
-		"pos_x": 328.000000,
-		"pos_y": 52.000000,
+		"pos_x": 785.000000,
+		"pos_y": 208.000000,
 		"size_x": 288.000000,
 		"size_y": 192.000000,
 		"invert": 0,
@@ -35,59 +36,16 @@
 		"release": 0.000000,
 		"waveform": 2
 	},
-	"CompressorComponent": {
-		"id": 3,
-		"pos_x": 751.000000,
-		"pos_y": 183.000000,
-		"size_x": 176.000000,
-		"size_y": 186.000000,
-		"threshold": 0.000000,
-		"ratio": 1.000000,
-		"gain": 0.000000,
-		"Attack": 15.000000,
-		"Release": 200.000000
-	},
-	"SequencerComponent": {
-		"id": 4,
-		"pos_x": 26.000000,
-		"pos_y": 290.000000,
-		"size_x": 392.000000,
-		"size_y": 116.000000,
-		"pattern": [ 1.000000, 0.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000, 0.000000 ]
-	},
-	"SamplerComponent": {
-		"id": 5,
-		"pos_x": 500.000000,
-		"pos_y": 298.000000,
-		"size_x": 183.000000,
-		"size_y": 140.000000,
-		"base_note": 36,
-		"filename": "samples/kick.wav"
+	"Connection": {
+		"component_out": 2,
+		"component_in": 0,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 0.550000
 	},
 	"Connection": {
 		"component_out": 1,
 		"component_in": 2,
-		"offset_out": 0,
-		"offset_in": 0,
-		"weight": 1.000000
-	},
-	"Connection": {
-		"component_out": 2,
-		"component_in": 3,
-		"offset_out": 0,
-		"offset_in": 0,
-		"weight": 1.000000
-	},
-	"Connection": {
-		"component_out": 5,
-		"component_in": 3,
-		"offset_out": 0,
-		"offset_in": 1,
-		"weight": 1.000000
-	},
-	"Connection": {
-		"component_out": 4,
-		"component_in": 5,
 		"offset_out": 0,
 		"offset_in": 0,
 		"weight": 1.000000

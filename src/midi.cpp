@@ -59,9 +59,11 @@ std::optional<midi::Track> midi::Track::load(char const * filename) {
 	midi::Track midi;
 	midi.ticks = ticks;
 
-	auto time = 0;
+	int time;
 
 	for (int i = 0; i < num_tracks; i++) {
+		time = 0;
+
 		unsigned char chunk_header[8]; fread_s(chunk_header, sizeof(chunk_header), 1, sizeof(chunk_header), file);
 		assert(memcmp(chunk_header, "MTrk", 4) == 0);
 	
@@ -95,15 +97,18 @@ std::optional<midi::Track> midi::Track::load(char const * filename) {
 			
 				bytes_parsed += 2 + num_bytes;
 
+				static constexpr auto META_COMMAND_END = 0x2F;
+				static constexpr auto META_COMMAND_TEMPO = 0x51;
+
 				switch (meta_cmd) {
-					case 0x2f: { // This event must come at the end of each track
+					case META_COMMAND_END: { // This event must come at the end of each track
 						assert(num_bytes == 0);
 						assert(bytes_parsed == chunk_length);
 
 						break;
 					}
 
-					case 0x51: { // Set Tempo
+					case META_COMMAND_TEMPO: {
 						assert(num_bytes == 0x03);
 
 						midi.tempo = getc(file) << 16 | getc(file) << 8 | getc(file);
@@ -198,7 +203,27 @@ std::optional<midi::Track> midi::Track::load(char const * filename) {
 
 	fclose(file);
 
-	std::sort(midi.events.begin(), midi.events.end(), [](midi::Event const & a, midi::Event const & b) {
+	std::sort(midi.events.begin(), midi.events.end(), [](Event const & a, Event const & b) -> bool {
+		if (a.time == b.time) {
+			if (a.type == b.type) {
+				if (a.type == Event::Type::CONTROL) {
+					if (a.control.id == b.control.id) {
+						return a.control.value < b.control.value;
+					}
+
+					return a.control.id < b.control.id;
+				} else {
+					if (a.note.note == b.note.note) {
+						return a.note.velocity < b.note.velocity;
+					}
+
+					return a.note.note < b.note.note;
+				}
+			}
+
+			return a.type < b.type;
+			
+		}
 		return a.time < b.time;	
 	});
 

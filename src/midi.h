@@ -5,8 +5,8 @@
 namespace midi {
 	struct Event {
 		enum struct Type {
-			PRESS   = 0x9,
 			RELEASE = 0x8,
+			PRESS   = 0x9,
 
 			CONTROL = 0xb
 		} type;
