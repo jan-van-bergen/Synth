@@ -1,4 +1,4 @@
-#include "components.h"
+#include "equalizer.h"
 
 #include <ImGui/implot.h>
 

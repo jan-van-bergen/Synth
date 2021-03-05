@@ -1,4 +1,4 @@
-#include "components.h"
+#include "oscillator.h"
 
 #include "synth.h"
 #include "util.h"

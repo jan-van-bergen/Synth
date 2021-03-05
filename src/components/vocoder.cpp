@@ -1,4 +1,4 @@
-#include "components.h"
+#include "vocoder.h"
 
 void VocoderComponent::calc_bands() {
 	bands.resize(num_bands);

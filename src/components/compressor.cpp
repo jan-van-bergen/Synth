@@ -1,4 +1,4 @@
-#include "components.h"
+#include "compressor.h"
 
 // Based on: SimpleSource by ChunkWare Music Software
 // https://github.com/music-dsp-collection/chunkware-simple-dynamics

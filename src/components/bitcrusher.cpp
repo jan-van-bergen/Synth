@@ -1,4 +1,4 @@
-#include "components.h"
+#include "bitcrusher.h"
 
 void BitCrusherComponent::update(Synth const & synth) {
 	auto num_quantizations     = float(1u << (bits - 1));

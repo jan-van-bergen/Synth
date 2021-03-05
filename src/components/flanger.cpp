@@ -1,4 +1,4 @@
-#include "components.h"
+#include "flanger.h"
 
 void FlangerComponent::update(Synth const & synth) {
 	// Convert ms to seconds

@@ -220,7 +220,35 @@
     <ClCompile Include="src\util.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\components.h" />
+    <ClInclude Include="src\components\additive_synth.h" />
+    <ClInclude Include="src\components\arp.h" />
+    <ClInclude Include="src\components\bitcrusher.h" />
+    <ClInclude Include="src\components\component.h" />
+    <ClInclude Include="src\components\components.h" />
+    <ClInclude Include="src\components\compressor.h" />
+    <ClInclude Include="src\components\decibel.h" />
+    <ClInclude Include="src\components\delay.h" />
+    <ClInclude Include="src\components\distortion.h" />
+    <ClInclude Include="src\components\equalizer.h" />
+    <ClInclude Include="src\components\filter.h" />
+    <ClInclude Include="src\components\flanger.h" />
+    <ClInclude Include="src\components\fm.h" />
+    <ClInclude Include="src\components\group.h" />
+    <ClInclude Include="src\components\improviser.h" />
+    <ClInclude Include="src\components\keyboard.h" />
+    <ClInclude Include="src\components\midi_player.h" />
+    <ClInclude Include="src\components\oscillator.h" />
+    <ClInclude Include="src\components\oscilloscope.h" />
+    <ClInclude Include="src\components\pan.h" />
+    <ClInclude Include="src\components\phaser.h" />
+    <ClInclude Include="src\components\sampler.h" />
+    <ClInclude Include="src\components\sequencer.h" />
+    <ClInclude Include="src\components\speaker.h" />
+    <ClInclude Include="src\components\spectrum.h" />
+    <ClInclude Include="src\components\split.h" />
+    <ClInclude Include="src\components\vectorscope.h" />
+    <ClInclude Include="src\components\vocoder.h" />
+    <ClInclude Include="src\components\voice.h" />
     <ClInclude Include="src\connector.h" />
     <ClInclude Include="src\dsp\fft.h" />
     <ClInclude Include="src\dsp\filter.h" />

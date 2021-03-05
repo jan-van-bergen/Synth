@@ -1,4 +1,4 @@
-#include "components.h"
+#include "sequencer.h"
 
 #include "synth.h"
 

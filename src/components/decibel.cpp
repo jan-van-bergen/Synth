@@ -1,4 +1,4 @@
-#include "components.h"
+#include "decibel.h"
 
 void DecibelComponent::update(Synth const & synth) {
 	auto max_amplitude = 0.0f;

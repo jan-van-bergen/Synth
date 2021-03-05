@@ -1,4 +1,4 @@
-#include "components.h"
+#include "phaser.h"
 
 void PhaserComponent::update(Synth const & synth) {
 	static constexpr auto Q_FACTOR = 0.49f;

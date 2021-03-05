@@ -155,9 +155,6 @@
     </ClInclude>
     <ClInclude Include="src\file_dialog.h" />
     <ClInclude Include="src\midi.h" />
-    <ClInclude Include="src\components.h">
-      <Filter>components</Filter>
-    </ClInclude>
     <ClInclude Include="src\note_event.h">
       <Filter>synth</Filter>
     </ClInclude>
@@ -181,6 +178,93 @@
     </ClInclude>
     <ClInclude Include="src\knob.h">
       <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\vocoder.h">
+      <Filter>components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\vectorscope.h">
+      <Filter>components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\split.h">
+      <Filter>components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\spectrum.h">
+      <Filter>components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\speaker.h">
+      <Filter>components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\sequencer.h">
+      <Filter>components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\sampler.h">
+      <Filter>components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\phaser.h">
+      <Filter>components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\pan.h">
+      <Filter>components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\oscilloscope.h">
+      <Filter>components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\oscillator.h">
+      <Filter>components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\midi_player.h">
+      <Filter>components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\keyboard.h">
+      <Filter>components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\improviser.h">
+      <Filter>components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\group.h">
+      <Filter>components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\fm.h">
+      <Filter>components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\flanger.h">
+      <Filter>components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\filter.h">
+      <Filter>components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\equalizer.h">
+      <Filter>components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\voice.h">
+      <Filter>components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\distortion.h">
+      <Filter>components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\delay.h">
+      <Filter>components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\decibel.h">
+      <Filter>components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\compressor.h">
+      <Filter>components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\bitcrusher.h">
+      <Filter>components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\arp.h">
+      <Filter>components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\additive_synth.h">
+      <Filter>components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\component.h">
+      <Filter>components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\components.h">
+      <Filter>components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

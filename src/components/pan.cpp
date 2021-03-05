@@ -1,4 +1,4 @@
-#include "components.h"
+#include "pan.h"
 
 void PanComponent::update(Synth const & synth) {
 	auto alpha = 0.5f + 0.5f * pan;

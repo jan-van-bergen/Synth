@@ -1,6 +1,5 @@
-#include "components.h"
+#include "spectrum.h"
 
-#include <complex>
 #include <array>
 
 #include <ImGui/implot.h>

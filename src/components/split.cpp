@@ -1,4 +1,4 @@
-#include "components.h"
+#include "split.h"
 
 void SplitComponent::update(Synth const & synth) {
 	for (int i = 0; i < BLOCK_SIZE; i++) {

@@ -1,4 +1,4 @@
-#include "components.h"
+#include "midi_player.h"
 
 #include "synth.h"
 

@@ -19,7 +19,7 @@ void Synth::update(Sample buf[BLOCK_SIZE]) {
 	time += BLOCK_SIZE;
 
 	// Collect the resulting audio samples
-	memset(buf, 0, BLOCK_SIZE * sizeof(Sample));
+	std::memset(buf, 0, BLOCK_SIZE * sizeof(Sample));
 
 	for (auto const & speaker : speakers) {
 		for (auto const & input : speaker->inputs) {

@@ -1,7 +1,7 @@
 #pragma once
 #include <set>
 
-#include "components.h"
+#include "components/components.h"
 
 #include "file_dialog.h"
 

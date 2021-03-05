@@ -1,4 +1,4 @@
-#include "components.h"
+#include "vectorscope.h"
 
 #include <ImGui/implot.h>
 

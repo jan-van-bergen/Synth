@@ -1,4 +1,4 @@
-#include "components.h"
+#include "oscilloscope.h"
 
 #include <ImGui/implot.h>
 
