@@ -27,11 +27,11 @@
 		"size_x": 288.000000,
 		"size_y": 200.000000,
 		"base_note": 48,
-		"attack": 0.100000,
+		"attack": 0.000000,
 		"hold": 0.500000,
 		"decay": 1.000000,
-		"sustain": 0.500000,
-		"release": 0.000000,
+		"sustain": 1.000000,
+		"release": 1.600001,
 		"filename": "samples/piano.wav"
 	},
 	"OscillatorComponent": {
@@ -104,7 +104,7 @@
 		"component_in": 0,
 		"offset_out": 0,
 		"offset_in": 0,
-		"weight": 0.350000
+		"weight": 0.460000
 	},
 	"Connection": {
 		"component_out": 3,

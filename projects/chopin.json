@@ -25,15 +25,23 @@
 		"size_x": 288.000000,
 		"size_y": 199.000000,
 		"base_note": 60,
-		"attack": 0.100000,
-		"hold": 0.500000,
-		"decay": 1.000000,
-		"sustain": 0.500000,
-		"release": 0.000000,
+		"attack": 0.000000,
+		"hold": 0.000000,
+		"decay": 4.000000,
+		"sustain": 0.890000,
+		"release": 16.000000,
 		"filename": "samples/piano.wav"
 	},
+	"GroupComponent": {
+		"id": 3,
+		"pos_x": 1140.000000,
+		"pos_y": 335.000000,
+		"size_x": 64.000000,
+		"size_y": 117.000000,
+		"gain": 6.000000
+	},
 	"Connection": {
-		"component_out": 2,
+		"component_out": 3,
 		"component_in": 0,
 		"offset_out": 0,
 		"offset_in": 0,
@@ -42,6 +50,13 @@
 	"Connection": {
 		"component_out": 1,
 		"component_in": 2,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 2,
+		"component_in": 3,
 		"offset_out": 0,
 		"offset_in": 0,
 		"weight": 1.000000

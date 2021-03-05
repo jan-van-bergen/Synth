@@ -79,6 +79,13 @@ void FMComponent::render(Synth const & synth) {
 			ImGui::NewLine();
 		}
 	}
+	
+	auto prev = ImGui::GetCursorPos();
+
+	ImGui::SetCursorPos(cur);
+	release.render();
+
+	ImGui::SetCursorPos(prev);
 
 	if (ImGui::BeginTabBar("Operators")) {
 		for (int i = 0; i < FM_NUM_OPERATORS; i++) {
@@ -98,9 +105,6 @@ void FMComponent::render(Synth const & synth) {
 
 		ImGui::EndTabBar();
 	}
-
-	ImGui::SetCursorPos(cur);
-	release.render();
 }
 
 void FMComponent::serialize_custom(json::Writer & writer) const {

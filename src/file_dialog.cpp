@@ -9,6 +9,8 @@ void FileDialog::show(Type type, std::string const & title, std::string const & 
 	this->title = title + "###FileDialog";
 	this->callback = callback;
 
+	selected[0] = '\0';
+
 	change_path(default_path);
 
 	should_open = true;
