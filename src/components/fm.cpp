@@ -80,10 +80,6 @@ void FMComponent::render(Synth const & synth) {
 		}
 	}
 
-	ImGui::SetCursorPos(cur);
-	release.render();
-//	ImGui::NewLine();
-
 	if (ImGui::BeginTabBar("Operators")) {
 		for (int i = 0; i < FM_NUM_OPERATORS; i++) {
 			sprintf_s(label, "Op %i", i);
@@ -102,6 +98,9 @@ void FMComponent::render(Synth const & synth) {
 
 		ImGui::EndTabBar();
 	}
+
+	ImGui::SetCursorPos(cur);
+	release.render();
 }
 
 void FMComponent::serialize_custom(json::Writer & writer) const {

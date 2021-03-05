@@ -62,7 +62,7 @@ namespace util {
 
 	template<typename T>
 	inline T remap(T value, T old_min, T old_max, T new_min, T new_max) {
-		assert(old_min <= value && value <= old_max);
+//		assert(old_min <= value && value <= old_max);
 
 		return new_min + (value - old_min) / (old_max - old_min) * (new_max - new_min);
 	}

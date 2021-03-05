@@ -123,11 +123,18 @@ std::optional<midi::Track> midi::Track::load(char const * filename) {
 				auto nib_command = (command & 0xf0) >> 4;
 				auto nib_channel = (command & 0x0f);
 
+				static constexpr auto COMMAND_NOTE_OFF           = 0x8;
+				static constexpr auto COMMAND_NOTE_ON            = 0x9;
+				static constexpr auto COMMAND_NOTE_AFTERTOUCH    = 0xA;
+				static constexpr auto COMMAND_CONTROL_CHANGE     = 0xB;
+				static constexpr auto COMMAND_PRORAM_CHANGE      = 0xC;
+				static constexpr auto COMMAND_CHANNEL_AFTERTOUCH = 0xD;
+				static constexpr auto COMMAND_PITCH_BEND         = 0xE;
+
 				switch (nib_command) {
-					case 0x8: {
+					case COMMAND_NOTE_OFF: {
 						auto note     = getc(file);
 						auto velocity = getc(file);
-
 						bytes_parsed += 2;
 
 						midi.events.push_back(midi::Event::make_release(time, note, velocity));
@@ -135,10 +142,9 @@ std::optional<midi::Track> midi::Track::load(char const * filename) {
 						break;
 					}
 
-					case 0x9: {
+					case COMMAND_NOTE_ON: {
 						auto note     = getc(file);
 						auto velocity = getc(file);
-
 						bytes_parsed += 2;
 
 						midi.events.push_back(midi::Event::make_press(time, note, velocity));
@@ -146,7 +152,45 @@ std::optional<midi::Track> midi::Track::load(char const * filename) {
 						break;
 					}
 
-					default: return { };
+					case COMMAND_NOTE_AFTERTOUCH: {
+						auto note     = getc(file);
+						auto velocity = getc(file);
+						bytes_parsed += 2;
+
+						break;
+					}
+
+					case COMMAND_CONTROL_CHANGE: {
+						auto control = getc(file);
+						auto value   = getc(file);
+						bytes_parsed += 2;
+
+						break;
+					}
+
+					case COMMAND_PRORAM_CHANGE: {
+						auto program = getc(file);
+						bytes_parsed++;
+
+						break;
+					}
+
+					case COMMAND_CHANNEL_AFTERTOUCH: {
+						auto channel = getc(file);
+						bytes_parsed++;
+
+						break;
+					}
+
+					case COMMAND_PITCH_BEND: {
+						auto pitch_bottom = getc(file);
+						auto pitch_top    = getc(file);
+						bytes_parsed += 2;
+
+						break;
+					}
+
+					default: printf("WARNING: Unknown MIDI command %x!\n", nib_command);
 				}
 			}
 		}
