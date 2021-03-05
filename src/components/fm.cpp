@@ -5,36 +5,38 @@
 void FMComponent::update(Synth const & synth) {
 	auto steps_per_second = 4.0f / 60.0f * float(synth.settings.tempo);
 
-	auto note_events = inputs[0].get_events();
+	update_voices(steps_per_second);
 
-	for (auto const & note_event : note_events) {
-		if (note_event.pressed) {
-			voices.emplace_back(note_event.note, note_event.velocity);
-		} else {
-			voices.erase(std::remove_if(voices.begin(), voices.end(), [note = note_event.note](auto voice) {
-				return voice.note == note;
-			}), voices.end());
-		}
-	}
-	
-	for (auto & voice : voices) {
+	for (int v = 0; v < voices.size(); v++) {
+		auto & voice = voices[v];
+
 		auto carrier_freq = util::note_freq(voice.note);
 		
-		for (int i = 0; i < BLOCK_SIZE; i++) {
+		for (int i = voice.get_first_sample(synth.time); i < BLOCK_SIZE; i++) {
 			auto time_in_seconds = voice.sample * SAMPLE_RATE_INV;
 			auto time_in_steps   = time_in_seconds * steps_per_second;
+			
+			float amplitude;
+			auto done = voice.apply_envelope(time_in_steps, 0.0f, INFINITY, 0.0f, 1.0f, release, amplitude);
+			
+			if (done) {
+				voices.erase(voices.begin() + v);
+				v--;
 
-			auto phase = TWO_PI * time_in_seconds * carrier_freq; 
+				break;
+			}
 
 			Sample sample = { };
 
-			float next_operator_values[NUM_OPERATORS] = { };
+			float next_operator_values[FM_NUM_OPERATORS] = { };
 
-			for (int o = 0; o < NUM_OPERATORS; o++) {
+			auto phase = TWO_PI * time_in_seconds * carrier_freq; 
+
+			for (int o = 0; o < FM_NUM_OPERATORS; o++) {
 				auto phs = ratios[o] * phase;
 
 				// Modulate phase of operator o using the values of other operators p
-				for (int p = 0; p < NUM_OPERATORS; p++) {
+				for (int p = 0; p < FM_NUM_OPERATORS; p++) {
 					phs += weights[p][o] * voice.operator_values[p];
 				}
 
@@ -44,9 +46,9 @@ void FMComponent::update(Synth const & synth) {
 				sample += outs[o] * value;
 			}
 
-			memcpy(voice.operator_values, next_operator_values, sizeof(voice.operator_values));
+			std::memcpy(voice.operator_values, next_operator_values, sizeof(voice.operator_values));
 
-			outputs[0].get_sample(i) += voice.velocity * sample;
+			outputs[0].get_sample(i) += amplitude * sample;
 
 			voice.sample += 1.0f;
 		}
@@ -56,21 +58,34 @@ void FMComponent::update(Synth const & synth) {
 void FMComponent::render(Synth const & synth) {
 	char label[128] = { };
 
-	for (int op_to = 0; op_to < NUM_OPERATORS; op_to++) {
-		for (int op_from = 0; op_from < NUM_OPERATORS; op_from++) {
-			sprintf_s(label, "Operator %i to %i", op_from, op_to);
+	ImVec2 cur = { };
 
+	for (int op_to = 0; op_to < FM_NUM_OPERATORS; op_to++) {
+		for (int op_from = 0; op_from < FM_NUM_OPERATORS; op_from++) {
+			sprintf_s(label, "Operator %i to %i", op_from, op_to);
 			ImGui::Knob(label, "", label, &weights[op_from][op_to], 0.0f, 2.0f, false, "", 12.0f);
-			ImGui::SameLine();
+
+			auto spacing = op_from < FM_NUM_OPERATORS - 1 ? -1.0f : 12.0f;
+			ImGui::SameLine(0.0f, spacing);
 		}
 
 		sprintf_s(label, "Out %i", op_to);
-
 		ImGui::Knob(label, "", label, &outs[op_to], 0.0f, 1.0f, false, "", 12.0f);
+
+		if (op_to == 0) {
+			// Save cursor position to allow drawing on the same line later on
+			ImGui::SameLine();
+			cur = ImGui::GetCursorPos();
+			ImGui::NewLine();
+		}
 	}
 
+	ImGui::SetCursorPos(cur);
+	release.render();
+//	ImGui::NewLine();
+
 	if (ImGui::BeginTabBar("Operators")) {
-		for (int i = 0; i < NUM_OPERATORS; i++) {
+		for (int i = 0; i < FM_NUM_OPERATORS; i++) {
 			sprintf_s(label, "Op %i", i);
 
 			if (ImGui::BeginTabItem(label)) {
@@ -90,11 +105,11 @@ void FMComponent::render(Synth const & synth) {
 }
 
 void FMComponent::serialize_custom(json::Writer & writer) const {
-	writer.write("weights", NUM_OPERATORS * NUM_OPERATORS, &weights[0][0]);
-	writer.write("outs",    NUM_OPERATORS, outs);
+	writer.write("weights", FM_NUM_OPERATORS * FM_NUM_OPERATORS, &weights[0][0]);
+	writer.write("outs",    FM_NUM_OPERATORS, outs);
 }
 
 void FMComponent::deserialize_custom(json::Object const & object) {
-	object.find_array("weights", NUM_OPERATORS * NUM_OPERATORS, &weights[0][0]);
-	object.find_array("outs",    NUM_OPERATORS, outs);
+	object.find_array("weights", FM_NUM_OPERATORS * FM_NUM_OPERATORS, &weights[0][0]);
+	object.find_array("outs",    FM_NUM_OPERATORS, outs);
 }

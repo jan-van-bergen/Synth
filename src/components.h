@@ -165,7 +165,88 @@ private:
 	bool going_up = true;
 };
 
-struct OscillatorComponent : Component {
+struct Voice {
+	int   note;
+	float velocity;
+	
+	int   start_time;              // In samples, absolute
+	float release_time = INFINITY; // In steps, relative to start
+
+	Voice(int note, float velocity, int start_time) : note(note), velocity(velocity), start_time(start_time) { }
+
+	int get_first_sample(int time) const {
+		if (time < start_time){
+			return start_time - time;
+		} else {
+			return 0;
+		}
+	}
+
+	bool apply_envelope(float time_in_steps, float a, float h, float d, float s, float r, float & amplitude) const {
+		amplitude = velocity * util::envelope(time_in_steps, a, h, d, s);
+
+		auto released = release_time < time_in_steps;
+
+		if (released) {
+			auto time_since_release = time_in_steps - release_time;
+
+			if (time_since_release < r) {
+				amplitude = util::lerp(amplitude, 0.0f, time_since_release / r);
+			} else {
+				return true; // Voice is done and should be removed
+			}
+		}
+
+		return false;
+	}
+
+	bool apply_envelope(float time_in_steps, float & amplitude) const {
+		return apply_envelope(time_in_steps, 0.1f, INFINITY, 0.0f, 1.0f, 0.1f, amplitude);
+	}
+};
+
+template<typename TVoice> requires std::is_base_of_v<Voice, TVoice>
+struct VoiceComponent : Component {
+protected:
+	std::vector<TVoice> voices;
+
+	VoiceComponent(int id,
+		std::string name,
+		std::vector<ConnectorIn>  && inputs,
+		std::vector<ConnectorOut> && outputs) : Component(id, name, std::move(inputs), std::move(outputs)) { }
+
+	void update_voices(float steps_per_second) {		
+		auto note_events = inputs[0].get_events();
+
+		for (auto const & note_event : note_events) {
+			if (note_event.pressed) {
+				voices.emplace_back(note_event.note, note_event.velocity, note_event.time);
+			} else {
+				while (true) {
+					auto voice = std::find_if(voices.begin(), voices.end(), [note = note_event.note](auto voice) {
+						return voice.note == note && std::isinf(voice.release_time);
+					});
+
+					if (voice == voices.end()) break;
+						
+					voice->release_time = float(note_event.time - voice->start_time) * SAMPLE_RATE_INV * steps_per_second;
+				}
+			}
+		}
+	}
+
+public:
+	void clear() { voices.clear(); }
+};
+
+struct OscillatorVoice : Voice {
+	float phase  = 0.0f;
+	float sample = 0.0f;
+
+	OscillatorVoice(int note, float velocity, int start_time) : Voice(note, velocity, start_time) { }
+};
+
+struct OscillatorComponent : VoiceComponent<OscillatorVoice> {
 	static constexpr const char * waveform_names[] = { "Sine", "Triangle", "Saw", "Square", "Pulse 25%", "Pulse 12.5%", "Noise" };
 
 	int waveform_index = 2;
@@ -179,28 +260,13 @@ struct OscillatorComponent : Component {
 	Parameter<float> portamento = { this, "portamento", "Por",  "Portamento", 0.0f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } };
 
 	// Envelope
-	Parameter<float> attack  = { this, "attack",  "Att",  "Attack",  0.1f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } };
-	Parameter<float> hold	 = { this, "hold",    "Hold", "Hold",    0.5f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } };
-	Parameter<float> decay 	 = { this, "decay",   "Dec",  "Decay",   1.0f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } };
-	Parameter<float> sustain = { this, "sustain", "Sus",  "Sustain", 0.5f, std::make_pair(0.0f, 1.0f) };
-	Parameter<float> release = { this, "release", "Rel",  "Release", 0.0f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } };
+	Parameter<float> attack  = Parameter<float>::make_attack (this);
+	Parameter<float> hold	 = Parameter<float>::make_hold   (this);
+	Parameter<float> decay 	 = Parameter<float>::make_decay  (this);
+	Parameter<float> sustain = Parameter<float>::make_sustain(this);
+	Parameter<float> release = Parameter<float>::make_release(this);
 	
-	struct Voice {
-		int   note;
-		float velocity;
-		
-		int start_time; // In samples
-
-		float phase  = 0.0f;
-		float sample = 0.0f;
-
-		float release_time = INFINITY; // In steps
-
-		Voice(int note, float velocity, int start_time) : note(note), velocity(velocity), start_time(start_time) { } 
-	};
-	std::vector<Voice> voices;
-
-	OscillatorComponent(int id) : Component(id, "Oscillator", { { this, "MIDI In", true } }, { { this, "Out" } }) { }
+	OscillatorComponent(int id) : VoiceComponent(id, "Oscillator", { { this, "MIDI In", true } }, { { this, "Out" } }) { }
 
 	void update(struct Synth const & synth) override;
 	void render(struct Synth const & synth) override;
@@ -214,88 +280,97 @@ private:
 	float portamento_frequency = 0.0f;
 };
 
-struct FMComponent : Component {
-	static constexpr auto NUM_OPERATORS = 4;
+static constexpr auto FM_NUM_OPERATORS = 4;
 
-	float weights[NUM_OPERATORS][NUM_OPERATORS] = { };
-	float outs[NUM_OPERATORS] = { 1.0f };
+struct FMVoice : Voice {
+	float sample = 0.0f;
 
-	Parameter<float> ratios[NUM_OPERATORS] = {
+	float operator_values[FM_NUM_OPERATORS] = { };
+
+	FMVoice(int note, float velocity, int start_time) : Voice(note, velocity, start_time) { }
+};
+
+struct FMComponent : VoiceComponent<FMVoice> {
+	float weights[FM_NUM_OPERATORS][FM_NUM_OPERATORS] = { };
+	float outs[FM_NUM_OPERATORS] = { 1.0f };
+
+	Parameter<float> ratios[FM_NUM_OPERATORS] = {
 		{ this, "ratio_0", "Rat", "Ratio", 1.0f, std::make_pair(0.25f, 16.0f), { 0.25f, 0.5f, 0.75f, 1.0f, 1.5f, 2.0f, 3.0f, 4.0f, 6.0f, 8.0f, 12.0f, 16.0f } },
 		{ this, "ratio_1", "Rat", "Ratio", 2.0f, std::make_pair(0.25f, 16.0f), { 0.25f, 0.5f, 0.75f, 1.0f, 1.5f, 2.0f, 3.0f, 4.0f, 6.0f, 8.0f, 12.0f, 16.0f } },
 		{ this, "ratio_2", "Rat", "Ratio", 4.0f, std::make_pair(0.25f, 16.0f), { 0.25f, 0.5f, 0.75f, 1.0f, 1.5f, 2.0f, 3.0f, 4.0f, 6.0f, 8.0f, 12.0f, 16.0f } },
 		{ this, "ratio_3", "Rat", "Ratio", 8.0f, std::make_pair(0.25f, 16.0f), { 0.25f, 0.5f, 0.75f, 1.0f, 1.5f, 2.0f, 3.0f, 4.0f, 6.0f, 8.0f, 12.0f, 16.0f } }
 	};
 	
-	Parameter<float> attacks[NUM_OPERATORS] = {
-		{ this, "attack_0", "Att", "Attack", 0.1f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } },
-		{ this, "attack_1", "Att", "Attack", 0.1f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } },
-		{ this, "attack_2", "Att", "Attack", 0.1f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } },
-		{ this, "attack_3", "Att", "Attack", 0.1f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } }
+	Parameter<float> attacks[FM_NUM_OPERATORS] = {
+		Parameter<float>::make_attack(this, "attack_0"),
+		Parameter<float>::make_attack(this, "attack_1"),
+		Parameter<float>::make_attack(this, "attack_2"),
+		Parameter<float>::make_attack(this, "attack_3")
 	};
-	Parameter<float> holds[NUM_OPERATORS] = {
-		{ this, "hold_0", "Hold", "Hold", 0.5f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } },
-		{ this, "hold_1", "Hold", "Hold", 0.5f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } },
-		{ this, "hold_2", "Hold", "Hold", 0.5f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } },
-		{ this, "hold_3", "Hold", "Hold", 0.5f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } }
+	Parameter<float> holds[FM_NUM_OPERATORS] = {
+		Parameter<float>::make_hold(this, "hold_0"),
+		Parameter<float>::make_hold(this, "hold_1"),
+		Parameter<float>::make_hold(this, "hold_2"),
+		Parameter<float>::make_hold(this, "hold_3")
 	};
-	Parameter<float> decays[NUM_OPERATORS] = {
-		{ this, "decays_0", "Dec", "Decay", 1.0f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } },
-		{ this, "decays_1", "Dec", "Decay", 1.0f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } },
-		{ this, "decays_2", "Dec", "Decay", 1.0f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } },
-		{ this, "decays_3", "Dec", "Decay", 1.0f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 } }
+	Parameter<float> decays[FM_NUM_OPERATORS] = {
+		Parameter<float>::make_decay(this, "decay_0"),
+		Parameter<float>::make_decay(this, "decay_1"),
+		Parameter<float>::make_decay(this, "decay_2"),
+		Parameter<float>::make_decay(this, "decay_3")
 	};
-	Parameter<float> sustains[NUM_OPERATORS] = {
-		{ this, "sustain_0", "Sus", "Sustain", 1.0f, std::make_pair(0.0f, 1.0f) },
-		{ this, "sustain_1", "Sus", "Sustain", 1.0f, std::make_pair(0.0f, 1.0f) },
-		{ this, "sustain_2", "Sus", "Sustain", 1.0f, std::make_pair(0.0f, 1.0f) },
-		{ this, "sustain_3", "Sus", "Sustain", 1.0f, std::make_pair(0.0f, 1.0f) }
+	Parameter<float> sustains[FM_NUM_OPERATORS] = {
+		Parameter<float>::make_sustain(this, "sustain_0"),
+		Parameter<float>::make_sustain(this, "sustain_1"),
+		Parameter<float>::make_sustain(this, "sustain_2"),
+		Parameter<float>::make_sustain(this, "sustain_3")
 	};
 
-	FMComponent(int id) : Component(id, "FM", { { this, "MIDI In", true } }, { { this, "Out" } }) { }
+	Parameter<float> release = Parameter<float>::make_release(this);
+
+	FMComponent(int id) : VoiceComponent(id, "FM", { { this, "MIDI In", true } }, { { this, "Out" } }) { }
 
 	void update(struct Synth const & synth) override;
 	void render(struct Synth const & synth) override;
 	
 	void   serialize_custom(json::Writer & writer) const override;
 	void deserialize_custom(json::Object const & object) override;
-
-private:
-	struct Voice {
-		int   note;
-		float velocity;
-
-		float sample = 0.0f;
-
-		float operator_values[NUM_OPERATORS] = { };
-	};
-	std::vector<Voice> voices;
 };
 
-struct AdditiveSynthComponent : Component {
+struct AdditiveVoice : Voice {
+	float sample = 0.0f;
+
+	AdditiveVoice(int note, float velocity, int start_time) : Voice(note, velocity, start_time) { }
+};
+
+struct AdditiveSynthComponent : VoiceComponent<AdditiveVoice> {
 	static constexpr auto NUM_HARMONICS = 32;
 
 	float harmonics[NUM_HARMONICS] = { 1.0f };
-
-	AdditiveSynthComponent(int id) : Component(id, "Additive Synth", { { this, "MIDI In", true } }, { { this, "Out" } }) { }
+	
+	// Envelope
+	Parameter<float> attack  = Parameter<float>::make_attack (this);
+	Parameter<float> hold	 = Parameter<float>::make_hold   (this);
+	Parameter<float> decay 	 = Parameter<float>::make_decay  (this);
+	Parameter<float> sustain = Parameter<float>::make_sustain(this);
+	Parameter<float> release = Parameter<float>::make_release(this);
+	
+	AdditiveSynthComponent(int id) : VoiceComponent(id, "Additive Synth", { { this, "MIDI In", true } }, { { this, "Out" } }) { }
 
 	void update(struct Synth const & synth) override;
 	void render(struct Synth const & synth) override;
 
 	void   serialize_custom(json::Writer & writer) const override;
 	void deserialize_custom(json::Object const & object) override;
-
-private:
-	struct Voice {
-		int   note;
-		float velocity;
-
-		float sample = 0.0f;
-	};
-	std::vector<Voice> voices;
 };
 
-struct SamplerComponent : Component {
+struct SamplerVoice : Voice {
+	float sample = 0.0f;
+	
+	SamplerVoice(int note, float velocity, float start_time) : Voice(note, velocity, start_time) { }
+};
+
+struct SamplerComponent : VoiceComponent<SamplerVoice> {
 	static constexpr auto DEFAULT_FILENAME = "samples/kick.wav";
 
 	static constexpr auto VISUAL_NUM_SAMPLES = 512;
@@ -306,8 +381,15 @@ struct SamplerComponent : Component {
 	char const * filename_display;
 
 	Parameter<int> base_note = { this, "base_note", "Note", "Base Note", util::note<util::NoteName::C, 3>(), std::make_pair(0, 127), { 0, 12, 24, 36, 48, 60, 72, 84, 96, 108, 120 } };
-
-	SamplerComponent(int id) : Component(id, "Sampler", { { this, "MIDI In", true } }, { { this, "Out" } }) {
+	
+	// Envelope
+	Parameter<float> attack  = Parameter<float>::make_attack (this);
+	Parameter<float> hold	 = Parameter<float>::make_hold   (this);
+	Parameter<float> decay 	 = Parameter<float>::make_decay  (this);
+	Parameter<float> sustain = Parameter<float>::make_sustain(this);
+	Parameter<float> release = Parameter<float>::make_release(this);
+	
+	SamplerComponent(int id) : VoiceComponent(id, "Sampler", { { this, "MIDI In", true } }, { { this, "Out" } }) {
 		load(DEFAULT_FILENAME);
 	}
 
@@ -320,14 +402,6 @@ struct SamplerComponent : Component {
 	void deserialize_custom(json::Object const & object) override;
 
 private:
-	struct Voice {
-		float current_sample = 0.0f;
-		float step           = 0.0f;
-
-		float velocity = 1.0f;
-	};
-	std::vector<Voice> voices;
-
 	struct {
 		std::vector<float> samples;
 		float max_y;

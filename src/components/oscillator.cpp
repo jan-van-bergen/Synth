@@ -27,19 +27,7 @@ static Sample generate_noise(unsigned & seed) {
 void OscillatorComponent::update(Synth const & synth) {
 	auto steps_per_second = 4.0f / 60.0f * float(synth.settings.tempo);
 
-	auto note_events = inputs[0].get_events();
-
-	for (auto const & note_event : note_events) {
-		if (note_event.pressed) {
-			voices.emplace_back(note_event.note, note_event.velocity, note_event.time);
-		} else {
-			auto voice = std::find_if(voices.begin(), voices.end(), [note = note_event.note](auto voice) {
-				return voice.note == note && std::isinf(voice.release_time);
-			});
-
-			if (voice != voices.end()) voice->release_time = (note_event.time - voice->start_time) * SAMPLE_RATE_INV * steps_per_second;
-		}
-	}
+	update_voices(steps_per_second);
 
 	auto sign = invert ? -1.0f : 1.0f;
 
@@ -52,35 +40,23 @@ void OscillatorComponent::update(Synth const & synth) {
 
 	for (int v = 0; v < voices.size(); v++) {
 		auto & voice = voices[v];
-
+		
 		auto note_frequency = util::note_freq(voice.note + transpose) * std::pow(2.0f, detune / 1200.0f);
 
 		PortamentoState portamento_voice = { 0, portamento_frequency };
-		
-		for (int i = 0; i < BLOCK_SIZE; i++) {
-			if (synth.time + i < voice.start_time) continue;
 
+		for (int i = voice.get_first_sample(synth.time); i < BLOCK_SIZE; i++) {
 			auto time_in_seconds = voice.sample * SAMPLE_RATE_INV;
 			auto time_in_steps   = time_in_seconds * steps_per_second;
 
-			// Apply envelope
-			auto amplitude = voice.velocity * util::envelope(time_in_steps, attack, hold, decay, sustain);
+			float amplitude;
+			auto done = voice.apply_envelope(time_in_steps, attack, hold, decay, sustain, release, amplitude);
 			
-			auto released = voice.release_time < float(synth.time + i - voice.start_time) * SAMPLE_RATE_INV * steps_per_second;
+			if (done) {
+				voices.erase(voices.begin() + v);
+				v--;
 
-			// Fade after release
-			if (released) {
-				auto steps_since_release = time_in_steps - voice.release_time;
-
-				if (steps_since_release < release) {
-					amplitude = util::lerp(amplitude, 0.0f, steps_since_release / release);
-				} else {
-					// Fade has run out, remove Voice
-					voices.erase(voices.begin() + v);
-					v--;
-
-					break;
-				}
+				break;
 			}
 
 			// Generate selected waveform
@@ -110,6 +86,8 @@ void OscillatorComponent::update(Synth const & synth) {
 			voice.phase = std::fmod(voice.phase + phase_delta, 1.0f);
 
 			voice.sample += 1.0f;
+			
+			auto released = voice.release_time < time_in_steps;
 
 			if (!released) {
 				portamento_voice.index = i;

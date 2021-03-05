@@ -38,11 +38,16 @@
 	},
 	"SamplerComponent": {
 		"id": 5,
-		"pos_x": 620.000000,
-		"pos_y": 548.000000,
+		"pos_x": 616.000000,
+		"pos_y": 462.000000,
 		"size_x": 258.000000,
-		"size_y": 158.000000,
+		"size_y": 198.000000,
 		"base_note": 36,
+		"attack": 0.000000,
+		"hold": 0.500000,
+		"decay": 1.000000,
+		"sustain": 1.000000,
+		"release": 0.000000,
 		"filename": "samples/kick.wav"
 	},
 	"SequencerComponent": {
@@ -64,10 +69,15 @@
 	"SamplerComponent": {
 		"id": 8,
 		"pos_x": 619.000000,
-		"pos_y": 715.000000,
+		"pos_y": 680.000000,
 		"size_x": 257.000000,
-		"size_y": 161.000000,
+		"size_y": 196.000000,
 		"base_note": 31,
+		"attack": 0.000000,
+		"hold": 0.500000,
+		"decay": 1.000000,
+		"sustain": 1.000000,
+		"release": 0.000000,
 		"filename": "samples/909_hat.wav"
 	},
 	"SequencerComponent": {

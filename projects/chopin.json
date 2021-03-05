@@ -22,9 +22,14 @@
 		"id": 2,
 		"pos_x": 674.000000,
 		"pos_y": 211.000000,
-		"size_x": 261.000000,
-		"size_y": 142.000000,
+		"size_x": 288.000000,
+		"size_y": 199.000000,
 		"base_note": 60,
+		"attack": 0.100000,
+		"hold": 0.500000,
+		"decay": 1.000000,
+		"sustain": 0.500000,
+		"release": 0.000000,
 		"filename": "samples/piano.wav"
 	},
 	"Connection": {

@@ -65,41 +65,37 @@ void SamplerComponent::load(char const * file) {
 }
 
 void SamplerComponent::update(Synth const & synth) {
-	auto note_events = inputs[0].get_events();
+	auto steps_per_second = 4.0f / 60.0f * float(synth.settings.tempo);
 
-	for (auto const & note_event : note_events) {
-		if (note_event.pressed) {
-			auto time_offset = note_event.time - synth.time;
-
-			auto frequency_note = util::note_freq(note_event.note);
-			auto frequency_base = util::note_freq(base_note);
-			
-			auto step = frequency_note / frequency_base;
-			auto current_sample = -step * time_offset;
-
-			voices.emplace_back(current_sample, step, note_event.velocity);
-		}
-	}
+	update_voices(steps_per_second);
 
 	auto sample_length = float(samples.size());
 
 	for (int v = 0; v < voices.size(); v++) {
 		auto & voice = voices[v];
 
-		for (int i = 0; i < BLOCK_SIZE; i++) {
-			if (voice.current_sample >= 0.0f) {
-				if (voice.current_sample >= sample_length) {
-					// Voice is done playing, remove
-					voices.erase(voices.begin() + v);
-					v--;
+		auto frequency_note = util::note_freq(voice.note);
+		auto frequency_base = util::note_freq(base_note);
+			
+		auto step = frequency_note / frequency_base;
 
-					break;
-				}
+		for (int i = voice.get_first_sample(synth.time); i < BLOCK_SIZE; i++) {
+			auto time_in_seconds = voice.sample * SAMPLE_RATE_INV;
+			auto time_in_steps   = time_in_seconds * steps_per_second;
+		
+			float amplitude;
+			auto done = voice.apply_envelope(time_in_steps, attack, hold, decay, sustain, release, amplitude);
+			
+			if (done || voice.sample >= sample_length) {
+				voices.erase(voices.begin() + v);
+				v--;
 
-				outputs[0].get_sample(i) += voice.velocity * util::sample_linear(samples.data(), samples.size(), voice.current_sample);
+				break;
 			}
 
-			voice.current_sample += voice.step;
+			outputs[0].get_sample(i) += amplitude * util::sample_linear(samples.data(), samples.size(), voice.sample);
+
+			voice.sample += step;
 		}
 	}
 }
@@ -111,6 +107,12 @@ void SamplerComponent::render(Synth const & synth) {
 	if (ImGui::Button("Load")) {
 		synth.file_dialog.show(FileDialog::Type::OPEN, "Open WAV File", "samples", [this](char const * path) { load(path); });
 	}
+	
+	attack .render(); ImGui::SameLine();
+	hold   .render(); ImGui::SameLine();
+	decay  .render(); ImGui::SameLine();
+	sustain.render(); ImGui::SameLine();
+	release.render();
 
 	base_note.render(util::note_name);
 	ImGui::SameLine();
@@ -133,7 +135,7 @@ void SamplerComponent::render(Synth const & synth) {
 		auto ratio = float(visual.samples.size()) / float(samples.size());
 
 		for (auto const & voice : voices) {
-			auto t = voice.current_sample * ratio;
+			auto t = voice.sample * ratio;
 			ImPlot::PlotVLines("", &t, 1);
 		}
 

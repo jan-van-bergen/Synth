@@ -215,4 +215,10 @@ struct Parameter : Param {
 	void operator=(T const & value) {
 		parameter = value;
 	}
+
+    template<typename = std::enable_if_t<IS_FLOAT>()> static Parameter<float> make_attack (Component * component, char const * name = "attack")  { return Parameter<float>(component, name, "Att",  "Attack",  0.1f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 }); }
+    template<typename = std::enable_if_t<IS_FLOAT>()> static Parameter<float> make_hold   (Component * component, char const * name = "hold")    { return Parameter<float>(component, name, "Hold", "Hold",    0.5f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 }); }
+    template<typename = std::enable_if_t<IS_FLOAT>()> static Parameter<float> make_decay  (Component * component, char const * name = "decay")   { return Parameter<float>(component, name, "Dec",  "Decay",   1.0f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 }); }
+    template<typename = std::enable_if_t<IS_FLOAT>()> static Parameter<float> make_sustain(Component * component, char const * name = "sustain") { return Parameter<float>(component, name, "Sus",  "Sustain", 0.5f, std::make_pair(0.0f, 1.0f)); }
+    template<typename = std::enable_if_t<IS_FLOAT>()> static Parameter<float> make_release(Component * component, char const * name = "release") { return Parameter<float>(component, name, "Rel",  "Release", 0.0f, std::make_pair(0.0f, 16.0f), { 1, 2, 3, 4, 8, 16 }); }
 };

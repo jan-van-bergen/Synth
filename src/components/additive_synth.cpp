@@ -5,30 +5,31 @@
 void AdditiveSynthComponent::update(Synth const & synth) {
 	auto steps_per_second = 4.0f / 60.0f * float(synth.settings.tempo);
 	
-	auto note_events = inputs[0].get_events();
-
-	for (auto const & note_event : note_events) {
-		if (note_event.pressed) {
-			voices.emplace_back(note_event.note, note_event.velocity);
-		} else {
-			voices.erase(std::remove_if(voices.begin(), voices.end(), [note = note_event.note](auto voice) {
-				return voice.note == note;
-			}), voices.end());
-		}
-	}
+	update_voices(steps_per_second);
 	
-	for (auto & voice : voices) {
+	for (int v = 0; v < voices.size(); v++) {
+		auto & voice = voices[v];
+
 		auto frequency = util::note_freq(voice.note);
 
-		for (int i = 0; i < BLOCK_SIZE; i++) {
+		for (int i = voice.get_first_sample(synth.time); i < BLOCK_SIZE; i++) {
 			auto time_in_seconds = voice.sample * SAMPLE_RATE_INV;
 			auto time_in_steps   = time_in_seconds * steps_per_second;
+			
+			float amplitude;
+			auto done = voice.apply_envelope(time_in_steps, attack, hold, decay, sustain, release, amplitude);
+			
+			if (done) {
+				voices.erase(voices.begin() + v);
+				v--;
 
-			auto phase = TWO_PI * time_in_seconds * frequency;
-		
+				break;
+			}
+
 			Sample sample = { };
 
 			auto harmonic_multiplier = 1.0f;
+			auto phase = TWO_PI * time_in_seconds * frequency;
 
 			for (auto harmonic : harmonics) {
 				sample += harmonic * std::sin(harmonic_multiplier * phase);
@@ -36,7 +37,7 @@ void AdditiveSynthComponent::update(Synth const & synth) {
 				harmonic_multiplier += 1.0f;
 			}
 
-			outputs[0].get_sample(i) += voice.velocity * sample;
+			outputs[0].get_sample(i) += amplitude * sample;
 
 			voice.sample += 1.0f;
 		}
@@ -85,6 +86,12 @@ void AdditiveSynthComponent::render(Synth const & synth) {
 
 		cur.x += HARMONIC_WIDTH + HARMONIC_PADDING;
 	}
+	
+	attack .render(); ImGui::SameLine();
+	hold   .render(); ImGui::SameLine();
+	decay  .render(); ImGui::SameLine();
+	sustain.render(); ImGui::SameLine();
+	release.render();
 
 	if (ImGui::Button("Saw")) {
 		for (int i = 0; i < NUM_HARMONICS; i++) {

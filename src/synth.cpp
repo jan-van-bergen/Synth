@@ -45,6 +45,8 @@ void Synth::render() {
 	if (component_to_be_removed) {
 		// Disconnect inputs
 		for (auto & input : component_to_be_removed->inputs) {
+			if (dragging == &input) dragging = nullptr;
+
 			while (!input.others.empty()) {
 				auto & [other, weight] = input.others[0];
 				disconnect(*other, input);
@@ -53,6 +55,8 @@ void Synth::render() {
 
 		// Disconnect outputs
 		for (auto & output : component_to_be_removed->outputs) {
+			if (dragging == &output) dragging = nullptr;
+
 			while (!output.others.empty()) {
 				auto & other = output.others[0];
 				disconnect(output, *other);
@@ -81,12 +85,13 @@ void Synth::render() {
 	}
 	ImGui::End();
 
-	// Debug tool to terminate infinite notes
+	// Debug utility to terminate infinite notes
 	if (ImGui::IsKeyPressed(SDL_SCANCODE_F5)) {
 		for (auto const & component : components) {
-			auto osc = dynamic_cast<OscillatorComponent *>(component.get());
-
-			if (osc) osc->voices.clear();
+			auto osc = dynamic_cast<OscillatorComponent    *>(component.get()); if (osc) osc->clear();
+			auto fm  = dynamic_cast<FMComponent            *>(component.get()); if (fm)  fm ->clear();
+			auto add = dynamic_cast<AdditiveSynthComponent *>(component.get()); if (add) add->clear();
+			auto smp = dynamic_cast<SamplerComponent       *>(component.get()); if (smp) smp->clear();
 		}
 	}
 }

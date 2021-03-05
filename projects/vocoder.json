@@ -38,11 +38,16 @@
 	},
 	"SamplerComponent": {
 		"id": 4,
-		"pos_x": 547.000000,
-		"pos_y": 84.000000,
-		"size_x": 266.000000,
-		"size_y": 156.000000,
+		"pos_x": 537.000000,
+		"pos_y": 70.000000,
+		"size_x": 286.000000,
+		"size_y": 204.000000,
 		"base_note": 36,
+		"attack": 0.000000,
+		"hold": 16.000000,
+		"decay": 1.000000,
+		"sustain": 1.000000,
+		"release": 0.000000,
 		"filename": "samples/dance.wav"
 	},
 	"VocoderComponent": {

@@ -66,9 +66,14 @@
 		"id": 8,
 		"pos_x": 533.000000,
 		"pos_y": 530.000000,
-		"size_x": 233.000000,
-		"size_y": 158.000000,
+		"size_x": 290.000000,
+		"size_y": 196.000000,
 		"base_note": 36,
+		"attack": 0.100000,
+		"hold": 0.500000,
+		"decay": 1.000000,
+		"sustain": 0.500000,
+		"release": 0.000000,
 		"filename": "samples/guitar.wav"
 	},
 	"DistortionComponent": {
