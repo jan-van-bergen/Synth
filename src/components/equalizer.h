@@ -1,6 +1,8 @@
 #pragma once
 #include "component.h"
 
+#include "dsp/filter.h"
+
 struct EqualizerComponent : Component {
 	static constexpr auto NUM_BANDS = 4;
 

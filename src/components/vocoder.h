@@ -1,6 +1,8 @@
 #pragma once
 #include "component.h"
 
+#include "dsp/filter.h"
+
 struct VocoderComponent : Component {
 	struct Band {
 		float freq = 1000.0f;

@@ -1,6 +1,8 @@
 #pragma once
 #include "component.h"
 
+#include "dsp/filter.h"
+
 struct PhaserComponent : Component {
 	Parameter<float> rate       = { this, "rate",       "Rate", "LFO Frequency",                       1.0f,  std::make_pair(0.0f, 5.0f) };
 	Parameter<float> min_depth  = { this, "min_depth",  "Min",  "Minimum Depth",                     500.0f,  std::make_pair(20.0f, 20000.0f), { }, Param::Curve::LOGARITHMIC };

@@ -26,6 +26,8 @@
 #include "vectorscope.h"
 #include "vocoder.h"
 
+#include "meta.h"
+
 template<typename T>
 concept IsComponent = std::derived_from<T, Component>;
 

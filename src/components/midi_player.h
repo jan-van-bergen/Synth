@@ -1,6 +1,8 @@
 #pragma once
 #include "component.h"
 
+#include "midi.h"
+
 struct MIDIPlayerComponent : Component {
 	static constexpr char const * DEFAULT_FILENAME = "midi/melody_2.mid";
 

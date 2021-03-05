@@ -2,20 +2,8 @@
 #include <string>
 #include <vector>
 
-#include <memory>
-
-#include <SDL2/SDL.h>
-#include <ImGui/imgui.h>
-
-#include "sample.h"
-#include "midi.h"
-
-#include "dsp/filter.h"
-
 #include "parameter.h"
 #include "connector.h"
-
-#include "meta.h"
 
 struct Component {
 	std::string name;

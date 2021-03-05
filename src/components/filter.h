@@ -1,6 +1,8 @@
 #pragma once
 #include "component.h"
 
+#include "dsp/filter.h"
+
 struct FilterComponent : Component {
 	static constexpr char const * filter_names[] = { "Low Pass", "High Pass", "Band Pass", "None" };
 	int filter_type = 0;
