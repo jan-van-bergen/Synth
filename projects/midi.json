@@ -55,11 +55,11 @@
 	},
 	"DistortionComponent": {
 		"id": 5,
-		"pos_x": 921.000000,
+		"pos_x": 932.000000,
 		"pos_y": 399.000000,
 		"size_x": 127.000000,
 		"size_y": 121.000000,
-		"amount": 0.782000
+		"amount": 0.812000
 	},
 	"FlangerComponent": {
 		"id": 8,
@@ -80,8 +80,8 @@
 		"pos_y": 181.000000,
 		"size_x": 176.000000,
 		"size_y": 186.000000,
-		"threshold": -8.399998,
-		"ratio": 5.059999,
+		"threshold": -9.000000,
+		"ratio": 5.639999,
 		"gain": 0.000000,
 		"Attack": 15.000000,
 		"Release": 200.000000
@@ -91,7 +91,7 @@
 		"component_in": 0,
 		"offset_out": 0,
 		"offset_in": 0,
-		"weight": 0.630000
+		"weight": 0.670000
 	},
 	"Connection": {
 		"component_out": 9,
@@ -140,6 +140,6 @@
 		"component_in": 9,
 		"offset_out": 0,
 		"offset_in": 1,
-		"weight": 0.900000
+		"weight": 0.830000
 	}
 }

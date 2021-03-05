@@ -5,38 +5,173 @@
 	},
 	"SpeakerComponent": {
 		"id": 0,
-		"pos_x": 1372.000000,
-		"pos_y": 348.000000,
+		"pos_x": 1246.000000,
+		"pos_y": 248.000000,
 		"size_x": 101.000000,
 		"size_y": 113.000000
 	},
-	"MIDIPlayerComponent": {
-		"id": 1,
-		"pos_x": 60.000000,
-		"pos_y": 60.000000,
-		"size_x": 501.000000,
-		"size_y": 122.000000,
-		"filename": "midi/chopin.mid"
+	"OscillatorComponent": {
+		"id": 2,
+		"pos_x": 194.000000,
+		"pos_y": 365.000000,
+		"size_x": 290.000000,
+		"size_y": 223.000000,
+		"invert": 0,
+		"phase": 0.000000,
+		"transpose": -5,
+		"detune": 0.000000,
+		"portamento": 0.000000,
+		"attack": 0.000000,
+		"hold": 0.500000,
+		"decay": 1.000000,
+		"sustain": 0.895000,
+		"release": 0.000000,
+		"waveform": 2
+	},
+	"SequencerComponent": {
+		"id": 3,
+		"pos_x": 33.000000,
+		"pos_y": 55.000000,
+		"size_x": 392.000000,
+		"size_y": 116.000000,
+		"pattern": [ 1.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000 ]
 	},
 	"SamplerComponent": {
-		"id": 2,
-		"pos_x": 674.000000,
-		"pos_y": 211.000000,
-		"size_x": 261.000000,
-		"size_y": 142.000000,
-		"base_note": 60,
-		"filename": "samples/piano.wav"
+		"id": 4,
+		"pos_x": 547.000000,
+		"pos_y": 84.000000,
+		"size_x": 266.000000,
+		"size_y": 156.000000,
+		"base_note": 36,
+		"filename": "samples/dance.wav"
+	},
+	"VocoderComponent": {
+		"id": 5,
+		"pos_x": 1009.000000,
+		"pos_y": 292.000000,
+		"size_x": 124.000000,
+		"size_y": 189.000000,
+		"num_bands": 64,
+		"width": 10.000000,
+		"decay": 0.440000,
+		"gain": 3.853000
+	},
+	"MIDIPlayerComponent": {
+		"id": 8,
+		"pos_x": 41.000000,
+		"pos_y": 208.000000,
+		"size_x": 257.000000,
+		"size_y": 128.000000,
+		"filename": "midi/carrier.mid"
+	},
+	"FilterComponent": {
+		"id": 9,
+		"pos_x": 1015.000000,
+		"pos_y": 61.000000,
+		"size_x": 123.000000,
+		"size_y": 141.000000,
+		"cutoff": 11009.000000,
+		"resonance": 0.415000,
+		"filter_type": 1
+	},
+	"DecibelComponent": {
+		"id": 10,
+		"pos_x": 1415.000000,
+		"pos_y": 113.000000,
+		"size_x": 116.000000,
+		"size_y": 218.000000
+	},
+	"EqualizerComponent": {
+		"id": 11,
+		"pos_x": 534.000000,
+		"pos_y": 364.000000,
+		"size_x": 374.000000,
+		"size_y": 312.000000,
+		"NUM_BANDS": 4,
+		"Band_0": {
+			"mode": 5,
+			"freq": 105.868172,
+			"Q": 1.000000,
+			"gain": -18.000000
+		},
+		"Band_1": {
+			"mode": 3,
+			"freq": 376.973572,
+			"Q": 1.000000,
+			"gain": 2.975610
+		},
+		"Band_2": {
+			"mode": 3,
+			"freq": 1732.898682,
+			"Q": 1.000000,
+			"gain": 7.454545
+		},
+		"Band_3": {
+			"mode": 3,
+			"freq": 7201.952148,
+			"Q": 0.500000,
+			"gain": -7.454545
+		}
 	},
 	"Connection": {
-		"component_out": 2,
+		"component_out": 9,
 		"component_in": 0,
 		"offset_out": 0,
 		"offset_in": 0,
 		"weight": 1.000000
 	},
 	"Connection": {
-		"component_out": 1,
+		"component_out": 5,
+		"component_in": 0,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 8,
 		"component_in": 2,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 3,
+		"component_in": 4,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 4,
+		"component_in": 5,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 11,
+		"component_in": 5,
+		"offset_out": 0,
+		"offset_in": 1,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 4,
+		"component_in": 9,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 0,
+		"component_in": 10,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 2,
+		"component_in": 11,
 		"offset_out": 0,
 		"offset_in": 0,
 		"weight": 1.000000

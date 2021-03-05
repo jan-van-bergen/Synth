@@ -23,7 +23,7 @@ struct Synth {
 
 	int time = 0;
 	
-	std::set<NoteEvent, NoteEvent::Compare> note_events; // Note Events, seperate for each channel
+	std::set<NoteEvent, NoteEvent::Compare> note_events;
 	
 	FileDialog mutable file_dialog;
 	bool just_loaded = false;

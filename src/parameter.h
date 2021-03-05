@@ -107,7 +107,7 @@ struct Parameter : Param {
 		if (ImGui::BeginPopupContextItem()) {
 			char label[128] = { };
 			
-			auto should_close_popup = false;
+			auto should_close_context_menu = false;
 
 			for (auto const & option : options) {	
 				if (formatter) {
@@ -118,7 +118,7 @@ struct Parameter : Param {
 				if (ImGui::Button(label)) {
 					parameter = option;
 
-					should_close_popup = true;
+					should_close_context_menu = true;
 				}
 			}
 
@@ -148,10 +148,43 @@ struct Parameter : Param {
 
 			ImGui::Separator();
 
+			static char enter_text[128] = { };
+			
+			if (ImGui::Button("Enter Value")) {
+				ImGui::OpenPopup("Enter");
+				
+				if constexpr (IS_FLOAT) { // NOTE: No custom formatting here
+					sprintf_s(enter_text, "%f", parameter);
+				} else {
+					sprintf_s(enter_text, "%i", parameter);
+				}
+			}
+
+			if (ImGui::BeginPopup("Enter")) {
+				ImGui::SetKeyboardFocusHere(0);
+				ImGui::InputText("Value", enter_text, sizeof(enter_text));
+
+				if (ImGui::IsKeyPressed(SDL_SCANCODE_RETURN)) {
+					ImGui::CloseCurrentPopup();
+					
+					if constexpr (IS_FLOAT) {
+						parameter = std::atof(enter_text);
+					} else {
+						parameter = std::atoi(enter_text);
+					}
+
+					parameter = util::clamp(parameter, lower, upper);
+
+					should_close_context_menu = true;
+				}
+
+				ImGui::EndPopup();
+			}
+
 			if (ImGui::Button("Copy")) {
 				clipboard_value = parameter;
 
-				should_close_popup = true;
+				should_close_context_menu = true;
 			}
 
 			if (ImGui::Button("Paste")) {
@@ -163,10 +196,10 @@ struct Parameter : Param {
 
 				parameter = util::clamp(parameter, lower, upper);
 
-				should_close_popup = true;
+				should_close_context_menu = true;
 			}
 
-			if (should_close_popup) ImGui::CloseCurrentPopup();
+			if (should_close_context_menu) ImGui::CloseCurrentPopup();
 
 			ImGui::EndPopup();
 		} else if (Param::param_waiting_to_link == this) {
