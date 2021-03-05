@@ -202,9 +202,9 @@ void Synth::render_menu() {
 			
 			ImGui::Separator();
 
-			if (ImGui::MenuItem("Group")) add_component<GroupComponent>();
-			if (ImGui::MenuItem("Split")) add_component<SplitComponent>();
+			if (ImGui::MenuItem("Gain"))  add_component<GainComponent>();
 			if (ImGui::MenuItem("Pan"))   add_component<PanComponent>();
+			if (ImGui::MenuItem("Split")) add_component<SplitComponent>();
 			
 			ImGui::Separator();
 

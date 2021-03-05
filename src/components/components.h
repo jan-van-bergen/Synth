@@ -46,7 +46,7 @@ using AllComponents = ComponentTypeList<
 	FilterComponent,
 	FlangerComponent,
 	FMComponent,
-	GroupComponent,
+	GainComponent,
 	ImproviserComponent,
 	KeyboardComponent,
 	OscillatorComponent,
