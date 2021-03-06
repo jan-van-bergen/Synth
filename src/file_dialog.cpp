@@ -4,12 +4,13 @@
 
 #include <SDL2/SDL_scancode.h>
 
-void FileDialog::show(Type type, std::string const & title, std::string const & default_path, OnFinishedCallBack callback) {
+void FileDialog::show(Type type, std::string const & title, std::string const & default_path, std::string const & file_extension, OnFinishedCallBack callback) {
 	this->type  = type;
+	this->file_extension = file_extension;
 	this->title = title + "###FileDialog";
 	this->callback = callback;
 
-	selected[0] = '\0';
+	strcpy_s(selected, file_extension_history[file_extension].c_str());
 
 	change_path(default_path);
 
@@ -122,7 +123,11 @@ void FileDialog::render() {
 
 		ImGui::EndPopup();
 		
-		if (confirmed) callback(selected_path.string().c_str());
+		if (confirmed) {
+			file_extension_history[file_extension] = std::string(selected);
+
+			callback(selected_path.string().c_str());
+		}
 	}
 }
 

@@ -105,7 +105,7 @@ void SamplerComponent::render(Synth const & synth) {
 	ImGui::SameLine();
 	
 	if (ImGui::Button("Load")) {
-		synth.file_dialog.show(FileDialog::Type::OPEN, "Open WAV File", "samples", [this](char const * path) { load(path); });
+		synth.file_dialog.show(FileDialog::Type::OPEN, "Open WAV File", "samples", ".wav", [this](char const * path) { load(path); });
 	}
 	
 	attack .render(); ImGui::SameLine();

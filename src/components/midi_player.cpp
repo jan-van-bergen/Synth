@@ -98,7 +98,7 @@ void MIDIPlayerComponent::render(Synth const & synth) {
 	ImGui::SameLine();
 	
 	if (ImGui::Button("Load")) {
-		synth.file_dialog.show(FileDialog::Type::OPEN, "Open MIDI File", "midi", [this](char const * path) { load(path); });
+		synth.file_dialog.show(FileDialog::Type::OPEN, "Open MIDI File", "midi", ".mid", [this](char const * path) { load(path); });
 	}
 
 	// Draw keyboard

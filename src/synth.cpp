@@ -235,8 +235,8 @@ void Synth::render_menu() {
 		ImGui::EndMainMenuBar();
 	}
 
-	if (show_popup_open) file_dialog.show(FileDialog::Type::OPEN, "Open Project", "projects", [this](char const * path) { open_file(path); });
-	if (show_popup_save) file_dialog.show(FileDialog::Type::SAVE, "Save Project", "projects", [this](char const * path) { save_file(path); });
+	if (show_popup_open) file_dialog.show(FileDialog::Type::OPEN, "Open Project", "projects", ".json", [this](char const * path) { open_file(path); });
+	if (show_popup_save) file_dialog.show(FileDialog::Type::SAVE, "Save Project", "projects", ".json", [this](char const * path) { save_file(path); });
 }
 
 void Synth::render_components() {
