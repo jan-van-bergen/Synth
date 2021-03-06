@@ -42,7 +42,8 @@ struct Synth {
 
 		auto result = static_cast<T *>(components.emplace_back(std::move(component)).get());
 
-		compute_update_order();
+		auto success = compute_update_order();
+		assert(success);
 
 		return result;
 	}
@@ -95,7 +96,7 @@ private:
 	
 	Component * component_to_be_removed = nullptr;
 
-	void compute_update_order();
+	bool compute_update_order();
 
 	void render_menu();
 	void render_components();

@@ -72,7 +72,8 @@ void Synth::render() {
 		// Remove Component
 		components.erase(std::find_if(components.begin(), components.end(), [rem = component_to_be_removed](auto const & component) { return component.get() == rem; }));
 
-		compute_update_order();
+		auto success = compute_update_order();
+		assert(success);
 	}
 
 	file_dialog.render();
@@ -107,7 +108,12 @@ bool Synth::connect(ConnectorOut & out, ConnectorIn & in, float weight) {
 	out.others.push_back(&in);
 	in .others.push_back(std::make_pair(&out, weight));
 
-	compute_update_order();
+	auto success = compute_update_order();
+
+	if (!success) {
+		disconnect(out, in);
+		return false;
+	}
 
 	return true;
 }
@@ -120,11 +126,12 @@ void Synth::disconnect(ConnectorOut & out, ConnectorIn & in) {
 		return pair.first == &out;	
 	}));
 
-	compute_update_order();
+	auto success = compute_update_order();
+	assert(success);
 }
 
 // Computes the order in which Components should be updated, based on the connections in the node graph
-void Synth::compute_update_order() {
+bool Synth::compute_update_order() {
 	std::queue<Component *> queue;
 
 	// Find the Components with no outgoing connetions and push them to the Queue
@@ -161,19 +168,32 @@ void Synth::compute_update_order() {
 					num_required += output.others.size();
 				}
 
+				if (num_satisfied > num_required) return false;
+
 				if (num_satisfied == num_required) { // If all outputs are now satisfied, push onto queue to explore the Node
 					queue.push(other->component);
 				}
-
-				assert(num_satisfied <= num_required);
 			}
 		}
 	}
 
+	// If any Component did not satisfy its outptus, the update graph is cyclic and therefore invalid
+	for (auto const & component : components) {
+		auto num_required = 0;
+		for (auto const & output : component->outputs) {
+			num_required += output.others.size();
+		}
+
+		if (component->num_outputs_satisfied < num_required) return false;
+	}
+
 	// Reorder according to update index
 	std::sort(components.begin(), components.end(), [](auto const & a, auto const & b) -> bool {
+		assert(a->update_index != b->update_index);
 		return a->update_index < b->update_index;
 	});
+
+	return true;
 }
 
 void Synth::render_menu() {
@@ -608,7 +628,8 @@ void Synth::open_file(char const * filename) {
 		}
 	}
 
-	compute_update_order();
+	auto success = compute_update_order();
+	assert(success);
 
 	unique_component_id = max_id + 1;
 
