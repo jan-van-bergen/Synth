@@ -3,19 +3,20 @@
 		"tempo": 130,
 		"master_volume": 1.000000
 	},
-	"SpeakerComponent": {
-		"id": 0,
-		"pos_x": 978.000000,
-		"pos_y": 380.000000,
-		"size_x": 101.000000,
-		"size_y": 113.000000
+	"MIDIPlayerComponent": {
+		"id": 4,
+		"pos_x": 99.000000,
+		"pos_y": 296.000000,
+		"size_x": 271.000000,
+		"size_y": 122.000000,
+		"filename": "C:\Dev\Git\Synth\midi\seinfeld.mid"
 	},
 	"FMComponent": {
 		"id": 2,
 		"pos_x": 469.000000,
 		"pos_y": 165.000000,
 		"size_x": 288.000000,
-		"size_y": 196.000000,
+		"size_y": 208.000000,
 		"ratio_0": 1.000000,
 		"ratio_1": 0.250000,
 		"ratio_2": 4.000000,
@@ -40,24 +41,23 @@
 		"weights": [ 0.340000, 0.000000, 0.000000, 0.000000, 2.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.260000, 0.280000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000 ],
 		"outs": [ 1.000000, 0.000000, 0.000000, 0.000000 ]
 	},
-	"MIDIPlayerComponent": {
-		"id": 4,
-		"pos_x": 99.000000,
-		"pos_y": 296.000000,
-		"size_x": 271.000000,
-		"size_y": 122.000000,
-		"filename": "C:\Dev\Git\Synth\midi\seinfeld.mid"
+	"SpeakerComponent": {
+		"id": 0,
+		"pos_x": 978.000000,
+		"pos_y": 380.000000,
+		"size_x": 101.000000,
+		"size_y": 113.000000
 	},
 	"Connection": {
-		"component_out": 2,
-		"component_in": 0,
+		"component_out": 4,
+		"component_in": 2,
 		"offset_out": 0,
 		"offset_in": 0,
 		"weight": 1.000000
 	},
 	"Connection": {
-		"component_out": 4,
-		"component_in": 2,
+		"component_out": 2,
+		"component_in": 0,
 		"offset_out": 0,
 		"offset_in": 0,
 		"weight": 1.000000

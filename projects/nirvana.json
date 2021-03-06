@@ -3,12 +3,13 @@
 		"tempo": 130,
 		"master_volume": 0.500000
 	},
-	"SpeakerComponent": {
-		"id": 0,
-		"pos_x": 1372.000000,
-		"pos_y": 348.000000,
-		"size_x": 115.000000,
-		"size_y": 123.000000
+	"MIDIPlayerComponent": {
+		"id": 7,
+		"pos_x": 50.000000,
+		"pos_y": 268.000000,
+		"size_x": 295.000000,
+		"size_y": 122.000000,
+		"filename": "midi/nirvana_guitar.mid"
 	},
 	"MIDIPlayerComponent": {
 		"id": 1,
@@ -18,12 +19,27 @@
 		"size_y": 130.000000,
 		"filename": "midi/nirvana.mid"
 	},
+	"SamplerComponent": {
+		"id": 8,
+		"pos_x": 210.000000,
+		"pos_y": 528.000000,
+		"size_x": 290.000000,
+		"size_y": 196.000000,
+		"base_note": 48,
+		"attack": 0.160000,
+		"hold": 0.500000,
+		"decay": 1.000000,
+		"sustain": 0.450000,
+		"release": 4.480000,
+		"filename": "samples/guitar.wav"
+	},
 	"OscillatorComponent": {
 		"id": 2,
 		"pos_x": 476.000000,
 		"pos_y": 64.000000,
 		"size_x": 290.000000,
 		"size_y": 199.000000,
+		"waveform": 4,
 		"invert": 0,
 		"phase": 0.000000,
 		"transpose": -12,
@@ -34,7 +50,20 @@
 		"decay": 2.000000,
 		"sustain": 0.100000,
 		"release": 1.000000,
-		"waveform": 4
+		"flt_attack": 0.100000,
+		"flt_hold": 0.500000,
+		"flt_decay": 1.000000,
+		"flt_release": 1.000000,
+		"amount": 1.000000,
+		"resonance": 0.000000
+	},
+	"DistortionComponent": {
+		"id": 9,
+		"pos_x": 596.000000,
+		"pos_y": 417.000000,
+		"size_x": 65.000000,
+		"size_y": 119.000000,
+		"amount": 0.647000
 	},
 	"FilterComponent": {
 		"id": 4,
@@ -42,9 +71,41 @@
 		"pos_y": 43.000000,
 		"size_x": 135.000000,
 		"size_y": 143.000000,
+		"filter_type": 2,
 		"cutoff": 283.819244,
-		"resonance": 0.900000,
-		"filter_type": 2
+		"resonance": 0.900000
+	},
+	"EqualizerComponent": {
+		"id": 10,
+		"pos_x": 705.000000,
+		"pos_y": 450.000000,
+		"size_x": 620.000000,
+		"size_y": 385.000000,
+		"NUM_BANDS": 4,
+		"Band_0": {
+			"mode": 5,
+			"freq": 79.621437,
+			"Q": 1.000000,
+			"gain": -16.200001
+		},
+		"Band_1": {
+			"mode": 3,
+			"freq": 342.265656,
+			"Q": 1.000000,
+			"gain": 0.692308
+		},
+		"Band_2": {
+			"mode": 3,
+			"freq": 1737.476318,
+			"Q": 1.000000,
+			"gain": 4.015385
+		},
+		"Band_3": {
+			"mode": 6,
+			"freq": 7962.143555,
+			"Q": 1.000000,
+			"gain": 8.446154
+		}
 	},
 	"DistortionComponent": {
 		"id": 5,
@@ -54,60 +115,30 @@
 		"size_y": 121.000000,
 		"amount": 0.676000
 	},
-	"MIDIPlayerComponent": {
-		"id": 7,
-		"pos_x": 50.000000,
-		"pos_y": 268.000000,
-		"size_x": 295.000000,
-		"size_y": 122.000000,
-		"filename": "midi/nirvana_guitar.mid"
-	},
-	"SamplerComponent": {
-		"id": 8,
-		"pos_x": 533.000000,
-		"pos_y": 530.000000,
-		"size_x": 290.000000,
-		"size_y": 196.000000,
-		"base_note": 36,
-		"attack": 0.100000,
-		"hold": 0.500000,
-		"decay": 1.000000,
-		"sustain": 0.500000,
-		"release": 0.000000,
-		"filename": "samples/guitar.wav"
-	},
-	"DistortionComponent": {
-		"id": 9,
-		"pos_x": 943.000000,
-		"pos_y": 464.000000,
-		"size_x": 65.000000,
-		"size_y": 119.000000,
-		"amount": 0.647000
+	"SpeakerComponent": {
+		"id": 0,
+		"pos_x": 1372.000000,
+		"pos_y": 348.000000,
+		"size_x": 115.000000,
+		"size_y": 123.000000
 	},
 	"Connection": {
-		"component_out": 5,
-		"component_in": 0,
+		"component_out": 7,
+		"component_in": 8,
 		"offset_out": 0,
 		"offset_in": 0,
-		"weight": 0.600000
-	},
-	"Connection": {
-		"component_out": 2,
-		"component_in": 0,
-		"offset_out": 0,
-		"offset_in": 0,
-		"weight": 0.300000
-	},
-	"Connection": {
-		"component_out": 9,
-		"component_in": 0,
-		"offset_out": 0,
-		"offset_in": 0,
-		"weight": 0.700000
+		"weight": 1.000000
 	},
 	"Connection": {
 		"component_out": 1,
 		"component_in": 2,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 8,
+		"component_in": 9,
 		"offset_out": 0,
 		"offset_in": 0,
 		"weight": 1.000000
@@ -120,6 +151,13 @@
 		"weight": 1.000000
 	},
 	"Connection": {
+		"component_out": 9,
+		"component_in": 10,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
 		"component_out": 4,
 		"component_in": 5,
 		"offset_out": 0,
@@ -127,17 +165,24 @@
 		"weight": 1.000000
 	},
 	"Connection": {
-		"component_out": 7,
-		"component_in": 8,
+		"component_out": 5,
+		"component_in": 0,
 		"offset_out": 0,
 		"offset_in": 0,
-		"weight": 1.000000
+		"weight": 0.560000
 	},
 	"Connection": {
-		"component_out": 8,
-		"component_in": 9,
+		"component_out": 2,
+		"component_in": 0,
 		"offset_out": 0,
 		"offset_in": 0,
-		"weight": 1.000000
+		"weight": 0.290000
+	},
+	"Connection": {
+		"component_out": 10,
+		"component_in": 0,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 0.950000
 	}
 }
