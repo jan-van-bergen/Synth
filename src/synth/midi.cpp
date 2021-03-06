@@ -5,7 +5,7 @@
 #include <cassert>
 #include <algorithm>
 
-#include "ring_buffer.h"
+#include "util/ring_buffer.h"
 
 //////////////////////////////////////////////////////////
 // Reference: https://faydoc.tripod.com/formats/mid.htm //

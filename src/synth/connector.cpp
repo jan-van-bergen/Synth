@@ -1,6 +1,6 @@
 #include "connector.h"
 
-#include "util.h"
+#include "util/util.h"
 
 Sample ConnectorIn::get_sample(int i) const {
 	Sample sample = 0.0f;

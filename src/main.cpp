@@ -14,13 +14,11 @@
 #include <ImGui/implot.h>
 #include <ImGui/font_audio.h>
 
-#include "util.h"
-#include "ring_buffer.h"
+#include "util/util.h"
+#include "util/ring_buffer.h"
 
-#include "midi.h"
-#include "sample.h"
-
-#include "synth.h"
+#include "synth/midi.h"
+#include "synth/synth.h"
 
 extern "C" { _declspec(dllexport) unsigned NvOptimusEnablement = true; }
 
