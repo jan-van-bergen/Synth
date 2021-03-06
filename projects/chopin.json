@@ -3,13 +3,6 @@
 		"tempo": 130,
 		"master_volume": 1.000000
 	},
-	"SpeakerComponent": {
-		"id": 0,
-		"pos_x": 1372.000000,
-		"pos_y": 348.000000,
-		"size_x": 101.000000,
-		"size_y": 113.000000
-	},
 	"MIDIPlayerComponent": {
 		"id": 1,
 		"pos_x": 60.000000,
@@ -32,20 +25,20 @@
 		"release": 16.000000,
 		"filename": "samples/piano.wav"
 	},
-	"GroupComponent": {
+	"GainComponent": {
 		"id": 3,
-		"pos_x": 1140.000000,
-		"pos_y": 335.000000,
+		"pos_x": 1083.000000,
+		"pos_y": 302.000000,
 		"size_x": 64.000000,
 		"size_y": 117.000000,
-		"gain": 6.000000
+		"gain": 1.799999
 	},
-	"Connection": {
-		"component_out": 3,
-		"component_in": 0,
-		"offset_out": 0,
-		"offset_in": 0,
-		"weight": 1.000000
+	"SpeakerComponent": {
+		"id": 0,
+		"pos_x": 1372.000000,
+		"pos_y": 348.000000,
+		"size_x": 101.000000,
+		"size_y": 113.000000
 	},
 	"Connection": {
 		"component_out": 1,
@@ -57,6 +50,13 @@
 	"Connection": {
 		"component_out": 2,
 		"component_in": 3,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 3,
+		"component_in": 0,
 		"offset_out": 0,
 		"offset_in": 0,
 		"weight": 1.000000

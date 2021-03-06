@@ -15,6 +15,13 @@ struct Component {
 	float pos [2] = { };
 	float size[2] = { };
 
+private:
+	friend struct Synth;
+
+	int update_index = -1;
+	int num_outputs_satisfied = 0;
+
+public:
 	Component(int id,
 		std::string name,
 		std::vector<ConnectorIn>  && inputs,

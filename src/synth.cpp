@@ -8,12 +8,12 @@
 #include "knob.h"
 
 void Synth::update(Sample buf[BLOCK_SIZE]) {
-	for (auto component = update_list_begin; component < update_list_end; component++) {
-		for (auto & output : (*component)->outputs) {
+	for (auto const & component : components) {
+		for (auto & output : component->outputs) {
 			output.clear();
 		}
 
-		(*component)->update(*this);
+		component->update(*this);
 	}
 
 	time += BLOCK_SIZE;
@@ -72,7 +72,7 @@ void Synth::render() {
 		// Remove Component
 		components.erase(std::find_if(components.begin(), components.end(), [rem = component_to_be_removed](auto const & component) { return component.get() == rem; }));
 
-		reconstruct_update_graph();
+		compute_update_order();
 	}
 
 	file_dialog.render();
@@ -107,7 +107,7 @@ bool Synth::connect(ConnectorOut & out, ConnectorIn & in, float weight) {
 	out.others.push_back(&in);
 	in .others.push_back(std::make_pair(&out, weight));
 
-	reconstruct_update_graph();
+	compute_update_order();
 
 	return true;
 }
@@ -120,19 +120,17 @@ void Synth::disconnect(ConnectorOut & out, ConnectorIn & in) {
 		return pair.first == &out;	
 	}));
 
-	reconstruct_update_graph();
+	compute_update_order();
 }
 
-void Synth::reconstruct_update_graph() {
-	// Update list is constructed in reverse order
-	update_list.resize(components.size());
-	update_list_end   = update_list.data() + update_list.size();
-	update_list_begin = update_list_end;
-
+// Computes the order in which Components should be updated, based on the connections in the node graph
+void Synth::compute_update_order() {
 	std::queue<Component *> queue;
 
 	// Find the Components with no outgoing connetions and push them to the Queue
-	for (auto const & component : components) {
+	for (auto & component : components) {
+		component->num_outputs_satisfied = 0;
+		
 		auto no_outputs = true;
 
 		for (auto const & output : component->outputs) {
@@ -145,18 +143,18 @@ void Synth::reconstruct_update_graph() {
 		if (no_outputs) queue.push(component.get());
 	}
 
-	std::unordered_map<Component *, int> num_outputs_satisfied;
+	auto current_component_index = int(components.size());
 
 	// Breadth First Search in reverse, starting at the outputs
 	while (!queue.empty()) {
 		auto component = queue.front();
 		queue.pop();
 
-		*(--update_list_begin) = component;
+		component->update_index = current_component_index--;
 
 		for (auto const & input : component->inputs) {
 			for (auto const & [other, weight] : input.others) {
-				auto num_satisfied = ++num_outputs_satisfied[other->component];
+				auto num_satisfied = ++other->component->num_outputs_satisfied;
 
 				auto num_required = 0;
 				for (auto const & output : other->component->outputs) {
@@ -171,6 +169,11 @@ void Synth::reconstruct_update_graph() {
 			}
 		}
 	}
+
+	// Reorder according to update index
+	std::sort(components.begin(), components.end(), [](auto const & a, auto const & b) -> bool {
+		return a->update_index < b->update_index;
+	});
 }
 
 void Synth::render_menu() {
@@ -605,7 +608,7 @@ void Synth::open_file(char const * filename) {
 		}
 	}
 
-	reconstruct_update_graph();
+	compute_update_order();
 
 	unique_component_id = max_id + 1;
 
