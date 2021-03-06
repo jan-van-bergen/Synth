@@ -12,6 +12,7 @@
 #include <ImGui/imgui_impl_sdl.h>
 #include <ImGui/imgui_impl_opengl3.h>
 #include <ImGui/implot.h>
+#include <ImGui/font_audio.h>
 
 #include "util.h"
 #include "ring_buffer.h"
@@ -69,6 +70,17 @@ int main(int argc, char * argv[]) {
 	// Setup Platform/Renderer bindings
 	ImGui_ImplSDL2_InitForOpenGL(window, context);
 	ImGui_ImplOpenGL3_Init("#version 330");
+
+	ImFontConfig icons_config;
+	icons_config.MergeMode  = true;
+	icons_config.PixelSnapH = true;
+	icons_config.GlyphOffset = ImVec2(0, 4);
+	
+	ImWchar icons_ranges[] = { ICON_MIN_FAD, ICON_MAX_FAD, 0 };
+
+	ImGuiIO & io = ImGui::GetIO();
+	io.Fonts->AddFontDefault();
+	io.Fonts->AddFontFromFileTTF("include/ImGui/font_audio.ttf", 16.0f, &icons_config, icons_ranges);
 	
 	SDL_AudioSpec audio_spec = { };
 	audio_spec.freq     = SAMPLE_RATE;
@@ -162,7 +174,7 @@ int main(int argc, char * argv[]) {
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplSDL2_NewFrame(window);
 		ImGui::NewFrame();
-
+		
 		synth.render();
 
 		ImGui::Render();

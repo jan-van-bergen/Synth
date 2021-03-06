@@ -594,7 +594,7 @@ void Synth::open_file(char const * filename) {
 				auto component = try_add_component<AllComponents>(*this, obj->name, id);
 
 				if (!component) {
-					printf("WARNING: Unsupported Component '%s'!\n", obj->name.c_str());
+					printf("WARNING: Unknown Component '%s'!\n", obj->name.c_str());
 					continue;
 				}
 

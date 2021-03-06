@@ -1,5 +1,7 @@
 #include "filter.h"
 
+#include <ImGui/font_audio.h>
+
 #include "util.h"
 
 void FilterComponent::update(Synth const & synth) {
@@ -23,24 +25,18 @@ void FilterComponent::update(Synth const & synth) {
 }
 
 void FilterComponent::render(Synth const & synth) {
-	if (ImGui::BeginCombo("Type", filter_names[filter_type])) {
-		for (int j = 0; j < util::array_count(filter_names); j++) {
-			if (ImGui::Selectable(filter_names[j], filter_type == j)) {
-				filter_type = j;
-			}
+	auto fmt_filter = [](int value, char * fmt, int len) {
+		switch (value) {
+			case 0: strcpy_s(fmt, len, ICON_FAD_FILTER_LOWPASS);  break;
+			case 1: strcpy_s(fmt, len, ICON_FAD_FILTER_HIGHPASS); break;
+			case 2: strcpy_s(fmt, len, ICON_FAD_FILTER_BANDPASS); break;
+			case 3: strcpy_s(fmt, len, ICON_FAD_FILTER_BYPASS);   break;
+
+			default: abort();
 		}
+	};
 
-		ImGui::EndCombo();
-	}
-
-	cutoff   .render(); ImGui::SameLine();
-	resonance.render();
-}
-
-void FilterComponent::serialize_custom(json::Writer & writer) const {
-	writer.write("filter_type", filter_type);
-}
-
-void FilterComponent::deserialize_custom(json::Object const & object) {
-	filter_type = object.find_int("filter_type", 0);
+	filter_type.render(fmt_filter); ImGui::SameLine();
+	cutoff     .render();           ImGui::SameLine();
+	resonance  .render();
 }

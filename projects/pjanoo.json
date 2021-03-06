@@ -3,12 +3,13 @@
 		"tempo": 128,
 		"master_volume": 0.800000
 	},
-	"SpeakerComponent": {
-		"id": 0,
-		"pos_x": 1793.000000,
-		"pos_y": 95.000000,
-		"size_x": 100.000000,
-		"size_y": 116.000000
+	"MIDIPlayerComponent": {
+		"id": 4,
+		"pos_x": 13.000000,
+		"pos_y": 671.000000,
+		"size_x": 262.000000,
+		"size_y": 128.000000,
+		"filename": "midi/pjanoo_bass.mid"
 	},
 	"MIDIPlayerComponent": {
 		"id": 1,
@@ -18,30 +19,29 @@
 		"size_y": 136.000000,
 		"filename": "midi/pjanoo_synth.mid"
 	},
-	"OscillatorComponent": {
-		"id": 2,
-		"pos_x": 336.000000,
-		"pos_y": 43.000000,
-		"size_x": 294.000000,
-		"size_y": 193.000000,
-		"invert": 0,
-		"phase": 0.000000,
-		"transpose": 0,
-		"detune": 0.000000,
-		"portamento": 0.300000,
-		"attack": 0.100000,
-		"hold": 0.500000,
-		"decay": 1.000000,
-		"sustain": 0.407000,
-		"release": 4.279000,
-		"waveform": 2
+	"SequencerComponent": {
+		"id": 6,
+		"pos_x": 648.000000,
+		"pos_y": 40.000000,
+		"size_x": 392.000000,
+		"size_y": 116.000000,
+		"pattern": [ 1.000000, 0.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000, 0.000000 ]
+	},
+	"MIDIPlayerComponent": {
+		"id": 16,
+		"pos_x": 691.000000,
+		"pos_y": 183.000000,
+		"size_x": 242.000000,
+		"size_y": 122.000000,
+		"filename": "midi/pattern_clap.mid"
 	},
 	"OscillatorComponent": {
 		"id": 3,
-		"pos_x": 387.000000,
-		"pos_y": 724.000000,
-		"size_x": 291.000000,
+		"pos_x": 374.000000,
+		"pos_y": 691.000000,
+		"size_x": 340.000000,
 		"size_y": 193.000000,
+		"waveform": 4,
 		"invert": 0,
 		"phase": 0.000000,
 		"transpose": -24,
@@ -52,41 +52,60 @@
 		"decay": 1.000000,
 		"sustain": 0.500000,
 		"release": 0.000000,
-		"waveform": 4
-	},
-	"MIDIPlayerComponent": {
-		"id": 4,
-		"pos_x": 13.000000,
-		"pos_y": 671.000000,
-		"size_x": 262.000000,
-		"size_y": 128.000000,
-		"filename": "midi/pjanoo_bass.mid"
+		"flt_attack": 0.100000,
+		"flt_hold": 0.500000,
+		"flt_decay": 1.000000,
+		"flt_release": 1.000000,
+		"amount": 1.000000,
+		"resonance": 0.000000
 	},
 	"OscillatorComponent": {
 		"id": 5,
-		"pos_x": 336.000000,
-		"pos_y": 246.000000,
-		"size_x": 297.000000,
+		"pos_x": 313.000000,
+		"pos_y": 253.000000,
+		"size_x": 342.000000,
 		"size_y": 195.000000,
+		"waveform": 2,
 		"invert": 0,
 		"phase": 0.686000,
 		"transpose": 0,
 		"detune": 16.278999,
-		"portamento": 0.300000,
+		"portamento": 0.140000,
 		"attack": 0.558000,
 		"hold": 0.500000,
 		"decay": 1.000000,
 		"sustain": 0.512000,
 		"release": 4.279000,
-		"waveform": 2
+		"flt_attack": 0.100000,
+		"flt_hold": 0.500000,
+		"flt_decay": 1.000000,
+		"flt_release": 1.000000,
+		"amount": 1.000000,
+		"resonance": 0.000000
 	},
-	"SequencerComponent": {
-		"id": 6,
-		"pos_x": 648.000000,
-		"pos_y": 40.000000,
-		"size_x": 392.000000,
-		"size_y": 116.000000,
-		"pattern": [ 1.000000, 0.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000, 0.000000 ]
+	"OscillatorComponent": {
+		"id": 2,
+		"pos_x": 291.000000,
+		"pos_y": 43.000000,
+		"size_x": 339.000000,
+		"size_y": 193.000000,
+		"waveform": 2,
+		"invert": 0,
+		"phase": 0.000000,
+		"transpose": 0,
+		"detune": 0.000000,
+		"portamento": 0.140000,
+		"attack": 0.100000,
+		"hold": 0.500000,
+		"decay": 1.000000,
+		"sustain": 0.407000,
+		"release": 4.279000,
+		"flt_attack": 0.100000,
+		"flt_hold": 0.500000,
+		"flt_decay": 1.000000,
+		"flt_release": 1.000000,
+		"amount": 1.000000,
+		"resonance": 0.000000
 	},
 	"SamplerComponent": {
 		"id": 8,
@@ -104,10 +123,10 @@
 	},
 	"SamplerComponent": {
 		"id": 9,
-		"pos_x": 1078.000000,
-		"pos_y": 239.000000,
+		"pos_x": 1062.000000,
+		"pos_y": 236.000000,
 		"size_x": 287.000000,
-		"size_y": 196.000000,
+		"size_y": 193.000000,
 		"base_note": 38,
 		"attack": 0.000000,
 		"hold": 3.000000,
@@ -118,21 +137,13 @@
 	},
 	"FilterComponent": {
 		"id": 11,
-		"pos_x": 950.000000,
-		"pos_y": 817.000000,
-		"size_x": 121.000000,
+		"pos_x": 935.000000,
+		"pos_y": 791.000000,
+		"size_x": 170.000000,
 		"size_y": 141.000000,
+		"filter_type": 0,
 		"cutoff": 322.364014,
-		"resonance": 0.585000,
-		"filter_type": 0
-	},
-	"DistortionComponent": {
-		"id": 12,
-		"pos_x": 1219.000000,
-		"pos_y": 742.000000,
-		"size_x": 65.000000,
-		"size_y": 121.000000,
-		"amount": 0.294000
+		"resonance": 0.585000
 	},
 	"FilterComponent": {
 		"id": 13,
@@ -140,9 +151,39 @@
 		"pos_y": 335.000000,
 		"size_x": 126.000000,
 		"size_y": 144.000000,
-		"cutoff": 726.155945,
-		"resonance": 0.734000,
-		"filter_type": 0
+		"filter_type": 0,
+		"cutoff": 10740.636719,
+		"resonance": 0.734000
+	},
+	"GainComponent": {
+		"id": 18,
+		"pos_x": 1431.000000,
+		"pos_y": 160.000000,
+		"size_x": 64.000000,
+		"size_y": 117.000000,
+		"gain": -1.199997
+	},
+	"DistortionComponent": {
+		"id": 12,
+		"pos_x": 1200.000000,
+		"pos_y": 750.000000,
+		"size_x": 65.000000,
+		"size_y": 121.000000,
+		"amount": 0.294000
+	},
+	"SamplerComponent": {
+		"id": 15,
+		"pos_x": 365.000000,
+		"pos_y": 479.000000,
+		"size_x": 288.000000,
+		"size_y": 194.000000,
+		"base_note": 48,
+		"attack": 0.000000,
+		"hold": 2.000000,
+		"decay": 1.000000,
+		"sustain": 0.900000,
+		"release": 10.400000,
+		"filename": "samples/piano.wav"
 	},
 	"CompressorComponent": {
 		"id": 14,
@@ -156,32 +197,10 @@
 		"Attack": 15.000000,
 		"Release": 200.000000
 	},
-	"SamplerComponent": {
-		"id": 15,
-		"pos_x": 375.000000,
-		"pos_y": 503.000000,
-		"size_x": 288.000000,
-		"size_y": 194.000000,
-		"base_note": 48,
-		"attack": 0.000000,
-		"hold": 2.000000,
-		"decay": 1.000000,
-		"sustain": 0.900000,
-		"release": 10.400000,
-		"filename": "samples/piano.wav"
-	},
-	"MIDIPlayerComponent": {
-		"id": 16,
-		"pos_x": 691.000000,
-		"pos_y": 183.000000,
-		"size_x": 242.000000,
-		"size_y": 122.000000,
-		"filename": "midi/pattern_clap.mid"
-	},
 	"CompressorComponent": {
 		"id": 17,
-		"pos_x": 1547.000000,
-		"pos_y": 402.000000,
+		"pos_x": 1231.000000,
+		"pos_y": 480.000000,
 		"size_x": 176.000000,
 		"size_y": 186.000000,
 		"threshold": -13.800014,
@@ -190,34 +209,12 @@
 		"Attack": 16.000000,
 		"Release": 128.000000
 	},
-	"GroupComponent": {
-		"id": 18,
-		"pos_x": 1431.000000,
-		"pos_y": 160.000000,
-		"size_x": 64.000000,
-		"size_y": 117.000000,
-		"gain": -1.199997
-	},
-	"Connection": {
-		"component_out": 17,
-		"component_in": 0,
-		"offset_out": 0,
-		"offset_in": 0,
-		"weight": 0.750000
-	},
-	"Connection": {
-		"component_out": 18,
-		"component_in": 0,
-		"offset_out": 0,
-		"offset_in": 0,
-		"weight": 0.900000
-	},
-	"Connection": {
-		"component_out": 1,
-		"component_in": 2,
-		"offset_out": 0,
-		"offset_in": 0,
-		"weight": 1.000000
+	"SpeakerComponent": {
+		"id": 0,
+		"pos_x": 1479.000000,
+		"pos_y": 421.000000,
+		"size_x": 100.000000,
+		"size_y": 116.000000
 	},
 	"Connection": {
 		"component_out": 4,
@@ -229,6 +226,13 @@
 	"Connection": {
 		"component_out": 1,
 		"component_in": 5,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 1,
+		"component_in": 2,
 		"offset_out": 0,
 		"offset_in": 0,
 		"weight": 1.000000
@@ -255,13 +259,6 @@
 		"weight": 1.000000
 	},
 	"Connection": {
-		"component_out": 11,
-		"component_in": 12,
-		"offset_out": 0,
-		"offset_in": 0,
-		"weight": 1.000000
-	},
-	"Connection": {
 		"component_out": 2,
 		"component_in": 13,
 		"offset_out": 0,
@@ -276,8 +273,22 @@
 		"weight": 0.800000
 	},
 	"Connection": {
-		"component_out": 13,
-		"component_in": 14,
+		"component_out": 9,
+		"component_in": 18,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 0.780000
+	},
+	"Connection": {
+		"component_out": 8,
+		"component_in": 18,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 11,
+		"component_in": 12,
 		"offset_out": 0,
 		"offset_in": 0,
 		"weight": 1.000000
@@ -297,6 +308,13 @@
 		"weight": 1.000000
 	},
 	"Connection": {
+		"component_out": 13,
+		"component_in": 14,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 0.860000
+	},
+	"Connection": {
 		"component_out": 14,
 		"component_in": 17,
 		"offset_out": 0,
@@ -308,7 +326,7 @@
 		"component_in": 17,
 		"offset_out": 0,
 		"offset_in": 0,
-		"weight": 0.900000
+		"weight": 0.960000
 	},
 	"Connection": {
 		"component_out": 3,
@@ -332,17 +350,17 @@
 		"weight": 0.840000
 	},
 	"Connection": {
-		"component_out": 9,
-		"component_in": 18,
+		"component_out": 17,
+		"component_in": 0,
 		"offset_out": 0,
 		"offset_in": 0,
-		"weight": 0.780000
+		"weight": 0.750000
 	},
 	"Connection": {
-		"component_out": 8,
-		"component_in": 18,
+		"component_out": 18,
+		"component_in": 0,
 		"offset_out": 0,
 		"offset_in": 0,
-		"weight": 1.000000
+		"weight": 0.900000
 	}
 }

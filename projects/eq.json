@@ -3,26 +3,20 @@
 		"tempo": 130,
 		"master_volume": 1.000000
 	},
-	"SpeakerComponent": {
-		"id": 0,
-		"pos_x": 1372.000000,
-		"pos_y": 348.000000,
-		"size_x": 101.000000,
-		"size_y": 113.000000
-	},
 	"KeyboardComponent": {
 		"id": 1,
-		"pos_x": 60.000000,
-		"pos_y": 60.000000,
+		"pos_x": -1.000000,
+		"pos_y": 672.000000,
 		"size_x": 100.000000,
 		"size_y": 100.000000
 	},
 	"OscillatorComponent": {
 		"id": 2,
-		"pos_x": 77.000000,
-		"pos_y": 198.000000,
-		"size_x": 291.000000,
+		"pos_x": 106.000000,
+		"pos_y": 361.000000,
+		"size_x": 339.000000,
 		"size_y": 195.000000,
+		"waveform": 2,
 		"invert": 1,
 		"phase": 0.000000,
 		"transpose": 0,
@@ -33,12 +27,17 @@
 		"decay": 1.000000,
 		"sustain": 0.500000,
 		"release": 0.000000,
-		"waveform": 2
+		"flt_attack": 0.100000,
+		"flt_hold": 0.500000,
+		"flt_decay": 1.000000,
+		"flt_release": 1.000000,
+		"amount": 1.000000,
+		"resonance": 0.000000
 	},
 	"EqualizerComponent": {
 		"id": 3,
-		"pos_x": 430.000000,
-		"pos_y": 100.000000,
+		"pos_x": 492.000000,
+		"pos_y": 101.000000,
 		"size_x": 882.000000,
 		"size_y": 733.000000,
 		"NUM_BANDS": 4,
@@ -67,12 +66,12 @@
 			"gain": 4.263158
 		}
 	},
-	"Connection": {
-		"component_out": 3,
-		"component_in": 0,
-		"offset_out": 0,
-		"offset_in": 0,
-		"weight": 1.000000
+	"SpeakerComponent": {
+		"id": 0,
+		"pos_x": 1465.000000,
+		"pos_y": 343.000000,
+		"size_x": 101.000000,
+		"size_y": 113.000000
 	},
 	"Connection": {
 		"component_out": 1,
@@ -84,6 +83,13 @@
 	"Connection": {
 		"component_out": 2,
 		"component_in": 3,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 3,
+		"component_in": 0,
 		"offset_out": 0,
 		"offset_in": 0,
 		"weight": 1.000000

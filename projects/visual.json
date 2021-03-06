@@ -3,13 +3,6 @@
 		"tempo": 130,
 		"master_volume": 1.000000
 	},
-	"SpeakerComponent": {
-		"id": 0,
-		"pos_x": 170.000000,
-		"pos_y": 495.000000,
-		"size_x": 100.000000,
-		"size_y": 111.000000
-	},
 	"KeyboardComponent": {
 		"id": 1,
 		"pos_x": 34.000000,
@@ -18,43 +11,12 @@
 		"size_y": 64.000000
 	},
 	"OscillatorComponent": {
-		"id": 2,
-		"pos_x": 24.000000,
-		"pos_y": 32.000000,
-		"size_x": 294.000000,
-		"size_y": 193.000000,
-		"invert": 0,
-		"phase": 0.000000,
-		"transpose": -24,
-		"detune": 0.000000,
-		"portamento": 0.000000,
-		"attack": 0.100000,
-		"hold": 0.500000,
-		"decay": 1.000000,
-		"sustain": 0.500000,
-		"release": 0.000000,
-		"waveform": 2
-	},
-	"SpectrumComponent": {
-		"id": 3,
-		"pos_x": 356.000000,
-		"pos_y": 386.000000,
-		"size_x": 1226.000000,
-		"size_y": 488.000000
-	},
-	"OscilloscopeComponent": {
-		"id": 4,
-		"pos_x": 357.000000,
-		"pos_y": 39.000000,
-		"size_x": 1223.000000,
-		"size_y": 339.000000
-	},
-	"OscillatorComponent": {
 		"id": 6,
 		"pos_x": 26.000000,
 		"pos_y": 242.000000,
-		"size_x": 288.000000,
+		"size_x": 345.000000,
 		"size_y": 193.000000,
+		"waveform": 2,
 		"invert": 0,
 		"phase": 0.000000,
 		"transpose": -24,
@@ -65,7 +27,71 @@
 		"decay": 1.000000,
 		"sustain": 0.500000,
 		"release": 0.000000,
-		"waveform": 2
+		"flt_attack": 0.100000,
+		"flt_hold": 0.500000,
+		"flt_decay": 1.000000,
+		"flt_release": 1.000000,
+		"amount": 1.000000,
+		"resonance": 0.000000
+	},
+	"OscillatorComponent": {
+		"id": 2,
+		"pos_x": 24.000000,
+		"pos_y": 32.000000,
+		"size_x": 346.000000,
+		"size_y": 193.000000,
+		"waveform": 2,
+		"invert": 0,
+		"phase": 0.000000,
+		"transpose": -24,
+		"detune": 0.000000,
+		"portamento": 0.000000,
+		"attack": 0.100000,
+		"hold": 0.500000,
+		"decay": 1.000000,
+		"sustain": 0.500000,
+		"release": 0.000000,
+		"flt_attack": 0.100000,
+		"flt_hold": 0.500000,
+		"flt_decay": 1.000000,
+		"flt_release": 1.000000,
+		"amount": 1.000000,
+		"resonance": 0.000000
+	},
+	"SpeakerComponent": {
+		"id": 0,
+		"pos_x": 170.000000,
+		"pos_y": 495.000000,
+		"size_x": 100.000000,
+		"size_y": 111.000000
+	},
+	"OscilloscopeComponent": {
+		"id": 4,
+		"pos_x": 384.000000,
+		"pos_y": 39.000000,
+		"size_x": 1196.000000,
+		"size_y": 339.000000
+	},
+	"SpectrumComponent": {
+		"id": 3,
+		"pos_x": 381.000000,
+		"pos_y": 382.000000,
+		"size_x": 1195.000000,
+		"size_y": 488.000000
+	},
+	"Connection": {
+		"component_out": 1,
+		"component_in": 6,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 1,
+		"component_in": 2,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
 	},
 	"Connection": {
 		"component_out": 2,
@@ -82,20 +108,6 @@
 		"weight": 1.000000
 	},
 	"Connection": {
-		"component_out": 1,
-		"component_in": 2,
-		"offset_out": 0,
-		"offset_in": 0,
-		"weight": 1.000000
-	},
-	"Connection": {
-		"component_out": 0,
-		"component_in": 3,
-		"offset_out": 0,
-		"offset_in": 0,
-		"weight": 1.000000
-	},
-	"Connection": {
 		"component_out": 0,
 		"component_in": 4,
 		"offset_out": 0,
@@ -103,8 +115,8 @@
 		"weight": 1.000000
 	},
 	"Connection": {
-		"component_out": 1,
-		"component_in": 6,
+		"component_out": 0,
+		"component_in": 3,
 		"offset_out": 0,
 		"offset_in": 0,
 		"weight": 1.000000

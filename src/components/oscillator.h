@@ -13,9 +13,7 @@ struct OscillatorVoice : Voice {
 };
 
 struct OscillatorComponent : VoiceComponent<OscillatorVoice> {
-	static constexpr const char * waveform_names[] = { "Sine", "Triangle", "Saw", "Square", "Pulse 25%", "Pulse 12.5%", "Noise" };
-
-	int waveform_index = 2;
+	Parameter<int> waveform = { this, "waveform", "Wav", "Waveform", 2, std::make_pair(0, 6) };
 	
 	Parameter<int>   invert = { this, "invert", "Inv", "Invert Waveform", 0, std::make_pair(0, 1) };
 	Parameter<float> phase  = { this, "phase",  "Phs", "Phase Offset",    0, std::make_pair(0.0f, 1.0f), { 0.0f, 0.25f, 0.5f, 0.75f, 1.0f } };
@@ -45,9 +43,6 @@ struct OscillatorComponent : VoiceComponent<OscillatorVoice> {
 
 	void update(struct Synth const & synth) override;
 	void render(struct Synth const & synth) override;
-
-	void   serialize_custom(json::Writer & writer) const override;
-	void deserialize_custom(json::Object const & object) override;
 
 private:
 	unsigned seed = util::seed();

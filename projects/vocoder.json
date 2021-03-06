@@ -3,19 +3,21 @@
 		"tempo": 130,
 		"master_volume": 1.000000
 	},
-	"SpeakerComponent": {
-		"id": 0,
-		"pos_x": 1246.000000,
-		"pos_y": 248.000000,
-		"size_x": 101.000000,
-		"size_y": 113.000000
+	"MIDIPlayerComponent": {
+		"id": 8,
+		"pos_x": 41.000000,
+		"pos_y": 208.000000,
+		"size_x": 257.000000,
+		"size_y": 128.000000,
+		"filename": "midi/carrier.mid"
 	},
 	"OscillatorComponent": {
 		"id": 2,
-		"pos_x": 194.000000,
+		"pos_x": 142.000000,
 		"pos_y": 365.000000,
-		"size_x": 290.000000,
+		"size_x": 342.000000,
 		"size_y": 223.000000,
+		"waveform": 2,
 		"invert": 0,
 		"phase": 0.000000,
 		"transpose": -5,
@@ -26,7 +28,12 @@
 		"decay": 1.000000,
 		"sustain": 0.895000,
 		"release": 0.000000,
-		"waveform": 2
+		"flt_attack": 0.100000,
+		"flt_hold": 0.500000,
+		"flt_decay": 1.000000,
+		"flt_release": 1.000000,
+		"amount": 1.000000,
+		"resonance": 0.000000
 	},
 	"SequencerComponent": {
 		"id": 3,
@@ -35,56 +42,6 @@
 		"size_x": 392.000000,
 		"size_y": 116.000000,
 		"pattern": [ 1.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000 ]
-	},
-	"SamplerComponent": {
-		"id": 4,
-		"pos_x": 537.000000,
-		"pos_y": 70.000000,
-		"size_x": 286.000000,
-		"size_y": 204.000000,
-		"base_note": 36,
-		"attack": 0.000000,
-		"hold": 16.000000,
-		"decay": 1.000000,
-		"sustain": 1.000000,
-		"release": 0.000000,
-		"filename": "samples/dance.wav"
-	},
-	"VocoderComponent": {
-		"id": 5,
-		"pos_x": 1009.000000,
-		"pos_y": 292.000000,
-		"size_x": 124.000000,
-		"size_y": 189.000000,
-		"num_bands": 64,
-		"width": 10.000000,
-		"decay": 0.440000,
-		"gain": 3.853000
-	},
-	"MIDIPlayerComponent": {
-		"id": 8,
-		"pos_x": 41.000000,
-		"pos_y": 208.000000,
-		"size_x": 257.000000,
-		"size_y": 128.000000,
-		"filename": "midi/carrier.mid"
-	},
-	"FilterComponent": {
-		"id": 9,
-		"pos_x": 1015.000000,
-		"pos_y": 61.000000,
-		"size_x": 123.000000,
-		"size_y": 141.000000,
-		"cutoff": 11009.000000,
-		"resonance": 0.415000,
-		"filter_type": 1
-	},
-	"DecibelComponent": {
-		"id": 10,
-		"pos_x": 1415.000000,
-		"pos_y": 113.000000,
-		"size_x": 116.000000,
-		"size_y": 218.000000
 	},
 	"EqualizerComponent": {
 		"id": 11,
@@ -118,23 +75,65 @@
 			"gain": -7.454545
 		}
 	},
+	"SamplerComponent": {
+		"id": 4,
+		"pos_x": 537.000000,
+		"pos_y": 70.000000,
+		"size_x": 286.000000,
+		"size_y": 204.000000,
+		"base_note": 36,
+		"attack": 0.000000,
+		"hold": 16.000000,
+		"decay": 1.000000,
+		"sustain": 1.000000,
+		"release": 0.000000,
+		"filename": "samples/dance.wav"
+	},
+	"VocoderComponent": {
+		"id": 5,
+		"pos_x": 1009.000000,
+		"pos_y": 292.000000,
+		"size_x": 124.000000,
+		"size_y": 189.000000,
+		"num_bands": 64,
+		"width": 10.000000,
+		"decay": 0.440000,
+		"gain": 3.853000
+	},
+	"FilterComponent": {
+		"id": 9,
+		"pos_x": 1015.000000,
+		"pos_y": 61.000000,
+		"size_x": 123.000000,
+		"size_y": 141.000000,
+		"filter_type": 1,
+		"cutoff": 11009.000000,
+		"resonance": 0.415000
+	},
+	"SpeakerComponent": {
+		"id": 0,
+		"pos_x": 1246.000000,
+		"pos_y": 248.000000,
+		"size_x": 101.000000,
+		"size_y": 113.000000
+	},
+	"DecibelComponent": {
+		"id": 10,
+		"pos_x": 1415.000000,
+		"pos_y": 113.000000,
+		"size_x": 116.000000,
+		"size_y": 218.000000
+	},
 	"Connection": {
-		"component_out": 9,
-		"component_in": 0,
+		"component_out": 8,
+		"component_in": 2,
 		"offset_out": 0,
 		"offset_in": 0,
 		"weight": 1.000000
 	},
 	"Connection": {
-		"component_out": 5,
-		"component_in": 0,
-		"offset_out": 0,
-		"offset_in": 0,
-		"weight": 0.900000
-	},
-	"Connection": {
-		"component_out": 8,
-		"component_in": 2,
+		"component_out": 2,
+		"component_in": 11,
 		"offset_out": 0,
 		"offset_in": 0,
 		"weight": 1.000000
@@ -168,15 +167,22 @@
 		"weight": 1.000000
 	},
 	"Connection": {
-		"component_out": 0,
-		"component_in": 10,
+		"component_out": 9,
+		"component_in": 0,
 		"offset_out": 0,
 		"offset_in": 0,
 		"weight": 1.000000
 	},
 	"Connection": {
-		"component_out": 2,
-		"component_in": 11,
+		"component_out": 5,
+		"component_in": 0,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 0.900000
+	},
+	"Connection": {
+		"component_out": 0,
+		"component_in": 10,
 		"offset_out": 0,
 		"offset_in": 0,
 		"weight": 1.000000

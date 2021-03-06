@@ -1,5 +1,7 @@
 #include "oscillator.h"
 
+#include <ImGui/font_audio.h>
+
 #include "synth.h"
 #include "util.h"
 
@@ -62,7 +64,7 @@ void OscillatorComponent::update(Synth const & synth) {
 			Sample sample = { };
 
 			// Generate selected waveform
-			switch (waveform_index) {
+			switch (waveform) {
 				case 0: sample = sign * amplitude * generate_sine    (phase + voice.phase); break;
 				case 1: sample = sign * amplitude * generate_triangle(phase + voice.phase); break;
 				case 2: sample = sign * amplitude * generate_saw     (phase + voice.phase); break;
@@ -115,24 +117,28 @@ void OscillatorComponent::update(Synth const & synth) {
 }
 
 void OscillatorComponent::render(Synth const & synth) {
-	ImGui::PushItemWidth(-64.0f);
+	auto fmt_waveform = [](int value, char * fmt, int len) -> void {
+		switch (value) {
+			case 0: strcpy_s(fmt, len, ICON_FAD_MODSINE);   break;
+			case 1: strcpy_s(fmt, len, ICON_FAD_MODTRI);	break;
+			case 2: strcpy_s(fmt, len, ICON_FAD_MODSAWUP);	break;
+			case 3: strcpy_s(fmt, len, ICON_FAD_MODSQUARE);	break;
+			case 4: strcpy_s(fmt, len, ICON_FAD_MODSQUARE);	break;
+			case 5: strcpy_s(fmt, len, ICON_FAD_MODSQUARE);	break;
+			case 6: strcpy_s(fmt, len, ICON_FAD_MODRANDOM);	break;
 
-	if (ImGui::BeginCombo("Waveform", waveform_names[waveform_index])) {
-		for (int i = 0; i < util::array_count(waveform_names); i++) {
-			if (ImGui::Selectable(waveform_names[i], waveform_index == i)) {
-				waveform_index = i;
-			}
-		}
+			default: abort();
+		};
+	};
 
-		ImGui::EndCombo();
-	}
+	waveform.render(fmt_waveform); ImGui::SameLine();
 
-	auto bool_to_str = [](int value, char * fmt, int len) -> void {
+	auto fmt_bool = [](int value, char * fmt, int len) -> void {
 		strcpy_s(fmt, len, value ? "True" : "False");
 	};
 
-	invert.render(bool_to_str); ImGui::SameLine();
-	phase .render();            ImGui::SameLine();
+	invert.render(fmt_bool); ImGui::SameLine();
+	phase .render();         ImGui::SameLine();
 
 	transpose .render(); ImGui::SameLine();
 	detune    .render(); ImGui::SameLine();
@@ -163,14 +169,4 @@ void OscillatorComponent::render(Synth const & synth) {
 
 		ImGui::EndTabBar();
 	}
-
-	ImGui::PopItemWidth();
-}
-
-void OscillatorComponent::serialize_custom(json::Writer & writer) const {
-	writer.write("waveform", waveform_index);
-}
-
-void OscillatorComponent::deserialize_custom(json::Object const & object) {
-	waveform_index = object.find_int("waveform", 3);
 }
