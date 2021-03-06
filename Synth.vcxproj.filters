@@ -22,21 +22,7 @@
     <ClCompile Include="include\ImGui\imgui_tables.cpp">
       <Filter>ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="src\json_parser.cpp">
-      <Filter>json</Filter>
-    </ClCompile>
-    <ClCompile Include="src\json_writer.cpp">
-      <Filter>json</Filter>
-    </ClCompile>
-    <ClCompile Include="src\connector.cpp">
-      <Filter>synth</Filter>
-    </ClCompile>
-    <ClCompile Include="src\synth.cpp">
-      <Filter>synth</Filter>
-    </ClCompile>
-    <ClCompile Include="src\file_dialog.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\midi.cpp" />
     <ClCompile Include="src\components\bitcrusher.cpp">
       <Filter>components</Filter>
     </ClCompile>
@@ -76,26 +62,17 @@
     <ClCompile Include="src\components\split.cpp">
       <Filter>components</Filter>
     </ClCompile>
-    <ClCompile Include="src\json.cpp">
-      <Filter>json</Filter>
-    </ClCompile>
     <ClCompile Include="src\components\keyboard.cpp">
       <Filter>components</Filter>
     </ClCompile>
     <ClCompile Include="src\components\oscilloscope.cpp">
       <Filter>components</Filter>
     </ClCompile>
-    <ClCompile Include="src\util.cpp">
-      <Filter>util</Filter>
-    </ClCompile>
     <ClCompile Include="src\components\flanger.cpp">
       <Filter>components</Filter>
     </ClCompile>
     <ClCompile Include="src\components\phaser.cpp">
       <Filter>components</Filter>
-    </ClCompile>
-    <ClCompile Include="src\parameter.cpp">
-      <Filter>synth</Filter>
     </ClCompile>
     <ClCompile Include="src\components\arp.cpp">
       <Filter>components</Filter>
@@ -124,9 +101,6 @@
     <ClCompile Include="src\components\vectorscope.cpp">
       <Filter>components</Filter>
     </ClCompile>
-    <ClCompile Include="src\knob.cpp">
-      <Filter>util</Filter>
-    </ClCompile>
     <ClCompile Include="src\components\fm.cpp">
       <Filter>components</Filter>
     </ClCompile>
@@ -136,48 +110,43 @@
     <ClCompile Include="src\components\group.cpp">
       <Filter>components</Filter>
     </ClCompile>
+    <ClCompile Include="src\json\json.cpp">
+      <Filter>json</Filter>
+    </ClCompile>
+    <ClCompile Include="src\json\json_parser.cpp">
+      <Filter>json</Filter>
+    </ClCompile>
+    <ClCompile Include="src\json\json_writer.cpp">
+      <Filter>json</Filter>
+    </ClCompile>
+    <ClCompile Include="src\synth\connector.cpp">
+      <Filter>synth</Filter>
+    </ClCompile>
+    <ClCompile Include="src\synth\knob.cpp">
+      <Filter>synth</Filter>
+    </ClCompile>
+    <ClCompile Include="src\synth\parameter.cpp">
+      <Filter>synth</Filter>
+    </ClCompile>
+    <ClCompile Include="src\synth\synth.cpp">
+      <Filter>synth</Filter>
+    </ClCompile>
+    <ClCompile Include="src\util\file_dialog.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="src\util\util.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="src\synth\midi.cpp">
+      <Filter>synth</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\json.h">
-      <Filter>json</Filter>
-    </ClInclude>
-    <ClInclude Include="src\connector.h">
-      <Filter>synth</Filter>
-    </ClInclude>
-    <ClInclude Include="src\parameter.h">
-      <Filter>synth</Filter>
-    </ClInclude>
-    <ClInclude Include="src\sample.h">
-      <Filter>synth</Filter>
-    </ClInclude>
-    <ClInclude Include="src\synth.h">
-      <Filter>synth</Filter>
-    </ClInclude>
-    <ClInclude Include="src\file_dialog.h" />
-    <ClInclude Include="src\midi.h" />
-    <ClInclude Include="src\note_event.h">
-      <Filter>synth</Filter>
-    </ClInclude>
-    <ClInclude Include="src\util.h">
-      <Filter>util</Filter>
-    </ClInclude>
-    <ClInclude Include="src\scope_timer.h">
-      <Filter>util</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ring_buffer.h">
-      <Filter>util</Filter>
-    </ClInclude>
-    <ClInclude Include="src\meta.h">
-      <Filter>util</Filter>
-    </ClInclude>
     <ClInclude Include="src\dsp\filter.h">
       <Filter>dsp</Filter>
     </ClInclude>
     <ClInclude Include="src\dsp\fft.h">
       <Filter>dsp</Filter>
-    </ClInclude>
-    <ClInclude Include="src\knob.h">
-      <Filter>util</Filter>
     </ClInclude>
     <ClInclude Include="src\components\vocoder.h">
       <Filter>components</Filter>
@@ -265,6 +234,45 @@
     </ClInclude>
     <ClInclude Include="src\components\components.h">
       <Filter>components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\json\json.h">
+      <Filter>json</Filter>
+    </ClInclude>
+    <ClInclude Include="src\synth\connector.h">
+      <Filter>synth</Filter>
+    </ClInclude>
+    <ClInclude Include="src\synth\knob.h">
+      <Filter>synth</Filter>
+    </ClInclude>
+    <ClInclude Include="src\synth\note_event.h">
+      <Filter>synth</Filter>
+    </ClInclude>
+    <ClInclude Include="src\synth\parameter.h">
+      <Filter>synth</Filter>
+    </ClInclude>
+    <ClInclude Include="src\synth\sample.h">
+      <Filter>synth</Filter>
+    </ClInclude>
+    <ClInclude Include="src\synth\synth.h">
+      <Filter>synth</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\file_dialog.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\meta.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\ring_buffer.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\scope_timer.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\util.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\synth\midi.h">
+      <Filter>synth</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

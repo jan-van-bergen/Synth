@@ -3,17 +3,13 @@
 
 #include "components/components.h"
 
-#include "file_dialog.h"
+#include "util/file_dialog.h"
 
 struct Synth {
 	std::vector<std::unique_ptr<Component>> components;
 	std::vector<SpeakerComponent *> speakers;
 
 	int unique_component_id = 0;
-
-//	std::vector<Component *> update_list; // Underlying data, update list grows back to front because it is constructed in reverse order
-//	Component             ** update_list_begin = nullptr;
-//	Component             ** update_list_end   = nullptr;
 
 	struct {
 		Parameter<int> tempo = { nullptr, "tempo", "Tmp", "Tempo", 130, std::make_pair(60, 200), { 80, 110, 128, 140, 150, 174 } };

@@ -1,6 +1,6 @@
 #include "delay.h"
 
-#include "synth.h"
+#include "synth/synth.h"
 
 void DelayComponent::history_resize(int size) {
 	history.resize(size);

@@ -2,9 +2,9 @@
 
 #include <ImGui/implot.h>
 
-#include "synth.h"
+#include "synth/synth.h"
 
-#include "scope_timer.h"
+#include "util/scope_timer.h"
 
 void SamplerComponent::load(char const * file) {
 	filename = file;

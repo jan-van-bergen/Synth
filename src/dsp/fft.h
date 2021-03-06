@@ -1,7 +1,7 @@
 #pragma once
 
-#include "sample.h"
-#include "util.h"
+#include "synth/sample.h"
+#include "util/util.h"
 
 namespace dsp {
 	template<int N, typename T>

@@ -1,6 +1,6 @@
 #include "midi_player.h"
 
-#include "synth.h"
+#include "synth/synth.h"
 
 void MIDIPlayerComponent::load(char const * file) {
 	filename = file;

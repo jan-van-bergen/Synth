@@ -1,6 +1,6 @@
 #include "improviser.h"
 
-#include "synth.h"
+#include "synth/synth.h"
 
 void ImproviserComponent::update(Synth const & synth) {
 	constexpr auto transfer = util::generate_lookup_table<float, 7 * 7>([](int index) -> float {

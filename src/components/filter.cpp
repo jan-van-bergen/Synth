@@ -2,7 +2,7 @@
 
 #include <ImGui/font_audio.h>
 
-#include "util.h"
+#include "util/util.h"
 
 void FilterComponent::update(Synth const & synth) {
 	dsp::VAFilterMode mode;

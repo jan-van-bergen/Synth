@@ -6,11 +6,10 @@
 
 #include <ImGui/imgui.h>
 
-#include "util.h"
-
 #include "knob.h"
 
-#include "json.h"
+#include "util/util.h"
+#include "json/json.h"
 
 struct Component;
 

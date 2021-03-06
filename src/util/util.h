@@ -9,7 +9,7 @@
 
 #include <SDL2/SDL_scancode.h>
 
-#include "sample.h"
+#include "synth/sample.h"
 
 inline constexpr auto     PI = 3.14159265359f;
 inline constexpr auto TWO_PI = 6.28318530718f;

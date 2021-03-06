@@ -1,6 +1,6 @@
 #include "sequencer.h"
 
-#include "synth.h"
+#include "synth/synth.h"
 
 static constexpr auto EPSILON = 0.001f;
 

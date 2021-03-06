@@ -1,6 +1,6 @@
 #include "keyboard.h"
 
-#include "synth.h"
+#include "synth/synth.h"
 
 void KeyboardComponent::update(Synth const & synth) {
 	for (auto const & note_event : synth.note_events) {

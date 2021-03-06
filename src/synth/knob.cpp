@@ -1,5 +1,9 @@
 #include "knob.h"
 
+#include <ImGui/imgui.h>
+
+#include "util/util.h"
+
 template<typename T>
 bool knob(char const * label, char const * name_display, char const * name_full, T * value, T min, T max, bool log_scale, char const * fmt, float size) {
 	static constexpr auto IS_FLOAT = std::is_same<T, float>();

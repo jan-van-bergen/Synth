@@ -2,8 +2,8 @@
 
 #include <ImGui/font_audio.h>
 
-#include "synth.h"
-#include "util.h"
+#include "synth/synth.h"
+#include "util/util.h"
 
 static Sample generate_sine(float phase) {
 	return std::sin(TWO_PI * phase);

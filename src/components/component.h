@@ -2,8 +2,8 @@
 #include <string>
 #include <vector>
 
-#include "parameter.h"
-#include "connector.h"
+#include "synth/parameter.h"
+#include "synth/connector.h"
 
 struct Component {
 	std::string name;

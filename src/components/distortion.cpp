@@ -1,6 +1,6 @@
 #include "distortion.h"
 
-#include "util.h"
+#include "util/util.h"
 
 void DistortionComponent::update(Synth const & synth) {
 	auto threshold = 1.00001f - amount;

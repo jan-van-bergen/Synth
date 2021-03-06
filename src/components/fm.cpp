@@ -1,6 +1,6 @@
 #include "fm.h"
 
-#include "synth.h"
+#include "synth/synth.h"
 
 void FMComponent::update(Synth const & synth) {
 	auto steps_per_second = 4.0f / 60.0f * float(synth.settings.tempo);

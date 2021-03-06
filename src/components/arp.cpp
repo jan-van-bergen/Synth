@@ -1,6 +1,6 @@
 #include "arp.h"
 
-#include "synth.h"
+#include "synth/synth.h"
 
 void ArpComponent::update(Synth const & synth) {
 	auto note_events = inputs[0].get_events();
