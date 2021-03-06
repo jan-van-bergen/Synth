@@ -4,6 +4,7 @@
 #include "util/util.h"
 
 namespace dsp {
+	// Based on: https://gist.github.com/agrafix/aa49c17cd32c8ba63b6a7cb8dce8b0bd
 	template<int N, typename T>
 	void fft(T fourier[]) {
 		static_assert(util::is_power_of_two(N), "FFT can only handle N that are a power of two");
