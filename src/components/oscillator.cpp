@@ -59,18 +59,29 @@ void OscillatorComponent::update(Synth const & synth) {
 				break;
 			}
 
+			Sample sample = { };
+
 			// Generate selected waveform
 			switch (waveform_index) {
-				case 0: outputs[0].get_sample(i) += sign * amplitude * generate_sine    (phase + voice.phase); break;
-				case 1: outputs[0].get_sample(i) += sign * amplitude * generate_triangle(phase + voice.phase); break;
-				case 2: outputs[0].get_sample(i) += sign * amplitude * generate_saw     (phase + voice.phase); break;
-				case 3: outputs[0].get_sample(i) += sign * amplitude * generate_square  (phase + voice.phase); break;
-				case 4: outputs[0].get_sample(i) += sign * amplitude * generate_square  (phase + voice.phase, 0.25f);  break;
-				case 5: outputs[0].get_sample(i) += sign * amplitude * generate_square  (phase + voice.phase, 0.125f); break;
-				case 6: outputs[0].get_sample(i) += sign * amplitude * generate_noise(seed); break;
+				case 0: sample = sign * amplitude * generate_sine    (phase + voice.phase); break;
+				case 1: sample = sign * amplitude * generate_triangle(phase + voice.phase); break;
+				case 2: sample = sign * amplitude * generate_saw     (phase + voice.phase); break;
+				case 3: sample = sign * amplitude * generate_square  (phase + voice.phase); break;
+				case 4: sample = sign * amplitude * generate_square  (phase + voice.phase, 0.25f);  break;
+				case 5: sample = sign * amplitude * generate_square  (phase + voice.phase, 0.125f); break;
+				case 6: sample = sign * amplitude * generate_noise(seed); break;
 
 				default: abort();
 			}
+			
+			auto flt        = flt_amount * util::envelope(time_in_steps, flt_attack, flt_hold, flt_decay, flt_sustain);
+			auto flt_cutoff = util::log_interpolate(20.f, 20000.0f, flt);
+
+			voice.filter.set(dsp::VAFilterMode::LOW_PASS, flt_cutoff, flt_resonance);
+
+			sample = voice.filter.process(sample);
+
+			outputs[0].get_sample(i) += sample;
 			
 			float frequency;
 
@@ -127,11 +138,31 @@ void OscillatorComponent::render(Synth const & synth) {
 	detune    .render(); ImGui::SameLine();
 	portamento.render();
 
-	attack .render(); ImGui::SameLine();
-	hold   .render(); ImGui::SameLine();
-	decay  .render(); ImGui::SameLine();
-	sustain.render(); ImGui::SameLine();
-	release.render();
+	if (ImGui::BeginTabBar("Envelopes")) {
+		if (ImGui::BeginTabItem("Vol")) {
+			attack .render(); ImGui::SameLine();
+			hold   .render(); ImGui::SameLine();
+			decay  .render(); ImGui::SameLine();
+			sustain.render(); ImGui::SameLine();
+			release.render();
+
+			ImGui::EndTabItem();
+		}
+
+		if (ImGui::BeginTabItem("Flt")) {
+			flt_attack .render(); ImGui::SameLine();
+			flt_hold   .render(); ImGui::SameLine();
+			flt_decay  .render(); ImGui::SameLine();
+			flt_sustain.render(); ImGui::SameLine();
+
+			flt_amount   .render(); ImGui::SameLine();
+			flt_resonance.render();
+			
+			ImGui::EndTabItem();
+		}
+
+		ImGui::EndTabBar();
+	}
 
 	ImGui::PopItemWidth();
 }

@@ -1,7 +1,38 @@
 {
 	"Settings": {
-		"tempo": 174,
+		"tempo": 130,
 		"master_volume": 1.000000
+	},
+	"KeyboardComponent": {
+		"id": 3,
+		"pos_x": 60.000000,
+		"pos_y": 60.000000,
+		"size_x": 64.000000,
+		"size_y": 64.000000
+	},
+	"OscillatorComponent": {
+		"id": 2,
+		"pos_x": 266.000000,
+		"pos_y": 106.000000,
+		"size_x": 349.000000,
+		"size_y": 215.000000,
+		"invert": 0,
+		"phase": 0.000000,
+		"transpose": 0,
+		"detune": 0.000000,
+		"portamento": 0.000000,
+		"attack": 0.100000,
+		"hold": 0.500000,
+		"decay": 1.000000,
+		"sustain": 0.500000,
+		"release": 0.000000,
+		"attack": 0.100000,
+		"hold": 0.500000,
+		"decay": 1.000000,
+		"sustain": 0.500000,
+		"amount": 0.000000,
+		"resonance": 0.500000,
+		"waveform": 2
 	},
 	"SpeakerComponent": {
 		"id": 0,
@@ -10,42 +41,16 @@
 		"size_x": 101.000000,
 		"size_y": 113.000000
 	},
-	"MIDIPlayerComponent": {
-		"id": 2,
-		"pos_x": 157.000000,
-		"pos_y": 74.000000,
-		"size_x": 393.000000,
-		"size_y": 122.000000,
-		"filename": "C:\Dev\Git\Synth\midi\mozart.mid"
-	},
-	"OscillatorComponent": {
-		"id": 3,
-		"pos_x": 621.000000,
-		"pos_y": 190.000000,
-		"size_x": 288.000000,
-		"size_y": 192.000000,
-		"invert": 0,
-		"phase": 0.000000,
-		"transpose": 0,
-		"detune": 0.000000,
-		"portamento": 0.000000,
-		"attack": 0.000000,
-		"hold": 0.500000,
-		"decay": 1.000000,
-		"sustain": 0.500000,
-		"release": 0.480000,
-		"waveform": 4
-	},
 	"Connection": {
 		"component_out": 3,
-		"component_in": 0,
+		"component_in": 2,
 		"offset_out": 0,
 		"offset_in": 0,
-		"weight": 0.880000
+		"weight": 1.000000
 	},
 	"Connection": {
 		"component_out": 2,
-		"component_in": 3,
+		"component_in": 0,
 		"offset_out": 0,
 		"offset_in": 0,
 		"weight": 1.000000
