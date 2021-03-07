@@ -15,8 +15,9 @@ struct OscillatorVoice : Voice {
 struct OscillatorComponent : VoiceComponent<OscillatorVoice> {
 	Parameter<int> waveform = { this, "waveform", "Wav", "Waveform", 2, std::make_pair(0, 6) };
 	
-	Parameter<int>   invert = { this, "invert", "Inv", "Invert Waveform", 0, std::make_pair(0, 1) };
-	Parameter<float> phase  = { this, "phase",  "Phs", "Phase Offset",    0, std::make_pair(0.0f, 1.0f), { 0.0f, 0.25f, 0.5f, 0.75f, 1.0f } };
+	Parameter<int>   invert  = { this, "invert", "Inv", "Invert Waveform",     0, std::make_pair(0, 1) };
+	Parameter<float> phase   = { this, "phase",  "Phs", "Phase Offset",        0, std::make_pair(0.0f, 1.0f), { 0.0f, 0.25f, 0.5f, 0.75f, 1.0f } };
+	Parameter<float> stereo  = { this, "stereo", "Ste", "Phase Stereo Offset", 0, std::make_pair(0.0f, 1.0f), { 0.0f, 0.25f, 0.5f, 0.75f, 1.0f } };
 
 	Parameter<int>   transpose = { this, "transpose", "Tps", "Transpose (notes)", 0, std::make_pair(-24, 24),         { -24, -12, 0, 12, 24 } };
 	Parameter<float> detune    = { this, "detune",    "Dtn", "Detune (cents)", 0.0f, std::make_pair(-100.0f, 100.0f), { 0.0f } };
@@ -36,8 +37,9 @@ struct OscillatorComponent : VoiceComponent<OscillatorVoice> {
 	Parameter<float> flt_decay   = Parameter<float>::make_decay  (this, "flt_decay");
 	Parameter<float> flt_sustain = Parameter<float>::make_sustain(this, "flt_release", 1.0f);
 
-	Parameter<float> flt_amount    = { this, "amount",    "Amt", "Amount",    1.0f, std::make_pair(0.0f, 1.0f) };
-	Parameter<float> flt_resonance = { this, "resonance", "Res", "Resonance", 0.0f, std::make_pair(0.0f, 1.0f) };
+	Parameter<float> flt_min       = { this, "flt_min",       "Min", "Minimum Filter Amount", 1.0f, std::make_pair( 0.0f, 1.0f) };
+	Parameter<float> flt_multiply  = { this, "flt_multiply",  "Amt", "Filter Amount",         0.0f, std::make_pair(-1.0f, 1.0f) };
+	Parameter<float> flt_resonance = { this, "flt_resonance", "Res", "Filter Resonance",      0.0f, std::make_pair( 0.0f, 1.0f) };
 	
 	OscillatorComponent(int id) : VoiceComponent(id, "Oscillator", { { this, "MIDI In", true } }, { { this, "Out" } }) { }
 

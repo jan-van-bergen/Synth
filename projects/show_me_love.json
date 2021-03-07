@@ -1,0 +1,179 @@
+{
+	"Settings": {
+		"tempo": 130,
+		"master_volume": 1.000000
+	},
+	"SequencerComponent": {
+		"id": 2,
+		"pos_x": 60.000000,
+		"pos_y": 60.000000,
+		"size_x": 392.000000,
+		"size_y": 116.000000,
+		"pattern": [ 1.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000 ]
+	},
+	"MIDIPlayerComponent": {
+		"id": 5,
+		"pos_x": 78.000000,
+		"pos_y": 332.000000,
+		"size_x": 230.000000,
+		"size_y": 122.000000,
+		"filename": "C:\Dev\Git\Synth\midi\show_me_love.mid"
+	},
+	"SamplerComponent": {
+		"id": 3,
+		"pos_x": 624.000000,
+		"pos_y": 62.000000,
+		"size_x": 288.000000,
+		"size_y": 192.000000,
+		"base_note": 36,
+		"attack": 0.000000,
+		"hold": 0.500000,
+		"decay": 1.000000,
+		"sustain": 1.000000,
+		"release": 0.000000,
+		"filename": "C:\Dev\Git\Synth\samples\hot_pants.wav"
+	},
+	"OscillatorComponent": {
+		"id": 7,
+		"pos_x": 511.000000,
+		"pos_y": 516.000000,
+		"size_x": 401.000000,
+		"size_y": 192.000000,
+		"waveform": 1,
+		"invert": 1,
+		"phase": 0.140000,
+		"transpose": -5,
+		"detune": 23.999977,
+		"portamento": 0.320000,
+		"attack": 0.100000,
+		"hold": 0.500000,
+		"decay": 1.000000,
+		"sustain": 0.500000,
+		"release": 0.800000,
+		"flt_attack": 0.148000,
+		"flt_hold": 0.000000,
+		"flt_decay": 1.000000,
+		"flt_release": 0.040000,
+		"flt_min": 0.000000,
+		"flt_multiply": 0.790000,
+		"flt_resonance": 0.550000
+	},
+	"OscillatorComponent": {
+		"id": 4,
+		"pos_x": 509.000000,
+		"pos_y": 316.000000,
+		"size_x": 405.000000,
+		"size_y": 192.000000,
+		"waveform": 2,
+		"invert": 0,
+		"phase": 0.000000,
+		"transpose": -24,
+		"detune": 0.000000,
+		"portamento": 0.360000,
+		"attack": 0.100000,
+		"hold": 0.500000,
+		"decay": 1.000000,
+		"sustain": 0.500000,
+		"release": 0.800000,
+		"flt_attack": 0.160000,
+		"flt_hold": 0.000000,
+		"flt_decay": 1.000000,
+		"flt_release": 0.050000,
+		"flt_min": 0.380000,
+		"flt_multiply": 0.120000,
+		"flt_resonance": 0.920000
+	},
+	"DistortionComponent": {
+		"id": 8,
+		"pos_x": 1084.000000,
+		"pos_y": 138.000000,
+		"size_x": 67.000000,
+		"size_y": 123.000000,
+		"amount": 0.330000
+	},
+	"DistortionComponent": {
+		"id": 6,
+		"pos_x": 1040.000000,
+		"pos_y": 418.000000,
+		"size_x": 64.000000,
+		"size_y": 117.000000,
+		"amount": 0.190000
+	},
+	"SpeakerComponent": {
+		"id": 0,
+		"pos_x": 1372.000000,
+		"pos_y": 348.000000,
+		"size_x": 101.000000,
+		"size_y": 113.000000
+	},
+	"Connection": {
+		"component_out": 2,
+		"component_in": 3,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 5,
+		"component_in": 7,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 5,
+		"component_in": 4,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 3,
+		"component_in": 8,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 4,
+		"component_in": 6,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 7,
+		"component_in": 6,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 0.820000
+	},
+	"Connection": {
+		"component_out": 3,
+		"component_in": 0,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 0.700000
+	},
+	"Connection": {
+		"component_out": 6,
+		"component_in": 0,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 0.550000
+	},
+	"Connection": {
+		"component_out": 8,
+		"component_in": 0,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 0.680000
+	},
+	"Connection": {
+		"component_out": 7,
+		"component_in": 0,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 0.410000
+	}
+}

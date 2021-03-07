@@ -1,275 +1,363 @@
 {
 	"Settings": {
-		"tempo": 130,
+		"tempo": 126,
 		"master_volume": 1.000000
 	},
+	"MIDIPlayerComponent": {
+		"id": 1,
+		"pos_x": 6.000000,
+		"pos_y": 143.000000,
+		"size_x": 206.000000,
+		"size_y": 122.000000,
+		"filename": "C:\Dev\Git\Synth\midi\i_feel_love_bass.mid"
+	},
+	"OscillatorComponent": {
+		"id": 19,
+		"pos_x": 246.000000,
+		"pos_y": 226.000000,
+		"size_x": 344.000000,
+		"size_y": 192.000000,
+		"waveform": 2,
+		"invert": 0,
+		"phase": 0.510000,
+		"transpose": -12,
+		"detune": 7.999992,
+		"portamento": 0.000000,
+		"attack": 0.000000,
+		"hold": 0.000000,
+		"decay": 0.840000,
+		"sustain": 0.000000,
+		"release": 0.000000,
+		"flt_attack": 0.000000,
+		"flt_hold": 0.000000,
+		"flt_decay": 1.000000,
+		"flt_release": 0.060000,
+		"amount": 0.620000,
+		"resonance": 0.310000
+	},
+	"OscillatorComponent": {
+		"id": 2,
+		"pos_x": 247.000000,
+		"pos_y": 26.000000,
+		"size_x": 344.000000,
+		"size_y": 192.000000,
+		"waveform": 2,
+		"invert": 0,
+		"phase": 0.000000,
+		"transpose": -24,
+		"detune": 0.000000,
+		"portamento": 0.000000,
+		"attack": 0.000000,
+		"hold": 0.000000,
+		"decay": 1.480000,
+		"sustain": 0.000000,
+		"release": 0.000000,
+		"flt_attack": 0.000000,
+		"flt_hold": 0.000000,
+		"flt_decay": 1.000000,
+		"flt_release": 0.050000,
+		"amount": 0.670000,
+		"resonance": 0.570000
+	},
+	"FlangerComponent": {
+		"id": 20,
+		"pos_x": 623.000000,
+		"pos_y": 106.000000,
+		"size_x": 176.000000,
+		"size_y": 169.000000,
+		"delay": 0.500000,
+		"depth": 7.100290,
+		"rate": 0.200000,
+		"phase": 0.110000,
+		"feedback": 0.570000,
+		"drywet": 0.280000
+	},
 	"SequencerComponent": {
-		"id": 6,
-		"pos_x": 35.000000,
-		"pos_y": 599.000000,
+		"id": 5,
+		"pos_x": 869.000000,
+		"pos_y": 29.000000,
 		"size_x": 392.000000,
 		"size_y": 116.000000,
 		"pattern": [ 1.000000, 0.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000, 0.000000 ]
 	},
 	"MIDIPlayerComponent": {
-		"id": 2,
-		"pos_x": 45.000000,
-		"pos_y": 48.000000,
-		"size_x": 306.000000,
+		"id": 17,
+		"pos_x": 182.000000,
+		"pos_y": 612.000000,
+		"size_x": 225.000000,
+		"size_y": 122.000000,
+		"filename": "C:\Dev\Git\Synth\midi\i_feel_love_trigger.mid"
+	},
+	"MIDIPlayerComponent": {
+		"id": 3,
+		"pos_x": 35.000000,
+		"pos_y": 429.000000,
+		"size_x": 335.000000,
 		"size_y": 125.000000,
-		"filename": "midi/chords7.mid"
+		"filename": "C:\Dev\Git\Synth\midi\i_feel_love_chords.mid"
+	},
+	"DistortionComponent": {
+		"id": 16,
+		"pos_x": 838.000000,
+		"pos_y": 269.000000,
+		"size_x": 64.000000,
+		"size_y": 117.000000,
+		"amount": 0.540000
+	},
+	"SequencerComponent": {
+		"id": 21,
+		"pos_x": 861.000000,
+		"pos_y": 687.000000,
+		"size_x": 392.000000,
+		"size_y": 116.000000,
+		"pattern": [ 0.000000, 0.300000, 0.600000, 0.520000, 0.000000, 0.360000, 0.600000, 0.400000, 0.000000, 0.280000, 0.560000, 0.440000, 0.000000, 0.260000, 0.480000, 0.580000 ]
 	},
 	"SamplerComponent": {
-		"id": 5,
-		"pos_x": 616.000000,
-		"pos_y": 462.000000,
-		"size_x": 291.000000,
-		"size_y": 198.000000,
+		"id": 6,
+		"pos_x": 1286.000000,
+		"pos_y": 32.000000,
+		"size_x": 288.000000,
+		"size_y": 192.000000,
 		"base_note": 36,
 		"attack": 0.000000,
-		"hold": 0.500000,
-		"decay": 1.000000,
-		"sustain": 1.000000,
+		"hold": 0.480000,
+		"decay": 0.960000,
+		"sustain": 0.000000,
 		"release": 0.000000,
 		"filename": "samples/kick.wav"
 	},
-	"ArpComponent": {
-		"id": 7,
-		"pos_x": 468.000000,
-		"pos_y": 48.000000,
-		"size_x": 133.000000,
-		"size_y": 211.000000,
-		"steps": 1.000000
-	},
-	"DistortionComponent": {
-		"id": 12,
-		"pos_x": 951.000000,
-		"pos_y": 530.000000,
-		"size_x": 67.000000,
-		"size_y": 123.000000,
-		"amount": 0.509000
-	},
-	"OscillatorComponent": {
-		"id": 13,
-		"pos_x": 261.000000,
-		"pos_y": 359.000000,
-		"size_x": 345.000000,
+	"SamplerComponent": {
+		"id": 18,
+		"pos_x": 531.000000,
+		"pos_y": 629.000000,
+		"size_x": 313.000000,
 		"size_y": 193.000000,
-		"waveform": 1,
-		"invert": 0,
-		"phase": 0.000000,
-		"transpose": 0,
-		"detune": 0.000000,
-		"portamento": 0.400000,
-		"attack": 0.700000,
-		"hold": 0.500000,
-		"decay": 1.000000,
-		"sustain": 0.640000,
-		"release": 0.000000,
-		"flt_attack": 0.100000,
-		"flt_hold": 0.500000,
-		"flt_decay": 1.000000,
-		"flt_release": 1.000000,
-		"amount": 1.000000,
-		"resonance": 0.000000
-	},
-	"OscillatorComponent": {
-		"id": 10,
-		"pos_x": 668.000000,
-		"pos_y": 254.000000,
-		"size_x": 343.000000,
-		"size_y": 194.000000,
-		"waveform": 2,
-		"invert": 0,
-		"phase": 0.105000,
-		"transpose": 0,
-		"detune": 11.628000,
-		"portamento": 0.080000,
+		"base_note": 36,
 		"attack": 0.000000,
-		"hold": 0.000000,
+		"hold": 16.000000,
 		"decay": 1.000000,
-		"sustain": 0.256000,
-		"release": 5.209000,
-		"flt_attack": 0.100000,
-		"flt_hold": 0.500000,
-		"flt_decay": 1.000000,
-		"flt_release": 1.000000,
-		"amount": 1.000000,
-		"resonance": 0.000000
+		"sustain": 1.000000,
+		"release": 0.000000,
+		"filename": "C:\Dev\Git\Synth\samples\i_feel_love.wav"
 	},
 	"OscillatorComponent": {
 		"id": 4,
-		"pos_x": 665.000000,
-		"pos_y": 43.000000,
-		"size_x": 341.000000,
-		"size_y": 195.000000,
+		"pos_x": 517.000000,
+		"pos_y": 423.000000,
+		"size_x": 344.000000,
+		"size_y": 192.000000,
 		"waveform": 2,
 		"invert": 0,
 		"phase": 0.000000,
 		"transpose": -12,
 		"detune": 0.000000,
-		"portamento": 0.050000,
-		"attack": 0.000000,
-		"hold": 0.000000,
-		"decay": 0.700000,
-		"sustain": 0.337000,
-		"release": 4.279000,
-		"flt_attack": 0.100000,
-		"flt_hold": 0.500000,
-		"flt_decay": 1.000000,
-		"flt_release": 1.000000,
-		"amount": 1.000000,
-		"resonance": 0.000000
-	},
-	"SequencerComponent": {
-		"id": 9,
-		"pos_x": 26.000000,
-		"pos_y": 762.000000,
-		"size_x": 392.000000,
-		"size_y": 116.000000,
-		"pattern": [ 0.000000, 0.660000, 1.000000, 0.520000, 0.180000, 0.560000, 1.000000, 0.640000, 0.000000, 0.640000, 1.000000, 0.600000, 0.280000, 0.660000, 1.000000, 0.480000 ]
-	},
-	"CompressorComponent": {
-		"id": 15,
-		"pos_x": 1083.000000,
-		"pos_y": 308.000000,
-		"size_x": 176.000000,
-		"size_y": 186.000000,
-		"threshold": -13.799999,
-		"ratio": 6.220000,
-		"gain": 1.199999,
-		"Attack": 15.000000,
-		"Release": 200.000000
-	},
-	"SamplerComponent": {
-		"id": 8,
-		"pos_x": 619.000000,
-		"pos_y": 680.000000,
-		"size_x": 294.000000,
-		"size_y": 196.000000,
-		"base_note": 31,
-		"attack": 0.000000,
+		"portamento": 0.000000,
+		"attack": 0.100000,
 		"hold": 0.500000,
 		"decay": 1.000000,
-		"sustain": 1.000000,
+		"sustain": 0.500000,
 		"release": 0.000000,
-		"filename": "samples/909_hat.wav"
+		"flt_attack": 2.320000,
+		"flt_hold": 4.000000,
+		"flt_decay": 16.000000,
+		"flt_release": 0.570000,
+		"amount": 0.760000,
+		"resonance": 0.330000
+	},
+	"EqualizerComponent": {
+		"id": 14,
+		"pos_x": 945.000000,
+		"pos_y": 162.000000,
+		"size_x": 238.000000,
+		"size_y": 192.000000,
+		"NUM_BANDS": 4,
+		"Band_0": {
+			"mode": 5,
+			"freq": 63.917114,
+			"Q": 1.500000,
+			"gain": -17.566265
+		},
+		"Band_1": {
+			"mode": 3,
+			"freq": 29.252811,
+			"Q": 1.000000,
+			"gain": -11.277108
+		},
+		"Band_2": {
+			"mode": 3,
+			"freq": 1017.306946,
+			"Q": 1.000000,
+			"gain": 1.301205
+		},
+		"Band_3": {
+			"mode": 6,
+			"freq": 4856.809570,
+			"Q": 1.000000,
+			"gain": 5.204819
+		}
+	},
+	"SamplerComponent": {
+		"id": 22,
+		"pos_x": 1106.000000,
+		"pos_y": 477.000000,
+		"size_x": 288.000000,
+		"size_y": 192.000000,
+		"base_note": 37,
+		"attack": 0.000000,
+		"hold": 0.000000,
+		"decay": 0.680000,
+		"sustain": 0.000000,
+		"release": 6.240000,
+		"filename": "C:\Dev\Git\Synth\samples\909_hat.wav"
+	},
+	"CompressorComponent": {
+		"id": 7,
+		"pos_x": 1209.000000,
+		"pos_y": 285.000000,
+		"size_x": 176.000000,
+		"size_y": 186.000000,
+		"threshold": -22.800011,
+		"ratio": 7.380001,
+		"gain": 0.000000,
+		"Attack": 15.000000,
+		"Release": 215.999939
 	},
 	"SpeakerComponent": {
 		"id": 0,
-		"pos_x": 1351.000000,
-		"pos_y": 463.000000,
-		"size_x": 109.000000,
-		"size_y": 112.000000
+		"pos_x": 1454.000000,
+		"pos_y": 381.000000,
+		"size_x": 101.000000,
+		"size_y": 113.000000
 	},
 	"DecibelComponent": {
-		"id": 14,
-		"pos_x": 1447.000000,
-		"pos_y": 75.000000,
-		"size_x": 119.000000,
+		"id": 12,
+		"pos_x": 1436.000000,
+		"pos_y": 607.000000,
+		"size_x": 135.000000,
 		"size_y": 218.000000
 	},
 	"Connection": {
-		"component_out": 6,
-		"component_in": 5,
+		"component_out": 1,
+		"component_in": 19,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 1,
+		"component_in": 2,
 		"offset_out": 0,
 		"offset_in": 0,
 		"weight": 1.000000
 	},
 	"Connection": {
 		"component_out": 2,
-		"component_in": 7,
+		"component_in": 20,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 0.850000
+	},
+	"Connection": {
+		"component_out": 19,
+		"component_in": 20,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 0.600000
+	},
+	"Connection": {
+		"component_out": 20,
+		"component_in": 16,
 		"offset_out": 0,
 		"offset_in": 0,
 		"weight": 1.000000
 	},
 	"Connection": {
 		"component_out": 5,
-		"component_in": 12,
+		"component_in": 6,
 		"offset_out": 0,
 		"offset_in": 0,
 		"weight": 1.000000
 	},
 	"Connection": {
-		"component_out": 2,
-		"component_in": 13,
+		"component_out": 17,
+		"component_in": 18,
 		"offset_out": 0,
 		"offset_in": 0,
 		"weight": 1.000000
 	},
 	"Connection": {
-		"component_out": 7,
-		"component_in": 10,
-		"offset_out": 0,
-		"offset_in": 0,
-		"weight": 1.000000
-	},
-	"Connection": {
-		"component_out": 7,
+		"component_out": 3,
 		"component_in": 4,
 		"offset_out": 0,
 		"offset_in": 0,
 		"weight": 1.000000
 	},
 	"Connection": {
-		"component_out": 4,
-		"component_in": 15,
-		"offset_out": 0,
-		"offset_in": 0,
-		"weight": 0.390000
-	},
-	"Connection": {
-		"component_out": 10,
-		"component_in": 15,
-		"offset_out": 0,
-		"offset_in": 0,
-		"weight": 0.200000
-	},
-	"Connection": {
-		"component_out": 13,
-		"component_in": 15,
-		"offset_out": 0,
-		"offset_in": 0,
-		"weight": 0.300000
-	},
-	"Connection": {
-		"component_out": 12,
-		"component_in": 15,
-		"offset_out": 0,
-		"offset_in": 1,
-		"weight": 0.610000
-	},
-	"Connection": {
-		"component_out": 9,
-		"component_in": 8,
-		"offset_out": 0,
-		"offset_in": 0,
-		"weight": 1.000000
-	},
-	"Connection": {
-		"component_out": 8,
-		"component_in": 0,
+		"component_out": 16,
+		"component_in": 14,
 		"offset_out": 0,
 		"offset_in": 0,
 		"weight": 0.550000
 	},
 	"Connection": {
-		"component_out": 12,
-		"component_in": 0,
-		"offset_out": 0,
-		"offset_in": 0,
-		"weight": 0.600000
-	},
-	"Connection": {
-		"component_out": 15,
-		"component_in": 0,
+		"component_out": 21,
+		"component_in": 22,
 		"offset_out": 0,
 		"offset_in": 0,
 		"weight": 1.000000
 	},
 	"Connection": {
+		"component_out": 14,
+		"component_in": 7,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 0.900000
+	},
+	"Connection": {
+		"component_out": 4,
+		"component_in": 7,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 0.360000
+	},
+	"Connection": {
+		"component_out": 18,
+		"component_in": 7,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 6,
+		"component_in": 7,
+		"offset_out": 0,
+		"offset_in": 1,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 6,
+		"component_in": 0,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 0.880000
+	},
+	"Connection": {
+		"component_out": 7,
+		"component_in": 0,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 0.990000
+	},
+	"Connection": {
+		"component_out": 22,
+		"component_in": 0,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 0.380000
+	},
+	"Connection": {
 		"component_out": 0,
-		"component_in": 14,
+		"component_in": 12,
 		"offset_out": 0,
 		"offset_in": 0,
 		"weight": 1.000000

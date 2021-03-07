@@ -1,0 +1,59 @@
+{
+	"Settings": {
+		"tempo": 130,
+		"master_volume": 1.000000
+	},
+	"MIDIPlayerComponent": {
+		"id": 1,
+		"pos_x": 181.000000,
+		"pos_y": 63.000000,
+		"size_x": 580.000000,
+		"size_y": 122.000000,
+		"filename": "C:\Dev\Git\Synth\midi\2channels.mid"
+	},
+	"OscillatorComponent": {
+		"id": 2,
+		"pos_x": 785.000000,
+		"pos_y": 208.000000,
+		"size_x": 352.000000,
+		"size_y": 192.000000,
+		"waveform": 2,
+		"invert": 0,
+		"phase": 0.000000,
+		"transpose": 0,
+		"detune": 0.000000,
+		"portamento": 0.160000,
+		"attack": 0.100000,
+		"hold": 0.500000,
+		"decay": 1.000000,
+		"sustain": 0.500000,
+		"release": 3.680000,
+		"flt_attack": 0.420000,
+		"flt_hold": 0.500000,
+		"flt_decay": 1.000000,
+		"flt_release": 0.290000,
+		"amount": 0.700000,
+		"resonance": 0.230000
+	},
+	"SpeakerComponent": {
+		"id": 0,
+		"pos_x": 1372.000000,
+		"pos_y": 348.000000,
+		"size_x": 101.000000,
+		"size_y": 113.000000
+	},
+	"Connection": {
+		"component_out": 1,
+		"component_in": 2,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 2,
+		"component_in": 0,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 0.550000
+	}
+}

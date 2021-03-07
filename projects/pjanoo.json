@@ -56,8 +56,9 @@
 		"flt_hold": 0.500000,
 		"flt_decay": 1.000000,
 		"flt_release": 1.000000,
-		"amount": 1.000000,
-		"resonance": 0.000000
+		"flt_min": 1.000000,
+		"flt_multiply": 1.000000,
+		"flt_resonance": 0.000000
 	},
 	"OscillatorComponent": {
 		"id": 5,
@@ -80,8 +81,9 @@
 		"flt_hold": 0.500000,
 		"flt_decay": 1.000000,
 		"flt_release": 1.000000,
-		"amount": 1.000000,
-		"resonance": 0.000000
+		"flt_min": 1.000000,
+		"flt_multiply": 1.000000,
+		"flt_resonance": 0.000000
 	},
 	"OscillatorComponent": {
 		"id": 2,
@@ -104,8 +106,9 @@
 		"flt_hold": 0.500000,
 		"flt_decay": 1.000000,
 		"flt_release": 1.000000,
-		"amount": 1.000000,
-		"resonance": 0.000000
+		"flt_min": 1.000000,
+		"flt_multiply": 1.000000,
+		"flt_resonance": 0.000000
 	},
 	"SamplerComponent": {
 		"id": 8,
@@ -149,10 +152,10 @@
 		"id": 13,
 		"pos_x": 695.000000,
 		"pos_y": 335.000000,
-		"size_x": 126.000000,
+		"size_x": 174.000000,
 		"size_y": 144.000000,
 		"filter_type": 0,
-		"cutoff": 10740.636719,
+		"cutoff": 295.821655,
 		"resonance": 0.734000
 	},
 	"GainComponent": {

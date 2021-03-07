@@ -16,6 +16,7 @@
 		"pos_y": 657.000000,
 		"size_x": 285.000000,
 		"size_y": 218.000000,
+		"waveform": 2,
 		"invert": 0,
 		"phase": 0.233000,
 		"transpose": -12,
@@ -30,9 +31,9 @@
 		"flt_hold": 0.500000,
 		"flt_decay": 1.000000,
 		"flt_release": 1.000000,
-		"amount": 1.000000,
-		"resonance": 0.000000,
-		"waveform": 2
+		"flt_min": 1.000000,
+		"flt_multiply": 1.000000,
+		"flt_resonance": 0.000000
 	},
 	"OscillatorComponent": {
 		"id": 7,
@@ -40,6 +41,7 @@
 		"pos_y": 421.000000,
 		"size_x": 289.000000,
 		"size_y": 222.000000,
+		"waveform": 2,
 		"invert": 0,
 		"phase": 0.000000,
 		"transpose": -12,
@@ -54,19 +56,19 @@
 		"flt_hold": 0.500000,
 		"flt_decay": 1.000000,
 		"flt_release": 1.000000,
-		"amount": 1.000000,
-		"resonance": 0.000000,
-		"waveform": 2
+		"flt_min": 1.000000,
+		"flt_multiply": 1.000000,
+		"flt_resonance": 0.000000
 	},
 	"FilterComponent": {
 		"id": 9,
 		"pos_x": 768.000000,
 		"pos_y": 667.000000,
-		"size_x": 148.000000,
+		"size_x": 179.000000,
 		"size_y": 144.000000,
+		"filter_type": 0,
 		"cutoff": 488.741119,
-		"resonance": 0.780000,
-		"filter_type": 0
+		"resonance": 0.780000
 	},
 	"FlangerComponent": {
 		"id": 12,
@@ -76,9 +78,9 @@
 		"size_y": 174.000000,
 		"delay": 0.500000,
 		"depth": 1.689000,
-		"rate": 0.260000,
+		"rate": 0.210000,
 		"phase": 0.020000,
-		"feedback": 0.532000,
+		"feedback": 0.452000,
 		"drywet": 0.364000
 	},
 	"SequencerComponent": {

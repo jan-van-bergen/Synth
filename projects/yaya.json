@@ -31,8 +31,9 @@
 		"flt_hold": 0.500000,
 		"flt_decay": 1.000000,
 		"flt_release": 1.000000,
-		"amount": 1.000000,
-		"resonance": 0.000000
+		"flt_min": 1.000000,
+		"flt_multiply": 1.000000,
+		"flt_resonance": 0.000000
 	},
 	"FilterComponent": {
 		"id": 4,

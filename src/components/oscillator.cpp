@@ -5,21 +5,32 @@
 #include "synth/synth.h"
 #include "util/util.h"
 
-static Sample generate_sine(float phase) {
-	return std::sin(TWO_PI * phase);
+static Sample generate_sine(float phase_left, float phase_right) {
+	return {
+		std::sin(TWO_PI * phase_left),
+		std::sin(TWO_PI * phase_right)
+	};
 }
 
-static Sample generate_square(float phase, float pulse_width = 0.5f) {
-	return std::fmodf(phase, 1.0f) < pulse_width ? 1.0f : -1.0f;
+static Sample generate_square(float phase_left, float phase_right, float pulse_width = 0.5f) {
+	return {
+		std::fmodf(phase_left,  1.0f) < pulse_width ? 1.0f : -1.0f,
+		std::fmodf(phase_right, 1.0f) < pulse_width ? 1.0f : -1.0f
+	};
 }
 
-static Sample generate_triangle(float phase) {
-	auto x = phase + 0.25f;
-	return 4.0f * std::abs(x - std::floor(x + 0.5f)) - 1.0f;
+static Sample generate_triangle(float phase_left, float phase_right) {
+	return {
+		4.0f * std::abs(phase_left  + 0.25f - std::floor(phase_left  + 0.75f)) - 1.0f,
+		4.0f * std::abs(phase_right + 0.25f - std::floor(phase_right + 0.75f)) - 1.0f
+	};
 }
 	
-static Sample generate_saw(float phase) {
-	return 2.0f * (phase - std::floor(phase + 0.5f));
+static Sample generate_saw(float phase_left, float phase_right) {
+	return {
+		2.0f * (phase_left  - std::floor(phase_left  + 0.5f)),
+		2.0f * (phase_right - std::floor(phase_right + 0.5f))
+	};
 }
 
 static Sample generate_noise(unsigned & seed) {
@@ -63,24 +74,26 @@ void OscillatorComponent::update(Synth const & synth) {
 
 			Sample sample = { };
 
+			auto phase_left  = phase + voice.phase;
+			auto phase_right = phase_left + stereo;
+
 			// Generate selected waveform
 			switch (waveform) {
-				case 0: sample = sign * amplitude * generate_sine    (phase + voice.phase); break;
-				case 1: sample = sign * amplitude * generate_triangle(phase + voice.phase); break;
-				case 2: sample = sign * amplitude * generate_saw     (phase + voice.phase); break;
-				case 3: sample = sign * amplitude * generate_square  (phase + voice.phase); break;
-				case 4: sample = sign * amplitude * generate_square  (phase + voice.phase, 0.25f);  break;
-				case 5: sample = sign * amplitude * generate_square  (phase + voice.phase, 0.125f); break;
+				case 0: sample = sign * amplitude * generate_sine    (phase_left, phase_right); break;
+				case 1: sample = sign * amplitude * generate_triangle(phase_left, phase_right); break;
+				case 2: sample = sign * amplitude * generate_saw     (phase_left, phase_right); break;
+				case 3: sample = sign * amplitude * generate_square  (phase_left, phase_right); break;
+				case 4: sample = sign * amplitude * generate_square  (phase_left, phase_right, 0.25f);  break;
+				case 5: sample = sign * amplitude * generate_square  (phase_left, phase_right, 0.125f); break;
 				case 6: sample = sign * amplitude * generate_noise(seed); break;
 
 				default: abort();
 			}
 			
-			auto flt        = flt_amount * util::envelope(time_in_steps, flt_attack, flt_hold, flt_decay, flt_sustain);
-			auto flt_cutoff = util::log_interpolate(20.f, 20000.0f, flt);
+			auto flt        = flt_min + flt_multiply * util::envelope(time_in_steps, flt_attack, flt_hold, flt_decay, flt_sustain);
+			auto flt_cutoff = util::log_interpolate(20.f, 20000.0f, util::clamp(flt, 0.0f, 1.0f));
 
 			voice.filter.set(dsp::VAFilterMode::LOW_PASS, flt_cutoff, flt_resonance);
-
 			sample = voice.filter.process(sample);
 
 			outputs[0].get_sample(i) += sample;
@@ -139,6 +152,7 @@ void OscillatorComponent::render(Synth const & synth) {
 
 	invert.render(fmt_bool); ImGui::SameLine();
 	phase .render();         ImGui::SameLine();
+	stereo.render();         ImGui::SameLine();
 
 	transpose .render(); ImGui::SameLine();
 	detune    .render(); ImGui::SameLine();
@@ -161,9 +175,10 @@ void OscillatorComponent::render(Synth const & synth) {
 			flt_decay  .render(); ImGui::SameLine();
 			flt_sustain.render(); ImGui::SameLine();
 
-			flt_amount   .render(); ImGui::SameLine();
+			flt_min      .render(); ImGui::SameLine();
+			flt_multiply .render(); ImGui::SameLine();
 			flt_resonance.render();
-			
+
 			ImGui::EndTabItem();
 		}
 

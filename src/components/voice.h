@@ -18,7 +18,7 @@ struct Voice {
 		}
 	}
 
-	bool apply_envelope(float time_in_steps, float a, float h, float d, float s, float r, float & amplitude) const {
+	[[nodiscard]] bool apply_envelope(float time_in_steps, float a, float h, float d, float s, float r, float & amplitude) const {
 		amplitude = velocity * util::envelope(time_in_steps, a, h, d, s);
 
 		auto released = release_time < time_in_steps;
@@ -36,7 +36,7 @@ struct Voice {
 		return false;
 	}
 
-	bool apply_envelope(float time_in_steps, float & amplitude) const {
+	[[nodiscard]] bool apply_envelope(float time_in_steps, float & amplitude) const {
 		return apply_envelope(time_in_steps, 0.1f, INFINITY, 0.0f, 1.0f, 0.1f, amplitude);
 	}
 };

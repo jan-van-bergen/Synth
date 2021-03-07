@@ -3,13 +3,6 @@
 		"tempo": 130,
 		"master_volume": 1.000000
 	},
-	"SpeakerComponent": {
-		"id": 0,
-		"pos_x": 450.000000,
-		"pos_y": 595.000000,
-		"size_x": 101.000000,
-		"size_y": 113.000000
-	},
 	"KeyboardComponent": {
 		"id": 1,
 		"pos_x": 60.000000,
@@ -23,6 +16,7 @@
 		"pos_y": 219.000000,
 		"size_x": 288.000000,
 		"size_y": 217.000000,
+		"waveform": 2,
 		"invert": 0,
 		"phase": 0.000000,
 		"transpose": 0,
@@ -33,7 +27,13 @@
 		"decay": 1.000000,
 		"sustain": 0.500000,
 		"release": 0.000000,
-		"waveform": 2
+		"flt_attack": 0.100000,
+		"flt_hold": 0.500000,
+		"flt_decay": 1.000000,
+		"flt_release": 1.000000,
+		"flt_min": 1.000000,
+		"flt_multiply": 0.000000,
+		"flt_resonance": 0.000000
 	},
 	"FlangerComponent": {
 		"id": 3,
@@ -48,19 +48,19 @@
 		"feedback": 0.844000,
 		"drywet": 1.000000
 	},
+	"SpeakerComponent": {
+		"id": 0,
+		"pos_x": 450.000000,
+		"pos_y": 595.000000,
+		"size_x": 101.000000,
+		"size_y": 113.000000
+	},
 	"VectorscopeComponent": {
 		"id": 4,
 		"pos_x": 707.000000,
 		"pos_y": 94.000000,
 		"size_x": 721.000000,
 		"size_y": 670.000000
-	},
-	"Connection": {
-		"component_out": 3,
-		"component_in": 0,
-		"offset_out": 0,
-		"offset_in": 0,
-		"weight": 1.000000
 	},
 	"Connection": {
 		"component_out": 1,
@@ -72,6 +72,13 @@
 	"Connection": {
 		"component_out": 2,
 		"component_in": 3,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 3,
+		"component_in": 0,
 		"offset_out": 0,
 		"offset_in": 0,
 		"weight": 1.000000
