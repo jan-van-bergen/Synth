@@ -19,43 +19,36 @@ void SamplerComponent::load(char const * file) {
 		return;
 	}
 
-	visual.samples.resize(VISUAL_NUM_SAMPLES);
+	visual.samples.resize(samples.size());
 
-	static constexpr auto FILTER_WIDTH = 3.0f;
+	for (int i = 0; i < samples.size(); i++) visual.samples[i] = 0.5f * (samples[i].left + samples[i].right);
 
-	auto scale = float(samples.size()) / float(VISUAL_NUM_SAMPLES);
-	auto filter_width = scale * FILTER_WIDTH;
-	
-	auto kernel = std::vector<float>(2 * int(ceilf(filter_width)) + 1);
+	auto num_samples = samples.size();
 
-	auto sum = 0.0f;
+	while (num_samples > VISUAL_NUM_SAMPLES) {
+		for (int i = 0; i < num_samples; i += 2) {
+			auto first  = visual.samples[i];
+			auto second = visual.samples[i + 1];
 
-	// Sample kernel using box filter
-	for (int i = 0; i < kernel.size(); i++) {
-		auto sample = util::sample_box<float>(i - 0.5f * kernel.size(), 1.0f / scale, [](float x) -> float { return util::lanczos(x, FILTER_WIDTH); });
+			auto diff = std::abs(first - second);
 
-		kernel[i] = sample;
-		sum      += sample;
+			if (diff > 0.2f) {
+				// Choose the sample with largest absolute amplitude
+				if (std::abs(first) > std::abs(second)) {
+					visual.samples[i/2] = first;
+				} else {
+					visual.samples[i/2] = second;
+				}
+			} else {
+				// Average the two samples
+				visual.samples[i/2] = 0.5f * (first + second);
+			}
+		}		
+
+		num_samples /= 2;
 	}
 
-	// Normalize kernel
-	for (int i = 0; i < kernel.size(); i++) kernel[i] /= sum;
-
-	// Convolution
-	for (int i = 0; i < visual.samples.size(); i++) {
-		auto center = (float(i) + 0.5f) * scale;
-		auto offset = int(floorf(center - filter_width));
-
-		auto accum = 0.0f;
-
-		for (int j = 0; j < kernel.size(); j++) {
-			int index = util::clamp<int>(offset + j, 0, samples.size() - 1);
-
-			accum += kernel[j] * 0.5f * (samples[index].left + samples[index].right);
-		}
-
-		visual.samples[i] = accum;
-	}
+	visual.samples.resize(num_samples);
 
 	visual.max_y = 0.001f;
 
