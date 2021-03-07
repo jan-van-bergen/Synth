@@ -1,5 +1,4 @@
 #pragma once
-#include <cmath>
 
 inline constexpr auto SAMPLE_RATE     = 44100;
 inline constexpr auto SAMPLE_RATE_INV = 1.0f / float(SAMPLE_RATE);

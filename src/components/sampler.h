@@ -20,10 +20,10 @@ struct SamplerComponent : VoiceComponent<SamplerVoice> {
 	Parameter<int> base_note = { this, "base_note", "Note", "Base Note", util::note<util::NoteName::C, 3>(), std::make_pair(0, 127), { 0, 12, 24, 36, 48, 60, 72, 84, 96, 108, 120 } };
 	
 	// Envelope
-	Parameter<float> attack  = Parameter<float>::make_attack (this);
+	Parameter<float> attack  = Parameter<float>::make_attack (this, "attack", 0.0f);
 	Parameter<float> hold	 = Parameter<float>::make_hold   (this);
 	Parameter<float> decay 	 = Parameter<float>::make_decay  (this);
-	Parameter<float> sustain = Parameter<float>::make_sustain(this);
+	Parameter<float> sustain = Parameter<float>::make_sustain(this, "sustain", 1.0f);
 	Parameter<float> release = Parameter<float>::make_release(this);
 	
 	SamplerComponent(int id) : VoiceComponent(id, "Sampler", { { this, "MIDI In", true } }, { { this, "Out" } }) {

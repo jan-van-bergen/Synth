@@ -53,6 +53,29 @@ float util::envelope(float t, float attack, float hold, float decay, float susta
 	return sustain;
 };
 
+template<bool SWAP_ENDIANNESS = false, typename T>
+void wav_integral_to_float(std::vector<Sample> & samples, SDL_AudioSpec const & wav_spec, T * wav_buffer, Uint32 wav_length) {
+	samples.resize(wav_length / (wav_spec.channels * sizeof(T)));
+
+	if (wav_spec.channels == 1) { // Mono
+		for (int i = 0; i < samples.size(); i++) {
+			if constexpr (SWAP_ENDIANNESS) util::swap_endianness(&wav_buffer[i]);
+
+			samples[i] = float(wav_buffer[i]) / float(std::numeric_limits<T>::max());
+		}
+	} else { // Stereo
+		for (int i = 0; i < samples.size(); i++) {
+			if constexpr (SWAP_ENDIANNESS) {
+				util::swap_endianness(&wav_buffer[2*i]);
+				util::swap_endianness(&wav_buffer[2*i + 1]);
+			}
+
+			samples[i].left  = float(wav_buffer[2*i])     / float(std::numeric_limits<T>::max());
+			samples[i].right = float(wav_buffer[2*i + 1]) / float(std::numeric_limits<T>::max());
+		}
+	}
+}
+
 std::vector<Sample> util::load_wav(char const * filename) {
 	Uint32        wav_length;
 	Uint8       * wav_buffer;
@@ -81,44 +104,26 @@ std::vector<Sample> util::load_wav(char const * filename) {
 
 			if (wav_spec.channels == 1) { // Mono
 				for (int i = 0; i < samples.size(); i++) {
-					float sample;
-					memcpy(&sample, wav_buffer + i * sizeof(float), sizeof(float));
-
-					samples[i] = sample;
+					samples[i] = reinterpret_cast<float *>(wav_buffer)[i];
 				}
 			} else { // Stereo
 				samples.resize(wav_length / sizeof(Sample));
-				memcpy(samples.data(), wav_buffer, wav_length);
+				std::memcpy(samples.data(), wav_buffer, wav_length);
 			}
 
 			break;
 		}
 
-		case AUDIO_S32LSB: {
-			samples.resize(wav_length / (wav_spec.channels * sizeof(int)));
+		case AUDIO_S8: wav_integral_to_float(samples, wav_spec, reinterpret_cast<char *>          (wav_buffer), wav_length); break;
+		case AUDIO_U8: wav_integral_to_float(samples, wav_spec, reinterpret_cast<unsigned char *> (wav_buffer), wav_length); break;
 
-			if (wav_spec.channels == 1) { // Mono
-				for (int i = 0; i < samples.size(); i++) {
-					int sample;
-					memcpy(&sample,  wav_buffer + i * sizeof(int), sizeof(int));
-					
-					samples[i] = float(sample) / float(std::numeric_limits<int>::max());
-				}
-			} else { // Stereo
-				for (int i = 0; i < samples.size(); i++) {
-					auto offset = 2 * i;
+		case AUDIO_S16LSB: wav_integral_to_float(samples, wav_spec, reinterpret_cast<short *>         (wav_buffer), wav_length); break;
+		case AUDIO_U16LSB: wav_integral_to_float(samples, wav_spec, reinterpret_cast<unsigned short *>(wav_buffer), wav_length); break;
+		case AUDIO_S32LSB: wav_integral_to_float(samples, wav_spec, reinterpret_cast<int *>           (wav_buffer), wav_length); break;
 
-					int left, right;
-					memcpy(&left,  wav_buffer + (offset)     * sizeof(int), sizeof(int));
-					memcpy(&right, wav_buffer + (offset + 1) * sizeof(int), sizeof(int));
-
-					samples[i].left  = float(left)  / float(std::numeric_limits<int>::max());
-					samples[i].right = float(right) / float(std::numeric_limits<int>::max());
-				}
-			}
-
-			break;
-		}
+		case AUDIO_S16MSB: wav_integral_to_float<true>(samples, wav_spec, reinterpret_cast<short *>         (wav_buffer), wav_length); break;
+		case AUDIO_U16MSB: wav_integral_to_float<true>(samples, wav_spec, reinterpret_cast<unsigned short *>(wav_buffer), wav_length); break;
+		case AUDIO_S32MSB: wav_integral_to_float<true>(samples, wav_spec, reinterpret_cast<int *>           (wav_buffer), wav_length); break;
 
 		default: printf("ERROR: Sample '%s' has unsupported format 0x%x\n", filename, wav_spec.format);
 	}

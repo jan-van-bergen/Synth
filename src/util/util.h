@@ -197,6 +197,15 @@ namespace util {
 	unsigned rand (unsigned & seed);
 	float    randf(unsigned & seed);
 
+	template<typename T>
+	void swap_endianness(T * ptr) {
+		auto bytes = reinterpret_cast<char *>(ptr);
+
+		for (int b = 0; b < sizeof(T) / 2; b++) {
+			std::swap(bytes[b], bytes[sizeof(T) - b - 1]);
+		}
+	}
+
 	std::vector<Sample> load_wav(char const * filename);
 
 	std::vector<char> read_file(char const * filename);

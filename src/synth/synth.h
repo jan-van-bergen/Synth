@@ -54,30 +54,10 @@ struct Synth {
 	bool    connect(ConnectorOut & out, ConnectorIn & in, float weight = 1.0f);
 	void disconnect(ConnectorOut & out, ConnectorIn & in);
 
-	void note_press(int note, float velocity, int time_offset = 0) {
-		note_events.insert(NoteEvent::make_press(time + time_offset, note, velocity));
-	}
+	void note_press  (int note, float velocity, int time_offset = 0);
+	void note_release(int note, int time_offset = 0);
 
-	void note_release(int note, int time_offset = 0) {
-		note_events.insert(NoteEvent::make_release(time + time_offset, note));
-	}
-
-	void control_update(int control, float value) {
-		auto & linked_params = Param::links[control];
-
-		// If there is a Parameter waiting to link, link it to the current Controller
-		if (Param::param_waiting_to_link) {
-			linked_params.push_back(Param::param_waiting_to_link);
-
-			Param::param_waiting_to_link->linked_controller = control;
-			Param::param_waiting_to_link = nullptr;
-		}
-
-		value = util::clamp(value, 0.0f, 1.0f);
-
-		// Update all Parameters that are linked to the current Controller
-		for (auto param : linked_params) param->set_value(value);
-	}
+	void control_update(int control, float value);
 	
 	void open_file(char const * filename);
 	void save_file(char const * filename) const;
