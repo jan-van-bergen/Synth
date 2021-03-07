@@ -38,7 +38,7 @@ struct OscillatorComponent : VoiceComponent<OscillatorVoice> {
 	Parameter<float> flt_sustain = Parameter<float>::make_sustain(this, "flt_release", 1.0f);
 
 	Parameter<float> flt_min       = { this, "flt_min",       "Min", "Minimum Filter Amount", 1.0f, std::make_pair( 0.0f, 1.0f) };
-	Parameter<float> flt_multiply  = { this, "flt_multiply",  "Amt", "Filter Amount",         0.0f, std::make_pair(-1.0f, 1.0f) };
+	Parameter<float> flt_multiply  = { this, "flt_multiply",  "Amt", "Filter Amount",         0.0f, std::make_pair(-1.0f, 1.0f), { 0.0f } };
 	Parameter<float> flt_resonance = { this, "flt_resonance", "Res", "Filter Resonance",      0.0f, std::make_pair( 0.0f, 1.0f) };
 	
 	OscillatorComponent(int id) : VoiceComponent(id, "Oscillator", { { this, "MIDI In", true } }, { { this, "Out" } }) { }

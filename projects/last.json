@@ -5,8 +5,8 @@
 	},
 	"MIDIPlayerComponent": {
 		"id": 1,
-		"pos_x": 6.000000,
-		"pos_y": 143.000000,
+		"pos_x": 17.000000,
+		"pos_y": 35.000000,
 		"size_x": 206.000000,
 		"size_y": 122.000000,
 		"filename": "C:\Dev\Git\Synth\midi\i_feel_love_bass.mid"
@@ -15,11 +15,12 @@
 		"id": 19,
 		"pos_x": 246.000000,
 		"pos_y": 226.000000,
-		"size_x": 344.000000,
+		"size_x": 395.000000,
 		"size_y": 192.000000,
 		"waveform": 2,
 		"invert": 0,
 		"phase": 0.510000,
+		"stereo": 0.160000,
 		"transpose": -12,
 		"detune": 7.999992,
 		"portamento": 0.000000,
@@ -32,18 +33,20 @@
 		"flt_hold": 0.000000,
 		"flt_decay": 1.000000,
 		"flt_release": 0.060000,
-		"amount": 0.620000,
-		"resonance": 0.310000
+		"flt_min": 0.230000,
+		"flt_multiply": 0.620000,
+		"flt_resonance": 0.310000
 	},
 	"OscillatorComponent": {
 		"id": 2,
 		"pos_x": 247.000000,
 		"pos_y": 26.000000,
-		"size_x": 344.000000,
+		"size_x": 404.000000,
 		"size_y": 192.000000,
 		"waveform": 2,
 		"invert": 0,
 		"phase": 0.000000,
+		"stereo": 0.000000,
 		"transpose": -24,
 		"detune": 0.000000,
 		"portamento": 0.000000,
@@ -56,21 +59,22 @@
 		"flt_hold": 0.000000,
 		"flt_decay": 1.000000,
 		"flt_release": 0.050000,
-		"amount": 0.670000,
-		"resonance": 0.570000
+		"flt_min": 0.030000,
+		"flt_multiply": 0.670000,
+		"flt_resonance": 0.570000
 	},
 	"FlangerComponent": {
 		"id": 20,
-		"pos_x": 623.000000,
-		"pos_y": 106.000000,
+		"pos_x": 684.000000,
+		"pos_y": 118.000000,
 		"size_x": 176.000000,
 		"size_y": 169.000000,
 		"delay": 0.500000,
-		"depth": 7.100290,
+		"depth": 3.299720,
 		"rate": 0.200000,
-		"phase": 0.110000,
-		"feedback": 0.570000,
-		"drywet": 0.280000
+		"phase": 0.020000,
+		"feedback": 0.390000,
+		"drywet": 0.270000
 	},
 	"SequencerComponent": {
 		"id": 5,
@@ -144,11 +148,12 @@
 		"id": 4,
 		"pos_x": 517.000000,
 		"pos_y": 423.000000,
-		"size_x": 344.000000,
+		"size_x": 403.000000,
 		"size_y": 192.000000,
 		"waveform": 2,
 		"invert": 0,
 		"phase": 0.000000,
+		"stereo": 0.000000,
 		"transpose": -12,
 		"detune": 0.000000,
 		"portamento": 0.000000,
@@ -161,8 +166,9 @@
 		"flt_hold": 4.000000,
 		"flt_decay": 16.000000,
 		"flt_release": 0.570000,
-		"amount": 0.760000,
-		"resonance": 0.330000
+		"flt_min": 0.070000,
+		"flt_multiply": 0.760000,
+		"flt_resonance": 0.330000
 	},
 	"EqualizerComponent": {
 		"id": 14,
@@ -207,7 +213,7 @@
 		"hold": 0.000000,
 		"decay": 0.680000,
 		"sustain": 0.000000,
-		"release": 6.240000,
+		"release": 0.320000,
 		"filename": "C:\Dev\Git\Synth\samples\909_hat.wav"
 	},
 	"CompressorComponent": {
@@ -216,7 +222,7 @@
 		"pos_y": 285.000000,
 		"size_x": 176.000000,
 		"size_y": 186.000000,
-		"threshold": -22.800011,
+		"threshold": -21.599991,
 		"ratio": 7.380001,
 		"gain": 0.000000,
 		"Attack": 15.000000,
@@ -318,7 +324,7 @@
 		"component_in": 7,
 		"offset_out": 0,
 		"offset_in": 0,
-		"weight": 0.360000
+		"weight": 0.310000
 	},
 	"Connection": {
 		"component_out": 18,
@@ -332,14 +338,14 @@
 		"component_in": 7,
 		"offset_out": 0,
 		"offset_in": 1,
-		"weight": 1.000000
+		"weight": 0.940000
 	},
 	"Connection": {
 		"component_out": 6,
 		"component_in": 0,
 		"offset_out": 0,
 		"offset_in": 0,
-		"weight": 0.880000
+		"weight": 0.860000
 	},
 	"Connection": {
 		"component_out": 7,
