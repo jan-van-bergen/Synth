@@ -210,6 +210,8 @@ namespace util {
 
 	std::vector<char> read_file(char const * filename);
 
+	bool file_exists(char const * filename);
+
 	int scancode_to_note(SDL_Scancode scancode);
 	
 	enum struct NoteName {

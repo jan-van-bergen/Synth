@@ -1,7 +1,5 @@
 #include "speaker.h"
 
-#include <filesystem>
-
 enum struct WavFmt : short {
 	PCM        = 0x0001,
 	IEEEFloat  = 0x0003,
@@ -69,7 +67,7 @@ void SpeakerComponent::render(Synth const & synth) {
 		while (true) {
 			sprintf_s(filename, "samples/recording_%i.wav", num);
 
-			if (!std::filesystem::exists(filename)) break;
+			if (!util::file_exists(filename)) break;
 
 			num++;
 		}

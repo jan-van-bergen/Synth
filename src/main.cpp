@@ -181,7 +181,7 @@ int main(int argc, char * argv[]) {
 		SDL_GL_SwapWindow(window);
 	}
 
-	char const * last_path = std::filesystem::exists("projects") ? "projects/last.json" : "last.json";
+	char const * last_path = util::file_exists("projects") ? "projects/last.json" : "last.json";
 	synth.save_file(last_path);
 
 	terminated = true;

@@ -1,0 +1,191 @@
+{
+	"Settings": {
+		"tempo": 130,
+		"master_volume": 1.000000
+	},
+	"MIDIPlayerComponent": {
+		"id": 4,
+		"pos_x": 52.000000,
+		"pos_y": 468.000000,
+		"size_x": 144.000000,
+		"size_y": 127.000000,
+		"filename": "C:\Dev\Git\Synth\midi\veldt_melody.mid"
+	},
+	"FMComponent": {
+		"id": 8,
+		"pos_x": 421.000000,
+		"pos_y": 497.000000,
+		"size_x": 288.000000,
+		"size_y": 204.000000,
+		"ratio_0": 0.500000,
+		"ratio_1": 0.750000,
+		"ratio_2": 4.000000,
+		"ratio_3": 8.000000,
+		"attack_0": 0.100000,
+		"attack_1": 0.000000,
+		"attack_2": 1.000000,
+		"attack_3": 0.100000,
+		"hold_0": 0.500000,
+		"hold_1": 0.000000,
+		"hold_2": 0.000000,
+		"hold_3": 0.500000,
+		"decay_0": 3.000000,
+		"decay_1": 1.680000,
+		"decay_2": 1.000000,
+		"decay_3": 1.000000,
+		"sustain_0": 0.050000,
+		"sustain_1": 0.000000,
+		"sustain_2": 0.000000,
+		"sustain_3": 0.500000,
+		"release": 0.800000,
+		"weights": [ 0.560000, 0.000000, 0.000000, 0.000000, 2.000000, 0.000000, 0.000000, 0.000000, 0.320000, 0.420000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000 ],
+		"outs": [ 1.000000, 0.000000, 0.000000, 0.000000 ]
+	},
+	"MIDIPlayerComponent": {
+		"id": 1,
+		"pos_x": 40.000000,
+		"pos_y": 39.000000,
+		"size_x": 235.000000,
+		"size_y": 122.000000,
+		"filename": "C:\Dev\Git\Synth\midi\veldt_chords.mid"
+	},
+	"DelayComponent": {
+		"id": 7,
+		"pos_x": 991.000000,
+		"pos_y": 617.000000,
+		"size_x": 120.000000,
+		"size_y": 117.000000,
+		"steps": 2,
+		"feedback": 0.590000
+	},
+	"DistortionComponent": {
+		"id": 6,
+		"pos_x": 910.000000,
+		"pos_y": 448.000000,
+		"size_x": 64.000000,
+		"size_y": 117.000000,
+		"amount": 0.750000
+	},
+	"OscillatorComponent": {
+		"id": 3,
+		"pos_x": 360.000000,
+		"pos_y": 247.000000,
+		"size_x": 400.000000,
+		"size_y": 192.000000,
+		"waveform": 2,
+		"invert": 0,
+		"phase": 0.230000,
+		"stereo": 0.180000,
+		"transpose": -12,
+		"detune": 15.999985,
+		"portamento": 0.000000,
+		"attack": 0.100000,
+		"hold": 0.500000,
+		"decay": 1.000000,
+		"sustain": 0.500000,
+		"release": 0.000000,
+		"flt_attack": 0.100000,
+		"flt_hold": 0.000000,
+		"flt_decay": 1.960000,
+		"flt_release": 0.060000,
+		"flt_min": 0.080000,
+		"flt_multiply": 0.680000,
+		"flt_resonance": 0.150000
+	},
+	"OscillatorComponent": {
+		"id": 2,
+		"pos_x": 364.000000,
+		"pos_y": 49.000000,
+		"size_x": 400.000000,
+		"size_y": 192.000000,
+		"waveform": 2,
+		"invert": 0,
+		"phase": 0.000000,
+		"stereo": 0.050000,
+		"transpose": -24,
+		"detune": 0.000000,
+		"portamento": 0.000000,
+		"attack": 0.100000,
+		"hold": 0.500000,
+		"decay": 1.000000,
+		"sustain": 0.500000,
+		"release": 0.000000,
+		"flt_attack": 0.000000,
+		"flt_hold": 0.000000,
+		"flt_decay": 2.000000,
+		"flt_release": 0.060000,
+		"flt_min": 0.100000,
+		"flt_multiply": 0.780000,
+		"flt_resonance": 0.280000
+	},
+	"SpeakerComponent": {
+		"id": 0,
+		"pos_x": 1359.000000,
+		"pos_y": 316.000000,
+		"size_x": 101.000000,
+		"size_y": 113.000000
+	},
+	"Connection": {
+		"component_out": 4,
+		"component_in": 8,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 8,
+		"component_in": 7,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 0.810000
+	},
+	"Connection": {
+		"component_out": 8,
+		"component_in": 6,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 0.820000
+	},
+	"Connection": {
+		"component_out": 1,
+		"component_in": 3,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 1,
+		"component_in": 2,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
+	},
+	"Connection": {
+		"component_out": 2,
+		"component_in": 0,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 0.830000
+	},
+	"Connection": {
+		"component_out": 3,
+		"component_in": 0,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 0.590000
+	},
+	"Connection": {
+		"component_out": 6,
+		"component_in": 0,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 0.300000
+	},
+	"Connection": {
+		"component_out": 7,
+		"component_in": 0,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 0.480000
+	}
+}

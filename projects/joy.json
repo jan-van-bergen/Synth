@@ -5,21 +5,22 @@
 	},
 	"MIDIPlayerComponent": {
 		"id": 1,
-		"pos_x": 181.000000,
-		"pos_y": 63.000000,
+		"pos_x": 140.000000,
+		"pos_y": 67.000000,
 		"size_x": 580.000000,
 		"size_y": 122.000000,
 		"filename": "C:\Dev\Git\Synth\midi\2channels.mid"
 	},
 	"OscillatorComponent": {
 		"id": 2,
-		"pos_x": 785.000000,
+		"pos_x": 824.000000,
 		"pos_y": 208.000000,
-		"size_x": 352.000000,
+		"size_x": 413.000000,
 		"size_y": 192.000000,
 		"waveform": 2,
 		"invert": 0,
 		"phase": 0.000000,
+		"stereo": 0.000000,
 		"transpose": 0,
 		"detune": 0.000000,
 		"portamento": 0.160000,
@@ -32,8 +33,9 @@
 		"flt_hold": 0.500000,
 		"flt_decay": 1.000000,
 		"flt_release": 0.290000,
-		"amount": 0.700000,
-		"resonance": 0.230000
+		"flt_min": 0.340000,
+		"flt_multiply": 0.460000,
+		"flt_resonance": 0.050000
 	},
 	"SpeakerComponent": {
 		"id": 0,

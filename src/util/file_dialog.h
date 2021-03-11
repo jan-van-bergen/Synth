@@ -4,8 +4,6 @@
 #include <optional>
 #include <functional>
 
-#include <filesystem>
-
 struct FileDialog {
 	enum struct Type {
 		SAVE,
@@ -15,16 +13,16 @@ struct FileDialog {
 private:
 	std::string title;
 
-	std::filesystem::path path;
+	std::string path;
 
 	std::string                                  file_extension;
 	std::unordered_map<std::string, std::string> file_extension_history; // For every file extension, what was the last filename used
 
-	char                  selected[512] = { };
-	std::filesystem::path selected_path;
+	char        selected[512] = { };
+	std::string selected_path;
 
 	struct Entry {
-		std::filesystem::path path;
+		std::string path;
 		std::string display;
 	};
 
@@ -40,17 +38,11 @@ private:
 	OnFinishedCallBack callback;
 
 public:
-	FileDialog() { 
-		if (std::filesystem::exists("projects/")) {
-			change_path("projects");
-		} else {
-			change_path(".");
-		}
-	}
+	FileDialog();
 
 	void show(Type type, std::string const & title, std::string const & default_path, std::string const & file_extension, OnFinishedCallBack callback);
 	void render();
 
 private:
-	void change_path(std::filesystem::path const & new_path);
+	void change_path(std::string const & new_path);
 };

@@ -1,10 +1,11 @@
 #include "util.h"
 
+#include <immintrin.h>
+
 #include <cassert>
 #include <ctime>
 #include <bit>
-
-#include <immintrin.h>
+#include <filesystem>
 
 #include <SDL2/SDL.h>
 
@@ -152,6 +153,10 @@ std::vector<char> util::read_file(char const * filename) {
 	fclose(file);
 
 	return buffer;
+}
+
+bool util::file_exists(char const * filename) {
+	return std::filesystem::exists(filename);	
 }
 
 int util::round(float f) {

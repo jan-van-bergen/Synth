@@ -1,6 +1,9 @@
 #include "midi.h"
 
+#define VC_EXTRALEAN
+#define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
+#include <mmeapi.h>
 
 #include <cassert>
 #include <algorithm>

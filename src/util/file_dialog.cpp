@@ -1,8 +1,18 @@
 #include "file_dialog.h"
 
+#include <filesystem>
+
 #include <ImGui/imgui.h>
 
 #include <SDL2/SDL_scancode.h>
+
+FileDialog::FileDialog() { 
+	if (std::filesystem::exists("projects/")) {
+		change_path("projects");
+	} else {
+		change_path(".");
+	}
+}
 
 void FileDialog::show(Type type, std::string const & title, std::string const & default_path, std::string const & file_extension, OnFinishedCallBack callback) {
 	this->type  = type;
@@ -29,14 +39,14 @@ void FileDialog::render() {
 			change_path(std::filesystem::path(path).parent_path().string());
 		}
 		ImGui::SameLine();
-		ImGui::Text(path.string().c_str());
+		ImGui::Text(path.c_str());
 		ImGui::Separator();
 
 		auto avail = ImGui::GetContentRegionAvail();
 
 		ImGui::BeginChild("Browser", ImVec2(avail.x, avail.y - 2 * ImGui::GetTextLineHeightWithSpacing() - 12));
 
-		std::filesystem::path const * new_path = nullptr;
+		std::string const * new_path = nullptr;
 
 		char label[128];
 		
@@ -91,7 +101,7 @@ void FileDialog::render() {
 					strcat_s(selected, ".json");
 				}
 
-				selected_path = path/selected;
+				selected_path = path + '/' + selected;
 
 				if (std::filesystem::exists(selected_path)) {
 					ImGui::OpenPopup("Overwrite");
@@ -116,7 +126,7 @@ void FileDialog::render() {
 				ImGui::EndPopup();
 			}
 		} else if (confirmed) {	
-			selected_path = path/selected;
+			selected_path = path + '/' + selected;
 		}
 
 		if (confirmed || ImGui::IsKeyPressed(SDL_SCANCODE_ESCAPE)) ImGui::CloseCurrentPopup(); 
@@ -126,25 +136,27 @@ void FileDialog::render() {
 		if (confirmed) {
 			file_extension_history[file_extension] = std::string(selected);
 
-			callback(selected_path.string().c_str());
+			callback(selected_path.c_str());
 		}
 	}
 }
 
-void FileDialog::change_path(std::filesystem::path const & new_path) {
-	path = std::filesystem::absolute(new_path);
+void FileDialog::change_path(std::string const & new_path) {
+	auto absolute_path = std::filesystem::absolute(new_path);
+
+	path = absolute_path.string();
 
 	directories.clear();
 	files      .clear();
 
-	for (auto const & item : std::filesystem::directory_iterator(path, std::filesystem::directory_options::skip_permission_denied)) {
+	for (auto const & item : std::filesystem::directory_iterator(absolute_path, std::filesystem::directory_options::skip_permission_denied)) {
 		try {
-			auto relative_path = std::filesystem::relative(item.path(), path).string();
+			auto relative_path = std::filesystem::relative(item.path(), absolute_path).string();
 
 			if (item.is_directory()) {
-				directories.emplace_back(item.path(), std::move(relative_path));
+				directories.emplace_back(item.path().string(), std::move(relative_path));
 			} else {
-				files.emplace_back(item.path(), std::move(relative_path));
+				files.emplace_back(item.path().string(), std::move(relative_path));
 			}
 		} catch (std::filesystem::filesystem_error const & err) { }
 	}
