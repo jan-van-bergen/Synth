@@ -192,7 +192,7 @@
     <ClCompile Include="src\components\filter.cpp" />
     <ClCompile Include="src\components\flanger.cpp" />
     <ClCompile Include="src\components\fm.cpp" />
-    <ClCompile Include="src\components\group.cpp" />
+    <ClCompile Include="src\components\gain.cpp" />
     <ClCompile Include="src\components\improviser.cpp" />
     <ClCompile Include="src\components\keyboard.cpp" />
     <ClCompile Include="src\components\oscillator.cpp" />
@@ -200,6 +200,7 @@
     <ClCompile Include="src\components\pan.cpp" />
     <ClCompile Include="src\components\phaser.cpp" />
     <ClCompile Include="src\components\midi_player.cpp" />
+    <ClCompile Include="src\components\reverb.cpp" />
     <ClCompile Include="src\components\sampler.cpp" />
     <ClCompile Include="src\components\sequencer.cpp" />
     <ClCompile Include="src\components\speaker.cpp" />
@@ -233,7 +234,7 @@
     <ClInclude Include="src\components\filter.h" />
     <ClInclude Include="src\components\flanger.h" />
     <ClInclude Include="src\components\fm.h" />
-    <ClInclude Include="src\components\group.h" />
+    <ClInclude Include="src\components\gain.h" />
     <ClInclude Include="src\components\improviser.h" />
     <ClInclude Include="src\components\keyboard.h" />
     <ClInclude Include="src\components\midi_player.h" />
@@ -241,6 +242,7 @@
     <ClInclude Include="src\components\oscilloscope.h" />
     <ClInclude Include="src\components\pan.h" />
     <ClInclude Include="src\components\phaser.h" />
+    <ClInclude Include="src\components\reverb.h" />
     <ClInclude Include="src\components\sampler.h" />
     <ClInclude Include="src\components\sequencer.h" />
     <ClInclude Include="src\components\speaker.h" />
@@ -249,8 +251,11 @@
     <ClInclude Include="src\components\vectorscope.h" />
     <ClInclude Include="src\components\vocoder.h" />
     <ClInclude Include="src\components\voice.h" />
+    <ClInclude Include="src\dsp\allpass_filter.h" />
+    <ClInclude Include="src\dsp\biquadfilter.h" />
+    <ClInclude Include="src\dsp\combfilter.h" />
     <ClInclude Include="src\dsp\fft.h" />
-    <ClInclude Include="src\dsp\filter.h" />
+    <ClInclude Include="src\dsp\vafilter.h" />
     <ClInclude Include="src\json\json.h" />
     <ClInclude Include="src\synth\connector.h" />
     <ClInclude Include="src\synth\knob.h" />

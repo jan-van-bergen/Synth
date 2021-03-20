@@ -100,7 +100,7 @@ std::optional<midi::Track> midi::Track::load(char const * filename) {
 			
 				bytes_parsed += 2 + num_bytes;
 
-				static constexpr auto META_COMMAND_END = 0x2F;
+				static constexpr auto META_COMMAND_END   = 0x2F;
 				static constexpr auto META_COMMAND_TEMPO = 0x51;
 
 				switch (meta_cmd) {

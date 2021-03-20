@@ -7,7 +7,7 @@
 		"id": 4,
 		"pos_x": 52.000000,
 		"pos_y": 468.000000,
-		"size_x": 144.000000,
+		"size_x": 316.000000,
 		"size_y": 127.000000,
 		"filename": "C:\Dev\Git\Synth\midi\veldt_melody.mid"
 	},
@@ -45,7 +45,7 @@
 		"id": 1,
 		"pos_x": 40.000000,
 		"pos_y": 39.000000,
-		"size_x": 235.000000,
+		"size_x": 321.000000,
 		"size_y": 122.000000,
 		"filename": "C:\Dev\Git\Synth\midi\veldt_chords.mid"
 	},
@@ -68,8 +68,8 @@
 	},
 	"OscillatorComponent": {
 		"id": 3,
-		"pos_x": 360.000000,
-		"pos_y": 247.000000,
+		"pos_x": 419.000000,
+		"pos_y": 269.000000,
 		"size_x": 400.000000,
 		"size_y": 192.000000,
 		"waveform": 2,
@@ -94,8 +94,8 @@
 	},
 	"OscillatorComponent": {
 		"id": 2,
-		"pos_x": 364.000000,
-		"pos_y": 49.000000,
+		"pos_x": 416.000000,
+		"pos_y": 51.000000,
 		"size_x": 400.000000,
 		"size_y": 192.000000,
 		"waveform": 2,
@@ -165,27 +165,27 @@
 		"component_in": 0,
 		"offset_out": 0,
 		"offset_in": 0,
-		"weight": 0.830000
+		"weight": 0.710000
 	},
 	"Connection": {
 		"component_out": 3,
 		"component_in": 0,
 		"offset_out": 0,
 		"offset_in": 0,
-		"weight": 0.590000
+		"weight": 0.490000
 	},
 	"Connection": {
 		"component_out": 6,
 		"component_in": 0,
 		"offset_out": 0,
 		"offset_in": 0,
-		"weight": 0.300000
+		"weight": 0.240000
 	},
 	"Connection": {
 		"component_out": 7,
 		"component_in": 0,
 		"offset_out": 0,
 		"offset_in": 0,
-		"weight": 0.480000
+		"weight": 0.400000
 	}
 }

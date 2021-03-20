@@ -29,8 +29,8 @@ namespace util {
 		}
 	}
 
-	template<typename T, typename L = T>
-	inline constexpr T lerp(T a, T b, L t) {
+	template<typename T>
+	inline constexpr T lerp(T a, T b, float t) {
 		return a + (b - a) * t;
 	}
 

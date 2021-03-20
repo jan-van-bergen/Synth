@@ -1,7 +1,7 @@
 #pragma once
 #include "voice.h"
 
-#include "dsp/filter.h"
+#include "dsp/vafilter.h"
 
 struct OscillatorVoice : Voice {
 	float phase  = 0.0f;

@@ -258,6 +258,7 @@ void Synth::render_menu() {
 
 			if (ImGui::MenuItem("Filter"))      add_component<FilterComponent>();
 			if (ImGui::MenuItem("Delay"))       add_component<DelayComponent>();
+			if (ImGui::MenuItem("Reverb"))      add_component<ReverbComponent>();
 			if (ImGui::MenuItem("Flanger"))     add_component<FlangerComponent>();
 			if (ImGui::MenuItem("Phaser"))      add_component<PhaserComponent>();
 			if (ImGui::MenuItem("Distortion"))  add_component<DistortionComponent>();

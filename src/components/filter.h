@@ -1,7 +1,7 @@
 #pragma once
 #include "component.h"
 
-#include "dsp/filter.h"
+#include "dsp/vafilter.h"
 
 struct FilterComponent : Component {
 	Parameter<int> filter_type = { this, "filter_type", "Type", "Filter Type", 0, std::make_pair(0, 3) };

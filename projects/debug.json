@@ -3,236 +3,76 @@
 		"tempo": 130,
 		"master_volume": 1.000000
 	},
-	"MIDIPlayerComponent": {
+	"KeyboardComponent": {
 		"id": 1,
-		"pos_x": 41.000000,
-		"pos_y": 36.000000,
-		"size_x": 206.000000,
-		"size_y": 122.000000,
-		"filename": "C:\Dev\Git\Synth\midi\i_feel_love_bass.mid"
-	},
-	"MIDIPlayerComponent": {
-		"id": 17,
-		"pos_x": 183.000000,
-		"pos_y": 498.000000,
-		"size_x": 144.000000,
-		"size_y": 122.000000,
-		"filename": "C:\Dev\Git\Synth\midi\i_feel_love_trigger.mid"
+		"pos_x": 60.000000,
+		"pos_y": 60.000000,
+		"size_x": 64.000000,
+		"size_y": 64.000000
 	},
 	"OscillatorComponent": {
-		"id": 2,
-		"pos_x": 316.000000,
+		"id": 4,
+		"pos_x": 169.000000,
 		"pos_y": 36.000000,
-		"size_x": 344.000000,
+		"size_x": 400.000000,
 		"size_y": 192.000000,
 		"waveform": 2,
 		"invert": 0,
 		"phase": 0.000000,
-		"transpose": -12,
+		"stereo": 0.000000,
+		"transpose": 0,
 		"detune": 0.000000,
 		"portamento": 0.000000,
 		"attack": 0.000000,
 		"hold": 0.000000,
-		"decay": 1.480000,
+		"decay": 1.000000,
 		"sustain": 0.000000,
 		"release": 0.000000,
-		"flt_attack": 0.000000,
-		"flt_hold": 0.000000,
+		"flt_attack": 0.100000,
+		"flt_hold": 0.500000,
 		"flt_decay": 1.000000,
-		"flt_release": 0.240000,
-		"amount": 0.570000,
-		"resonance": 0.730000
+		"flt_release": 1.000000,
+		"flt_min": 1.000000,
+		"flt_multiply": 0.000000,
+		"flt_resonance": 0.000000
 	},
-	"SamplerComponent": {
-		"id": 18,
-		"pos_x": 487.000000,
-		"pos_y": 560.000000,
-		"size_x": 288.000000,
-		"size_y": 193.000000,
-		"base_note": 36,
-		"attack": 0.000000,
-		"hold": 16.000000,
-		"decay": 1.000000,
-		"sustain": 1.000000,
-		"release": 0.000000,
-		"filename": "C:\Dev\Git\Synth\samples\i_feel_love.wav"
-	},
-	"SequencerComponent": {
+	"ReverbComponent": {
 		"id": 5,
-		"pos_x": 869.000000,
-		"pos_y": 29.000000,
-		"size_x": 392.000000,
-		"size_y": 116.000000,
-		"pattern": [ 1.000000, 0.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000, 0.000000 ]
-	},
-	"DistortionComponent": {
-		"id": 16,
-		"pos_x": 747.000000,
-		"pos_y": 81.000000,
-		"size_x": 64.000000,
-		"size_y": 117.000000,
-		"amount": 0.300000
+		"pos_x": 689.000000,
+		"pos_y": 151.000000,
+		"size_x": 176.000000,
+		"size_y": 169.000000,
+		"room": 1.000000,
+		"decay": 1.000000,
+		"spread": 0.200000,
+		"damp": 0.200000,
+		"dry": 0.000000,
+		"wet": 0.000000
 	},
 	"SpeakerComponent": {
 		"id": 0,
-		"pos_x": 1374.000000,
-		"pos_y": 591.000000,
+		"pos_x": 1372.000000,
+		"pos_y": 348.000000,
 		"size_x": 101.000000,
 		"size_y": 113.000000
 	},
-	"MIDIPlayerComponent": {
-		"id": 3,
-		"pos_x": 97.000000,
-		"pos_y": 271.000000,
-		"size_x": 335.000000,
-		"size_y": 125.000000,
-		"filename": "C:\Dev\Git\Synth\midi\i_feel_love_chords.mid"
-	},
-	"SamplerComponent": {
-		"id": 6,
-		"pos_x": 1286.000000,
-		"pos_y": 32.000000,
-		"size_x": 288.000000,
-		"size_y": 192.000000,
-		"base_note": 36,
-		"attack": 0.000000,
-		"hold": 0.480000,
-		"decay": 0.960000,
-		"sustain": 0.000000,
-		"release": 0.000000,
-		"filename": "samples/kick.wav"
-	},
-	"EqualizerComponent": {
-		"id": 14,
-		"pos_x": 917.000000,
-		"pos_y": 169.000000,
-		"size_x": 238.000000,
-		"size_y": 192.000000,
-		"NUM_BANDS": 4,
-		"Band_0": {
-			"mode": 5,
-			"freq": 63.917114,
-			"Q": 1.500000,
-			"gain": -17.566265
-		},
-		"Band_1": {
-			"mode": 3,
-			"freq": 29.252811,
-			"Q": 1.000000,
-			"gain": -11.277108
-		},
-		"Band_2": {
-			"mode": 3,
-			"freq": 1017.306946,
-			"Q": 1.000000,
-			"gain": 1.301205
-		},
-		"Band_3": {
-			"mode": 6,
-			"freq": 4856.809570,
-			"Q": 1.000000,
-			"gain": 5.204819
-		}
-	},
-	"DecibelComponent": {
-		"id": 12,
-		"pos_x": 1460.000000,
-		"pos_y": 313.000000,
-		"size_x": 135.000000,
-		"size_y": 218.000000
-	},
-	"DelayComponent": {
-		"id": 10,
-		"pos_x": 1166.000000,
-		"pos_y": 707.000000,
-		"size_x": 120.000000,
-		"size_y": 117.000000,
-		"steps": 3,
-		"feedback": 0.680000
-	},
-	"OscillatorComponent": {
-		"id": 4,
-		"pos_x": 520.000000,
-		"pos_y": 282.000000,
-		"size_x": 344.000000,
-		"size_y": 192.000000,
-		"waveform": 2,
-		"invert": 0,
-		"phase": 0.000000,
-		"transpose": -12,
-		"detune": 0.000000,
-		"portamento": 0.000000,
-		"attack": 0.100000,
-		"hold": 0.500000,
-		"decay": 1.000000,
-		"sustain": 0.500000,
-		"release": 0.000000,
-		"flt_attack": 2.320000,
-		"flt_hold": 4.000000,
-		"flt_decay": 16.000000,
-		"flt_release": 0.820000,
-		"amount": 0.620000,
-		"resonance": 0.670000
-	},
 	"Connection": {
 		"component_out": 1,
-		"component_in": 2,
+		"component_in": 4,
 		"offset_out": 0,
 		"offset_in": 0,
 		"weight": 1.000000
 	},
 	"Connection": {
-		"component_out": 17,
-		"component_in": 18,
-		"offset_out": 0,
-		"offset_in": 0,
-		"weight": 1.000000
-	},
-	"Connection": {
-		"component_out": 2,
-		"component_in": 16,
-		"offset_out": 0,
-		"offset_in": 0,
-		"weight": 0.920000
-	},
-	"Connection": {
-		"component_out": 18,
-		"component_in": 0,
+		"component_out": 4,
+		"component_in": 5,
 		"offset_out": 0,
 		"offset_in": 0,
 		"weight": 1.000000
 	},
 	"Connection": {
 		"component_out": 5,
-		"component_in": 6,
-		"offset_out": 0,
-		"offset_in": 0,
-		"weight": 1.000000
-	},
-	"Connection": {
-		"component_out": 16,
-		"component_in": 14,
-		"offset_out": 0,
-		"offset_in": 0,
-		"weight": 0.580000
-	},
-	"Connection": {
-		"component_out": 0,
-		"component_in": 12,
-		"offset_out": 0,
-		"offset_in": 0,
-		"weight": 1.000000
-	},
-	"Connection": {
-		"component_out": 18,
-		"component_in": 10,
-		"offset_out": 0,
-		"offset_in": 0,
-		"weight": 1.000000
-	},
-	"Connection": {
-		"component_out": 3,
-		"component_in": 4,
+		"component_in": 0,
 		"offset_out": 0,
 		"offset_in": 0,
 		"weight": 1.000000

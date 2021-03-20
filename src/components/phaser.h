@@ -1,7 +1,7 @@
 #pragma once
 #include "component.h"
 
-#include "dsp/filter.h"
+#include "dsp/biquadfilter.h"
 
 struct PhaserComponent : Component {
 	Parameter<float> rate       = { this, "rate",       "Rate", "LFO Frequency",                       1.0f,  std::make_pair(0.0f, 5.0f) };

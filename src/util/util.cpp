@@ -115,8 +115,8 @@ std::vector<Sample> util::load_wav(char const * filename) {
 			break;
 		}
 
-		case AUDIO_S8: wav_integral_to_float(samples, wav_spec, reinterpret_cast<char *>          (wav_buffer), wav_length); break;
-		case AUDIO_U8: wav_integral_to_float(samples, wav_spec, reinterpret_cast<unsigned char *> (wav_buffer), wav_length); break;
+		case AUDIO_S8: wav_integral_to_float(samples, wav_spec, reinterpret_cast<char *>         (wav_buffer), wav_length); break;
+		case AUDIO_U8: wav_integral_to_float(samples, wav_spec, reinterpret_cast<unsigned char *>(wav_buffer), wav_length); break;
 
 		case AUDIO_S16LSB: wav_integral_to_float(samples, wav_spec, reinterpret_cast<short *>         (wav_buffer), wav_length); break;
 		case AUDIO_U16LSB: wav_integral_to_float(samples, wav_spec, reinterpret_cast<unsigned short *>(wav_buffer), wav_length); break;

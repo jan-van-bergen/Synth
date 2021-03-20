@@ -3,21 +3,38 @@
 		"tempo": 130,
 		"master_volume": 1.000000
 	},
-	"SpeakerComponent": {
-		"id": 0,
-		"pos_x": 1028.000000,
-		"pos_y": 269.000000,
-		"size_x": 120.000000,
-		"size_y": 115.000000
+	"SequencerComponent": {
+		"id": 3,
+		"pos_x": 43.000000,
+		"pos_y": 88.000000,
+		"size_x": 392.000000,
+		"size_y": 116.000000,
+		"pattern": [ 1.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000, 1.000000, 0.000000, 1.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000, 1.000000, 0.000000 ]
+	},
+	"SamplerComponent": {
+		"id": 2,
+		"pos_x": 544.000000,
+		"pos_y": 59.000000,
+		"size_x": 291.000000,
+		"size_y": 199.000000,
+		"base_note": 36,
+		"attack": 0.000000,
+		"hold": 0.500000,
+		"decay": 1.000000,
+		"sustain": 1.000000,
+		"release": 0.000000,
+		"filename": "samples/909_clap.wav"
 	},
 	"OscillatorComponent": {
 		"id": 1,
-		"pos_x": 210.000000,
-		"pos_y": 263.000000,
-		"size_x": 299.000000,
+		"pos_x": 186.000000,
+		"pos_y": 282.000000,
+		"size_x": 403.000000,
 		"size_y": 198.000000,
+		"waveform": 3,
 		"invert": 0,
 		"phase": 0.000000,
+		"stereo": 0.000000,
 		"transpose": 0,
 		"detune": 0.000000,
 		"portamento": 0.000000,
@@ -26,24 +43,27 @@
 		"decay": 1.000000,
 		"sustain": 0.500000,
 		"release": 0.000000,
-		"waveform": 3
+		"flt_attack": 0.100000,
+		"flt_hold": 0.500000,
+		"flt_decay": 1.000000,
+		"flt_release": 1.000000,
+		"flt_min": 1.000000,
+		"flt_multiply": 0.000000,
+		"flt_resonance": 0.000000
 	},
-	"SamplerComponent": {
-		"id": 2,
-		"pos_x": 512.000000,
-		"pos_y": 70.000000,
-		"size_x": 201.000000,
-		"size_y": 145.000000,
-		"base_note": 36,
-		"filename": "samples/909_clap.wav"
+	"SpeakerComponent": {
+		"id": 0,
+		"pos_x": 1028.000000,
+		"pos_y": 269.000000,
+		"size_x": 120.000000,
+		"size_y": 115.000000
 	},
-	"SequencerComponent": {
-		"id": 3,
-		"pos_x": 43.000000,
-		"pos_y": 88.000000,
-		"size_x": 392.000000,
-		"size_y": 116.000000,
-		"pattern": [ 1.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000, 1.000000, 0.000000, 1.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000, 1.000000, 0.000000 ]
+	"Connection": {
+		"component_out": 3,
+		"component_in": 2,
+		"offset_out": 0,
+		"offset_in": 0,
+		"weight": 1.000000
 	},
 	"Connection": {
 		"component_out": 1,
@@ -55,13 +75,6 @@
 	"Connection": {
 		"component_out": 2,
 		"component_in": 0,
-		"offset_out": 0,
-		"offset_in": 0,
-		"weight": 1.000000
-	},
-	"Connection": {
-		"component_out": 3,
-		"component_in": 2,
 		"offset_out": 0,
 		"offset_in": 0,
 		"weight": 1.000000

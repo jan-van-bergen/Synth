@@ -86,18 +86,38 @@ static std::unique_ptr<json::JSON> parse_json(char const *& cur, char const * en
 		// Parse Float or Int
 		auto start = cur;
 
-		match(cur, end, "-");
+		auto is_negative = match(cur, end, "-");
+
+		// Parse infinity
+		if (match(cur, end, "infinity") || match(cur, end, "inf")) {
+			if (cur < end) {
+				return std::make_unique<json::ValueFloat>(name, is_negative ? -INFINITY : INFINITY);
+			}
+		}
+
+		// Parse NaN
+		if (match(cur, end, "nan")) {
+			if (match(cur, end, "(")) {
+				while (!match(cur, end, ")")) cur++;
+			}
+
+			if (cur < end) {
+				return std::make_unique<json::ValueFloat>(name, NAN);
+			}
+		}
+
+		// Parse integer
 		while (cur < end && isdigit(*cur)) cur++;
 
 		if (match(cur, end, ".")) {
-			// Parse Float
+			// Parse as Float
 			while (cur < end && isdigit(*cur)) cur++;
 
 			if (cur < end) {
 				return std::make_unique<json::ValueFloat>(name, parse_num<float>(start, cur));
 			}
 		} else if (cur < end) {
-			// Parse Int
+			// Parse as Int
 			return std::make_unique<json::ValueInt>(name, parse_num<int>(start, cur));
 		}
 	}

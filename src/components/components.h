@@ -10,7 +10,7 @@
 #include "filter.h"
 #include "flanger.h"
 #include "fm.h"
-#include "group.h"
+#include "gain.h"
 #include "improviser.h"
 #include "keyboard.h"
 #include "midi_player.h"
@@ -18,6 +18,7 @@
 #include "oscilloscope.h"
 #include "pan.h"
 #include "phaser.h"
+#include "reverb.h"
 #include "sampler.h"
 #include "sequencer.h"
 #include "speaker.h"
@@ -53,6 +54,7 @@ using AllComponents = ComponentTypeList<
 	OscilloscopeComponent,
 	PanComponent,
 	PhaserComponent,
+	ReverbComponent,
 	MIDIPlayerComponent,
 	SamplerComponent,
 	SequencerComponent,

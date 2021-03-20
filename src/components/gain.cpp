@@ -1,4 +1,4 @@
-#include "group.h"
+#include "gain.h"
 
 void GainComponent::update(Synth const & synth) {
 	auto amp = util::db_to_linear(gain);

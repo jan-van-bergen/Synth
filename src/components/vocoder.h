@@ -1,7 +1,7 @@
 #pragma once
 #include "component.h"
 
-#include "dsp/filter.h"
+#include "dsp/biquadfilter.h"
 
 struct VocoderComponent : Component {
 	struct Band {

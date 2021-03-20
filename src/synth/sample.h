@@ -43,5 +43,8 @@ inline Sample operator-(float f, Sample const & s) { return { s.left - f, s.righ
 inline Sample operator*(float f, Sample const & s) { return { s.left * f, s.right * f }; }
 inline Sample operator/(float f, Sample const & s) { return { s.left / f, s.right / f }; }
 
+inline Sample operator+(Sample const & s) { return s; }
+inline Sample operator-(Sample const & s) { return Sample(-s.left, -s.right); }
+
 inline bool operator==(Sample const & a, Sample const & b) { return a.left == b.left && a.right == b.right; }
 inline bool operator!=(Sample const & a, Sample const & b) { return a.left != b.left || a.right != b.right; }
