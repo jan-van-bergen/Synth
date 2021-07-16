@@ -7,11 +7,7 @@
 #include <SDL2/SDL_scancode.h>
 
 FileDialog::FileDialog() { 
-	if (std::filesystem::exists("projects/")) {
-		change_path("projects");
-	} else {
-		change_path(".");
-	}
+	change_path("projects");
 }
 
 void FileDialog::show(Type type, std::string const & title, std::string const & default_path, std::string const & file_extension, OnFinishedCallBack callback) {
@@ -142,7 +138,10 @@ void FileDialog::render() {
 }
 
 void FileDialog::change_path(std::string const & new_path) {
-	auto absolute_path = std::filesystem::absolute(new_path);
+	std::filesystem::path absolute_path = 
+		std::filesystem::exists(new_path) ?
+		std::filesystem::absolute(new_path) :
+		std::filesystem::absolute(".");
 
 	path = absolute_path.string();
 
